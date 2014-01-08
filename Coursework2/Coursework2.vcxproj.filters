@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="DXEngine">
+      <UniqueIdentifier>{46a16aa5-7015-4a91-9328-833f749e08d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Headers">
+      <UniqueIdentifier>{1e549563-a12c-45fc-a92d-3d3133804ab5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Sources">
+      <UniqueIdentifier>{19a7b557-7e87-4da9-a69c-0124b819148d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Headers\Objects">
+      <UniqueIdentifier>{65477572-33b2-485f-968c-3ee4ca40fb0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Sources\Objects">
+      <UniqueIdentifier>{520f3979-d81d-49b8-a8d4-b4e2725f9c93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Headers\Shaders">
+      <UniqueIdentifier>{c054ef62-3565-4617-b7df-ab3662a7323b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Sources\Shaders">
+      <UniqueIdentifier>{c35e6b24-dd8d-499b-92a0-7ebf468abd85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Sources\Utilities">
+      <UniqueIdentifier>{25e94040-6cba-4671-855b-ecd8f128c1d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Headers\Utilities">
+      <UniqueIdentifier>{e5d4f89d-93ab-431b-9cc6-ef37727a5743}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Engine.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\State.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DModel.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DTexture.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Shaders\D3DTextureShader.cpp">
+      <Filter>DXEngine\Sources\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DCamera.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\D3DShaderManager.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Shaders\D3DBumpMapShader.cpp">
+      <Filter>DXEngine\Sources\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Shaders\D3DLightShader.cpp">
+      <Filter>DXEngine\Sources\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DFrustum.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\D3DText.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DFont.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Shaders\D3DFontShader.cpp">
+      <Filter>DXEngine\Sources\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Utilities\CPUMonitor.cpp">
+      <Filter>DXEngine\Sources\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Utilities\FPSMonitor.cpp">
+      <Filter>DXEngine\Sources\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Utilities\HPRTimer.cpp">
+      <Filter>DXEngine\Sources\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DLight.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DBitmap.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\D3DSys.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\D3DAudio.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\D3DInput.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DXEngine\Engine.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\State.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DModel.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DTexture.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Shaders\D3DTextureShader.h">
+      <Filter>DXEngine\Headers\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DCamera.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\D3DShaderManager.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Shaders\D3DLightShader.h">
+      <Filter>DXEngine\Headers\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Shaders\D3DBumpMapShader.h">
+      <Filter>DXEngine\Headers\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DFrustum.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\D3DText.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DFont.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Shaders\D3DFontShader.h">
+      <Filter>DXEngine\Headers\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Utilities\HPRTimer.h">
+      <Filter>DXEngine\Headers\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Utilities\FPSMonitor.h">
+      <Filter>DXEngine\Headers\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Utilities\CPUMonitor.h">
+      <Filter>DXEngine\Headers\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DLight.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DBitmap.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\D3DSys.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\D3DAudio.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\D3DInput.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Defines.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\LinkedList.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

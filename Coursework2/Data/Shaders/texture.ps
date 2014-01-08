@@ -1,0 +1,18 @@
+Texture2D g_ShaderTexture;
+SamplerState g_SampleType;
+
+struct PixelInputType
+{
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD0;
+};
+
+float4 TexturePixelShader(PixelInputType i) : SV_TARGET
+{
+	float4 texCol;
+
+	// Sample the pixel colour from the texture suing the sampler at this tex coord location.
+	texCol = g_ShaderTexture.Sample(g_SampleType, i.tex);
+
+	return texCol;
+}

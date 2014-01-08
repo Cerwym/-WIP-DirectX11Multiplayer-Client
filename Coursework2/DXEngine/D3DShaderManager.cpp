@@ -13,7 +13,6 @@ D3DShaderManager::D3DShaderManager(const D3DShaderManager& other)
 {
 }
 
-
 D3DShaderManager::~D3DShaderManager()
 {
 	// Safely delete all the shader objects.
@@ -87,10 +86,9 @@ bool D3DShaderManager::RenderLightShader(ID3D11DeviceContext* deviceContext, int
 
 
 bool D3DShaderManager::RenderBumpMapShader(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
-											 ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalTexture, D3DXVECTOR3 lightDirection, 
-											 D3DXVECTOR4 diffuse)
+											 ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalTexture, D3DLight* lightObject)
 {
-	if(!m_BumpMapShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, colorTexture, normalTexture, lightDirection, diffuse))
+	if(!m_BumpMapShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, colorTexture, normalTexture, lightObject->GetDirection(), lightObject->GetDiffuseColour()))
 		return false;
 
 	return true;

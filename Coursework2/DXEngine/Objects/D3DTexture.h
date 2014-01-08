@@ -10,6 +10,7 @@ class D3DTexture
 {
 public:
 	D3DTexture();
+	D3DTexture(ID3D11ShaderResourceView* );
 	D3DTexture(const D3DTexture&){}
 	~D3DTexture();
 

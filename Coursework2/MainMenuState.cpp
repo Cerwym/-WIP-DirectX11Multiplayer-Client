@@ -8,6 +8,9 @@ MainMenuState::MainMenuState() : State( MAINMENU_STATE )
 	m_StoneCube = 0;
 	m_TextBatch = 0;
 	m_Light = 0;
+	m_DebugView = 0;
+	m_DebugView2 = 0;
+	m_DebugView3 = 0;
 	g_Engine->DebugOutput(L"Main Menu Initialized\n");
 	m_MouseLock = true;
 }
@@ -19,16 +22,23 @@ void MainMenuState::dLoad()
 
 	// Might want to check to see if the objects already exists as loading a new state will change what the object points to
 	m_MarbleCube = new D3DModel(D3DXVECTOR3(-3.5f, 0, 0));
-	m_MarbleCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds" );
+	m_MarbleCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds" , NULL );
 
 	m_MetalCube = new D3DModel();
-	m_MetalCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/metal.dds" );
+	m_MetalCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/metal.dds", NULL );
+
+	m_StoneCube = new D3DModel(D3DXVECTOR3(3.5f, 0, 0));
+	if (!m_StoneCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/stone.dds", L"Data/Models/cube_normal.dds" ))
+	{
+		MessageBox( g_Engine->GetWindow(), L"Error creating cube with normal map", L"Error", MB_OK);
+	}
 	
 	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
 	m_Camera->SetPosition(D3DXVECTOR3(0.0f, 0.0f, -10.0f));
 	
 	// RebuildView must be called after instantiation so that the text will be drawn correctly.
 	m_Camera->RebuildView();
+	m_baseViewMatrix = m_Camera->GetViewMatrix();
 
 	m_Light = new D3DLight;
 	// Set to white and point down the positive x
@@ -39,7 +49,11 @@ void MainMenuState::dLoad()
 	m_Light->SetSpecularPower(64.0f);
 
 	m_TextBatch = new D3DText;
-	m_TextBatch->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), g_Engine->GetWindow(), g_Engine->GetScreenWidth(), g_Engine->GetScreenHeight(), m_Camera->GetViewMatrix() );
+	m_TextBatch->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), g_Engine->GetWindow(), g_Engine->GetScreenWidth(), g_Engine->GetScreenHeight(), m_baseViewMatrix );
+
+	m_DebugView = new D3DBitmap;
+	m_DebugView->Init( D3D()->GetDevice(), Options()->scrWidth, Options()->scrHeight, NULL, 100, 100 );
+	m_DebugView->SetPosition(50, 50);
 
 	g_Engine->DebugOutput(L"Main Menu Loaded\n");
 }
@@ -51,6 +65,9 @@ void MainMenuState::dClose()
 	S_DELETE( m_StoneCube );
 	S_DELETE( m_MarbleCube );
 	S_DELETE( m_TextBatch );
+	S_DELETE( m_DebugView );
+	S_DELETE( m_DebugView2 );
+	S_DELETE( m_DebugView3 );
 	g_Engine->DebugOutput(L"Main Menu Closed\n");
 }
 
@@ -111,6 +128,7 @@ void MainMenuState::dUpdate( float dt )
 
 	m_MarbleCube->RotateBy( 1 * dt, 0, 0 );
 	m_MetalCube->RotateBy( 0, 1 * dt, 0 );
+	m_StoneCube->RotateBy( 1 * dt , 0, 1 * dt );
 
 	if (m_MouseLock)
 		g_Engine->LockMouseToCentre();
@@ -121,16 +139,35 @@ void MainMenuState::dUpdate( float dt )
 
 void MainMenuState::dRender()
 {
+	RenderTexture()->SetRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView() );
+	RenderTexture()->ClearRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView(), 0.0f, 0.0f, 0.5f, 1.0f);
+	// Render the scene (CURRENTLY WITH ALL SHADERS on the front buffer)
+	Render3D();
+
+	m_DebugView->SetTexture( RenderTexture()->GetShaderResourceView() );
+	// Continue rendering as normal on the back buffer
+	
+	D3D()->SetBackBufferRenderTarget();
+	D3D()->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	
+	Render3D();
+	Render2D();
+}
+
+void MainMenuState::Render3D()
+{
 	m_Camera->RebuildView();
 
-	m_ViewMatrix = m_Camera->GetViewMatrix();
-	m_ProjectionMatrix = m_Camera->GetProjMatrix();
-
-	m_MarbleCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_ViewMatrix, m_ProjectionMatrix, m_Camera->GetPosition(), m_Light );
+	m_MarbleCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, NULL );
 
 	// Passing in a light object will make the cube draw against the light shader
-	m_MetalCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_ViewMatrix, m_ProjectionMatrix, m_Camera->GetPosition(), m_Light );
-	
+	m_MetalCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light );
+
+	m_StoneCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light );
+}
+
+void MainMenuState::Render2D()
+{
 	// Being 2D rendering
 	D3D()->TurnZBufferOff();
 	D3D()->TurnOnAlphaBlending();
@@ -141,7 +178,8 @@ void MainMenuState::dRender()
 		PostQuitMessage( 0 );
 	}
 
+	m_DebugView->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_baseViewMatrix, m_OrthoMatrix ) ;
+	
 	D3D()->TurnOffAlphaBlending();
 	D3D()->TurnZBufferOn();
-
 }

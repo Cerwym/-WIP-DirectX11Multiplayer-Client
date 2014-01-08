@@ -5,6 +5,11 @@ D3DTexture::D3DTexture()
 	m_Texture = 0;
 }
 
+D3DTexture::D3DTexture(ID3D11ShaderResourceView* resource )
+{
+	m_Texture = resource;
+}
+
 D3DTexture::~D3DTexture()
 {
 	S_RELEASE(m_Texture);

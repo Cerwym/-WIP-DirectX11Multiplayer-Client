@@ -11,7 +11,7 @@ void GameState::dLoad()
 {
 	g_Engine->DebugOutput(L"Main Menu Loading...\n");
 	m_Cube = new D3DModel(D3DXVECTOR3(0, 0, 0));
-	m_Cube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds" );
+	m_Cube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds", NULL );
 
 	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
 	m_Camera->SetPosition(D3DXVECTOR3(0.0f, 0.0f, -10.0f));
@@ -68,5 +68,5 @@ void GameState::dRender()
 
 	m_Camera->RebuildView();
 
-	m_Cube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera->GetViewMatrix(), m_Camera->GetProjMatrix() );
+	m_Cube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, NULL );
 }

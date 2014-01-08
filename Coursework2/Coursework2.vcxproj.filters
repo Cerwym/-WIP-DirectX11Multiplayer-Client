@@ -114,6 +114,9 @@
     <ClCompile Include="DXEngine\D3DInput.cpp">
       <Filter>DXEngine\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="DXEngine\Utilities\D3DRenderToTexture.cpp">
+      <Filter>DXEngine\Sources\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXEngine\Engine.h">
@@ -189,6 +192,12 @@
       <Filter>DXEngine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="DXEngine\LinkedList.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Utilities\D3DRenderToTexture.h">
+      <Filter>DXEngine\Headers\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\EngineDefinition.h">
       <Filter>DXEngine\Headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -22,8 +22,8 @@ public:
 	bool RenderLightShader( ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
 		ID3D11ShaderResourceView* texture, D3DXVECTOR3 &camPosition, D3DLight* lightObject );
 
-	bool RenderBumpMapShader(ID3D11DeviceContext*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, ID3D11ShaderResourceView*, 
-		ID3D11ShaderResourceView*, D3DXVECTOR3, D3DXVECTOR4);
+	bool RenderBumpMapShader( ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
+		ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalTexture, D3DLight* lightObject );
 
 private:
 	D3DTextureShader* m_TextureShader;

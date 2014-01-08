@@ -2,9 +2,11 @@
 #define STATE_H
 
 #include "Defines.h"
+#include "EngineDefinition.h"
 #include "Utilities\FPSMonitor.h"
 #include "Utilities\CPUMonitor.h"
 #include "Utilities\HPRTimer.h"
+#include "Utilities\D3DRenderToTexture.h"
 #include "D3DSys.h"
 #include "D3DAudio.h"
 #include "D3DInput.h"
@@ -15,9 +17,9 @@ public:
 	State( unsigned long id = 0 );
 	~State();
 
-	void State::Load( D3DSys* d3d, D3DAudio* audio, D3DInput* input )
+	void State::Load( EngineDefinition* eDef, D3DSys* d3d, D3DAudio* audio, D3DInput* input )
 	{
-		baseLoad( d3d, audio,  input );
+		baseLoad( eDef, d3d, audio,  input );
 		dLoad();
 	}
 
@@ -64,16 +66,20 @@ protected:
 	D3DSys* D3D() { return m_Device; }
 	D3DAudio* Audio() { return m_Audio; }
 	D3DInput* Input() { return m_Input; }
+	D3DRenderToTexture* RenderTexture() { return m_RenderToTexture; }
+	EngineDefinition* Options() { return m_Definition; }
 
 private:
 
-	void baseLoad( D3DSys* d3d, D3DAudio* audio, D3DInput* input );
+	void baseLoad( EngineDefinition* eDef, D3DSys* d3d, D3DAudio* audio, D3DInput* input );
 	void baseClose();
 	void baseUpdate();
 
 	D3DSys* m_Device;
 	D3DAudio* m_Audio; 
 	D3DInput* m_Input;
+	D3DRenderToTexture* m_RenderToTexture;
+	EngineDefinition* m_Definition;
 
 	FPSMonitor* m_FPSMonitor;
 	CPUMonitor* m_CpuMonitor;

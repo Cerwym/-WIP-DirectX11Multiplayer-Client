@@ -99,6 +99,7 @@
     <ClCompile Include="DXEngine\Shaders\D3DTextureShader.cpp" />
     <ClCompile Include="DXEngine\State.cpp" />
     <ClCompile Include="DXEngine\Utilities\CPUMonitor.cpp" />
+    <ClCompile Include="DXEngine\Utilities\D3DRenderToTexture.cpp" />
     <ClCompile Include="DXEngine\Utilities\FPSMonitor.cpp" />
     <ClCompile Include="DXEngine\Utilities\HPRTimer.cpp" />
     <ClCompile Include="GameState.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="DXEngine\Engine.h" />
     <ClInclude Include="DXEngine\Defines.h" />
     <ClInclude Include="DXEngine\D3DInput.h" />
+    <ClInclude Include="DXEngine\EngineDefinition.h" />
     <ClInclude Include="DXEngine\LinkedList.h" />
     <ClInclude Include="DXEngine\Objects\D3DBitmap.h" />
     <ClInclude Include="DXEngine\Objects\D3DCamera.h" />
@@ -127,6 +129,7 @@
     <ClInclude Include="DXEngine\Shaders\D3DTextureShader.h" />
     <ClInclude Include="DXEngine\State.h" />
     <ClInclude Include="DXEngine\Utilities\CPUMonitor.h" />
+    <ClInclude Include="DXEngine\Utilities\D3DRenderToTexture.h" />
     <ClInclude Include="DXEngine\Utilities\FPSMonitor.h" />
     <ClInclude Include="DXEngine\Utilities\HPRTimer.h" />
     <ClInclude Include="GameState.h" />

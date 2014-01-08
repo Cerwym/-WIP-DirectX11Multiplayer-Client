@@ -20,12 +20,13 @@ bool D3DBitmap::Init(ID3D11Device* device, int screenWidth, int screenHeight, WC
 {
 	bool result;
 
+	D3DXMatrixIdentity( &m_worldMatrix );
+
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
 
 	m_bitmapWidth = bitmapWidth;
 	m_bitmapHeight = bitmapHeight;
-
 
 	// Store the location of where the image was last drawn, if the location hasn't changed between frames, do not modify the dynamic vertex buffer for this instance
 	m_previousPosX = -1;
@@ -43,15 +44,17 @@ bool D3DBitmap::Init(ID3D11Device* device, int screenWidth, int screenHeight, WC
 	return true;
 }
 
-bool D3DBitmap::Render(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
+bool D3DBitmap::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, D3DXMATRIX view, D3DXMATRIX projection )
 {
 	bool result;
 
-	result = UpdateBuffers(deviceContext, positionX, positionY);
+	result = UpdateBuffers(deviceContext, m_Position.x, m_Position.y);
 	if (!result)
 		return false;
 
 	RenderBuffers(deviceContext);
+
+	sm->RenderTextureShader(deviceContext, m_indexCount, m_worldMatrix, view, projection, m_Texture->GetTexture() );
 	
 	return true;
 }
@@ -186,7 +189,7 @@ bool D3DBitmap::UpdateBuffers(ID3D11DeviceContext* deviceContext, int posX, int 
 	return true;
 }
 
-void D3DBitmap::RenderBuffers(ID3D11DeviceContext* deviceContext)
+void D3DBitmap::RenderBuffers( ID3D11DeviceContext* deviceContext )
 {
 	unsigned int stride;
 	unsigned int offset = 0;
@@ -197,8 +200,6 @@ void D3DBitmap::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	//deviceContext->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R8G8B8A8_UINT, 0);
 	deviceContext->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	return;
 }
 
 bool D3DBitmap::LoadTexture(ID3D11Device* device, WCHAR* fName)
@@ -213,4 +214,16 @@ bool D3DBitmap::LoadTexture(ID3D11Device* device, WCHAR* fName)
 		return false;
 
 	return true;
+}
+
+void D3DBitmap::SetTexture( ID3D11ShaderResourceView* texture )
+{
+	// Delete the texture if it already exists as we don't want dangling pointers
+	if (m_Texture)
+	{
+		delete m_Texture;
+		m_Texture = 0;
+	}
+
+	 m_Texture = new D3DTexture(texture);
 }

@@ -185,7 +185,7 @@ void Engine::AddState( State* state, bool change /* = true */ )
 
 	m_currentState = m_States->GetLast();
 	// Give updated pointers to the state as the context of these DirectX objects may have changed
-	m_currentState->Load( m_D3D, m_Audio, m_Input );
+	m_currentState->Load( m_Definition, m_D3D, m_Audio, m_Input );
 }
 
 void Engine::PopState( State* state )
@@ -206,7 +206,7 @@ void Engine::ChangeState( unsigned long id )
 
 			m_currentState = m_States->GetCurrent();
 			// Give updated pointers to the state as the context of these DirectX objects may have changed
-			m_currentState->Load( m_D3D, m_Audio, m_Input );
+			m_currentState->Load( m_Definition, m_D3D, m_Audio, m_Input );
 
 			m_stateChanged = true;
 

@@ -7,6 +7,7 @@
 #include "DXEngine/Objects/D3DModel.h"
 #include "DXEngine/Objects/D3DCamera.h"
 #include "DXEngine/Objects/D3DLight.h"
+#include "DXEngine/Objects/D3DBitmap.h"
 
 class MainMenuState : public State
 {
@@ -23,7 +24,10 @@ private:
 	void Render2D();
 	void Render3D();
 
-	D3DCamera* m_Camera;
+	D3DCamera* m_Camera;	
+	D3DBitmap* m_DebugView;
+	D3DBitmap* m_DebugView2;
+	D3DBitmap* m_DebugView3;
 	D3DModel* m_MarbleCube;
 	D3DModel* m_MetalCube;
 	D3DModel* m_StoneCube;
@@ -31,7 +35,7 @@ private:
 	float m_cubeRotation;
 	bool m_MouseLock;
 
-	D3DXMATRIX m_WorldMatrix, m_ViewMatrix, m_ProjectionMatrix, m_OrthoMatrix;
+	D3DXMATRIX m_WorldMatrix, m_baseViewMatrix, m_ProjectionMatrix, m_OrthoMatrix;
 	D3DText* m_TextBatch;
 };
 

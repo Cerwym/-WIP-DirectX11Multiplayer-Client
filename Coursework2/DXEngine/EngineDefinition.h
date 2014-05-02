@@ -1,7 +1,9 @@
 #ifndef ENGINEDEFINITION_H 
 #define ENGINEDEFINITION_H
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <string>
 
 struct EngineDefinition
 {
@@ -14,6 +16,8 @@ struct EngineDefinition
 	bool fullscreen; // is fullscreen enabled or not
 	int mouseSensitivityX; // The sensitivity of the mouse in the X axis
 	int mouseSensitivityY; // The sensitivity of the mouse in the X axis
+	char* server_addr;
+	unsigned short server_port; 
 
 	EngineDefinition()
 	{
@@ -26,6 +30,8 @@ struct EngineDefinition
 		fullscreen = false;
 		mouseSensitivityX = 1;
 		mouseSensitivityY = 1;
+		server_addr = NULL;
+		server_port = 0;
 	}
 };
 

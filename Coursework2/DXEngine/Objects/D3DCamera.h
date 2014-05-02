@@ -17,6 +17,7 @@ public:
 	D3DXVECTOR3& GetPosition(){return m_Position;}
 	D3DXMATRIX GetViewMatrix()const{return m_ViewMatrix;}
 	D3DXMATRIX GetProjMatrix()const{return m_ProjMatrix;}
+	D3DXMATRIX GetWorld()const{return m_WorldMatrix;}
 
 	void SetFOV(float FoVy, float aspect, float z_near, float z_far);
 	void Move_X(float dt);

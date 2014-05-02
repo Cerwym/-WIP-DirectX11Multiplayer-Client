@@ -1,9 +1,10 @@
 #ifndef STATE_H 
 #define STATE_H
 
+#include <process.h> // For threading
 #include "Defines.h"
 #include "EngineDefinition.h"
-#include "Utilities\FPSMonitor.h"
+#include "Objects\D3DBitmap.h"
 #include "Utilities\CPUMonitor.h"
 #include "Utilities\HPRTimer.h"
 #include "Utilities\D3DRenderToTexture.h"
@@ -14,13 +15,23 @@
 class State
 {
 public:
-	State( unsigned long id = 0 );
+	State( unsigned long id = 0, float locktoFPS = 60.0f );
 	~State();
 
-	void State::Load( EngineDefinition* eDef, D3DSys* d3d, D3DAudio* audio, D3DInput* input )
+	bool State::Load( EngineDefinition* eDef, D3DSys* d3d, D3DAudio* audio, D3DInput* input )
 	{
-		baseLoad( eDef, d3d, audio,  input );
-		dLoad();
+		// Start a thread to begin
+		if (!baseLoad( eDef, d3d, audio,  input ))
+			return false;
+
+		if (!dLoad())
+		{
+			MessageBox(0, L"State Failed to load correctly, check Init()", L"Error", MB_OK);
+			return false;
+		}
+		
+		isLoaded = true;
+		return true;
 	}
 
 	void State::Close()
@@ -32,7 +43,7 @@ public:
 	void State::Update()
 	{
 		baseUpdate();
-		dUpdate( m_StateTime / 1000 );
+		dUpdate( m_StateTime );
 	}
 
 	void State::Render()
@@ -42,13 +53,17 @@ public:
 		dRender(); // Render the derived state
 		m_Device->EndScene();
 	}
+
+	bool State::IsLoaded(){ return isLoaded;}
+
+	void SetFailed(){ FailedToLoadLast = true;}
 	
 	unsigned long GetID(){ return m_ID; }
 
 protected:
 
 	// Calling the derived state's load is required, and MUST be overridden
-	virtual void dLoad() = 0;
+	virtual bool dLoad() = 0;
 	// Calling the derived state's close is required, and MUST be overridden
 	virtual void dClose() = 0;
 	// Calling the derived state's update is required, and MUST be overridden
@@ -61,17 +76,22 @@ protected:
 	// Return the current percentage of the CPU used by the application.
 	int GetCPU() { return m_CpuMonitor->GetCPUPercentage(); }
 	// Return the current frame rate
-	int GetFPS() { return m_FPSMonitor->GetFPS(); }
+	int GetFPS() { return (int)m_HPRTimer->GetFrameRate(); }
+	bool isLoaded;
 
 	D3DSys* D3D() { return m_Device; }
 	D3DAudio* Audio() { return m_Audio; }
 	D3DInput* Input() { return m_Input; }
 	D3DRenderToTexture* RenderTexture() { return m_RenderToTexture; }
 	EngineDefinition* Options() { return m_Definition; }
+	// Temporary, clean this up
+	D3DBitmap* TEMPMOUSE() {return m_MouseBitmap; }
+	
+	bool FailedToLoadLast;
 
 private:
 
-	void baseLoad( EngineDefinition* eDef, D3DSys* d3d, D3DAudio* audio, D3DInput* input );
+	bool baseLoad( EngineDefinition* eDef, D3DSys* d3d, D3DAudio* audio, D3DInput* input);
 	void baseClose();
 	void baseUpdate();
 
@@ -81,11 +101,14 @@ private:
 	D3DRenderToTexture* m_RenderToTexture;
 	EngineDefinition* m_Definition;
 
-	FPSMonitor* m_FPSMonitor;
+	// Bitmap used to store the mouse cursor's tetxure
+	D3DBitmap* m_MouseBitmap;
+
 	CPUMonitor* m_CpuMonitor;
 	HPRTimer* m_HPRTimer;
 
 	float m_StateTime;
+	float m_MaxFramerate;
 
 private:
 	unsigned long m_ID;

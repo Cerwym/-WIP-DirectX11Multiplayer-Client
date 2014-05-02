@@ -2,25 +2,11 @@
 
 Engine *g_Engine = NULL;
 
-LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam )
-{
-	switch ( msg )
-	{
-		case WM_ACTIVATEAPP:
-			g_Engine->SetActiveFlag( wParam );
-			return 0;
-
-		case WM_DESTROY:
-			PostQuitMessage( 0 );
-			return 0;
-
-		default:
-			return DefWindowProc( hwnd, msg, wParam, lParam );
-	}
-}
-
 Engine::Engine( EngineDefinition *definition )
 {
+	m_ShaderManager = 0;
+	m_loadingState = 0;
+
 	WNDCLASSEX wcex; // The definition for the Window class structure.
 
 	// The engine has not yet loaded
@@ -51,8 +37,6 @@ Engine::Engine( EngineDefinition *definition )
 	wcex.hIconSm = LoadIcon( NULL, IDI_APPLICATION );
 	RegisterClassEx( &wcex );
 
-	ShowCursor(false);
-
 	// Initialize the COM using multi threaded concurrency.
 	CoInitializeEx( NULL, COINIT_MULTITHREADED );
 
@@ -69,7 +53,10 @@ Engine::Engine( EngineDefinition *definition )
 	m_States = new LinkedList< State >;
 	m_currentState = NULL;
 
+	
 	m_Input = new D3DInput( m_window );
+	m_Audio = 0;
+	
 	m_Audio = new D3DAudio;
 	if (!m_Audio->Init(m_window))
 	{
@@ -85,6 +72,7 @@ Engine::Engine( EngineDefinition *definition )
 	}
 
 	// Initialize the shader manager will all available shaders
+	
 	m_ShaderManager = new D3DShaderManager;
 	if (!m_ShaderManager->Init(m_D3D->GetDevice(), m_window))
 	{
@@ -97,6 +85,12 @@ Engine::Engine( EngineDefinition *definition )
 	// Allow the application perform state setup if it is required.
 	if (m_Definition->StateInit != NULL )
 		m_Definition->StateInit();
+
+	// Bring the window up on the screen and set it as the main focus
+	ShowWindow( m_window, SW_SHOW );
+	SetForegroundWindow( m_window );
+	SetFocus( m_window );
+	ShowCursor(false);
 
 	m_loaded = true;
 }
@@ -117,7 +111,7 @@ Engine::~Engine()
 		S_DELETE( m_D3D );
 		S_DELETE( m_ShaderManager );
 	}
-
+	
 	// Uninitialize the COM
 	CoUninitialize();
 
@@ -169,7 +163,6 @@ void Engine::Run()
 
 void Engine::LockMouseToCentre()
 {
-	ClipCursor(&m_windowRect);
 	SetCursorPos(m_windowRect.left + (m_Definition->scrWidth /2), m_windowRect.top + (m_Definition->scrHeight /2));
 }
 
@@ -184,8 +177,54 @@ void Engine::AddState( State* state, bool change /* = true */ )
 		m_currentState->Close();
 
 	m_currentState = m_States->GetLast();
-	// Give updated pointers to the state as the context of these DirectX objects may have changed
-	m_currentState->Load( m_Definition, m_D3D, m_Audio, m_Input );
+
+	ThreadedLoadState(m_currentState);
+}
+
+void Engine::ThreadedLoadState( State* stateToLoad )
+{
+	// Set the current state to be the parameter passed, this is harmless in itself, but will be required for the recursive call.
+	m_currentState = stateToLoad;
+
+	m_loadingState = new LoadingState;
+	m_loadingState->Load( m_Definition, m_D3D, m_Audio, m_Input );
+
+	// Use a future so that the result of the state's load can be evaluated later.
+	// Do this asynchronously so that the loading thread will still draw.
+	std::future<bool> val = std::async(std::launch::async, &State::Load, stateToLoad, m_Definition, m_D3D, m_Audio, m_Input );
+
+	while (true)
+	{	
+		// Wait for one millisecond and if a result (the state has finished or returned false) is valid, break from this loop.
+		std::chrono::milliseconds timeout(1);
+		if (val.wait_for(timeout) == std::future_status::ready)
+		{
+			break;
+		}
+
+		ShowWindow( m_window, SW_NORMAL );
+		m_loadingState->Update();
+		m_loadingState->Render();
+	}
+
+	// destroy the loading screen if the current state has finished loading
+	m_loadingState->Close();
+	delete m_loadingState;
+	m_loadingState = 0;
+
+	// Get the returned value from the threaded load.
+	bool success = val.get();
+	if (success == false) // If the state failed to load correctly, load the last working state.
+	{
+		DebugOutput(L"Loading failed, loading previous state...\n");
+		// Close the state that did not load correctly.
+		stateToLoad->Close();
+		PopState(stateToLoad); // Pop the state that failed to load, otherwise data from that state will still exists, prohibiting the application from qutting cleanly.
+		m_previousState->SetFailed();
+		ThreadedLoadState(m_previousState);
+	}
+
+	// If we've reached here, everything will have loaded correctly, rejoice! :)
 }
 
 void Engine::PopState( State* state )
@@ -202,12 +241,14 @@ void Engine::ChangeState( unsigned long id )
 		{
 			// Close the old state;
 			if ( m_currentState != NULL )
+			{
+				m_previousState = m_currentState; // store it as the previous
 				m_currentState->Close();
+			}
 
 			m_currentState = m_States->GetCurrent();
 			// Give updated pointers to the state as the context of these DirectX objects may have changed
-			m_currentState->Load( m_Definition, m_D3D, m_Audio, m_Input );
-
+			ThreadedLoadState(m_currentState);
 			m_stateChanged = true;
 
 			break;
@@ -224,4 +265,21 @@ void Engine::DebugOutput(WCHAR* szFormat, ...)
 	va_end(arg);
 
 	OutputDebugString(szBuff);
+}
+
+LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+	switch ( msg )
+	{
+	case WM_ACTIVATEAPP:
+		g_Engine->SetActiveFlag( wParam );
+		return 0;
+
+	case WM_DESTROY:
+		PostQuitMessage( 0 );
+		return 0;
+
+	default:
+		return DefWindowProc( hwnd, msg, wParam, lParam );
+	}
 }

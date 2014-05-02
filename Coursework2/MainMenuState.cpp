@@ -11,29 +11,36 @@ MainMenuState::MainMenuState() : State( MAINMENU_STATE )
 	m_DebugView = 0;
 	m_DebugView2 = 0;
 	m_DebugView3 = 0;
+	m_SkyBox = 0;
+	m_RainEmitter = 0;
+
 	g_Engine->DebugOutput(L"Main Menu Initialized\n");
 	m_MouseLock = true;
 }
 
-void MainMenuState::dLoad()
+bool MainMenuState::dLoad()
 {
 	g_Engine->DebugOutput(L"Main Menu Loading...\n");
 	m_OrthoMatrix = D3D()->GetOrthoMatrix();
 
 	// Might want to check to see if the objects already exists as loading a new state will change what the object points to
 	m_MarbleCube = new D3DModel(D3DXVECTOR3(-3.5f, 0, 0));
-	m_MarbleCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds" , NULL );
+	if(!m_MarbleCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds"))
+		return false;
 
 	m_MetalCube = new D3DModel();
-	m_MetalCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/metal.dds", NULL );
+	if (!m_MetalCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/metal.dds"))
+		return false;
 
 	m_StoneCube = new D3DModel(D3DXVECTOR3(3.5f, 0, 0));
 	if (!m_StoneCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/stone.dds", L"Data/Models/cube_normal.dds" ))
-	{
-		MessageBox( g_Engine->GetWindow(), L"Error creating cube with normal map", L"Error", MB_OK);
-	}
+		return false;
+
+	m_SkyBox = new D3DSkyBox;
+	if(!m_SkyBox->Init( D3D()->GetDevice(), 10, 10, L"Data/Textures/skymap.dds", g_Engine->GetWindow()))
+		return false;
 	
-	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
+	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) Options()->scrWidth / Options()->scrHeight, 0.1f, 1000.0f );
 	m_Camera->SetPosition(D3DXVECTOR3(0.0f, 0.0f, -10.0f));
 	
 	// RebuildView must be called after instantiation so that the text will be drawn correctly.
@@ -49,13 +56,21 @@ void MainMenuState::dLoad()
 	m_Light->SetSpecularPower(64.0f);
 
 	m_TextBatch = new D3DText;
-	m_TextBatch->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), g_Engine->GetWindow(), g_Engine->GetScreenWidth(), g_Engine->GetScreenHeight(), m_baseViewMatrix );
+	if (!m_TextBatch->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), g_Engine->GetWindow(), g_Engine->GetScreenWidth(), g_Engine->GetScreenHeight(), m_baseViewMatrix ))
+		return false;
 
 	m_DebugView = new D3DBitmap;
-	m_DebugView->Init( D3D()->GetDevice(), Options()->scrWidth, Options()->scrHeight, NULL, 100, 100 );
+	if (!m_DebugView->Init( D3D()->GetDevice(), Options()->scrWidth, Options()->scrHeight, NULL, 100, 100 ))
+		return false;
+
 	m_DebugView->SetPosition(50, 50);
 
-	g_Engine->DebugOutput(L"Main Menu Loaded\n");
+	m_RainEmitter = new	D3DParticleEmitter;
+	if (!m_RainEmitter->Initialize( D3D()->GetDevice(), L"Data/Textures/raindrop.dds"))
+		return false;
+
+	g_Engine->DebugOutput(L"Main Menu Loaded\n"); 
+	return true;
 }
 
 void MainMenuState::dClose()
@@ -68,6 +83,9 @@ void MainMenuState::dClose()
 	S_DELETE( m_DebugView );
 	S_DELETE( m_DebugView2 );
 	S_DELETE( m_DebugView3 );
+	S_DELETE( m_RainEmitter );
+	S_DELETE( m_SkyBox );
+
 	g_Engine->DebugOutput(L"Main Menu Closed\n");
 }
 
@@ -96,25 +114,13 @@ void MainMenuState::dUpdate( float dt )
 	if ( Input()->isKeyPressed( DIK_S, true ) )
 		m_Camera->Move_Z(-2.3f * dt);
 
-// 	if ( Input()->isKeyPressed( DIK_L, false ) )
-// 		m_MouseLock = !m_MouseLock;
+ 	if ( Input()->isKeyPressed( DIK_L, false ) )
+ 		m_MouseLock = !m_MouseLock;
 
-	if ( Input()->isKeyPressed( DIK_J, true ) )
-		m_MetalCube->TranslateBy( -2.3f * dt, 0, 0 );
-
-	if ( Input()->isKeyPressed( DIK_L, true ) )
-		m_MetalCube->TranslateBy( 2.3f * dt, 0, 0 );
-
-	if ( Input()->isKeyPressed( DIK_I, true ) )
-		m_MetalCube->TranslateBy( 0, 0, 2.3f * dt );
-
-	if ( Input()->isKeyPressed( DIK_K, true ) )
-		m_MetalCube->TranslateBy( 0, 0, -2.3f * dt );
-
-	if ( Input()->GetDeltaY() != 0 )
+	if ( Input()->GetDeltaY() != 0 && m_MouseLock )
 		m_Camera->Pitch( ( Input()->GetDeltaY() / g_Engine->GetMouseSensitivityY() ) * 0.0087266f );
 	
-	if ( Input()->GetDeltaX() != 0 )
+	if ( Input()->GetDeltaX() != 0 && m_MouseLock)
 		m_Camera->Roll( ( Input()->GetDeltaX() / g_Engine->GetMouseSensitivityX() ) * 0.0087266f );
 
 	if (! m_TextBatch->SetMousePosition( Input()->GetPosX(), Input()->GetPosY(), D3D()->GetDeviceContext() ) )
@@ -130,19 +136,39 @@ void MainMenuState::dUpdate( float dt )
 	m_MetalCube->RotateBy( 0, 1 * dt, 0 );
 	m_StoneCube->RotateBy( 1 * dt , 0, 1 * dt );
 
+	m_RainEmitter->Frame(dt *5000, D3D()->GetDeviceContext(), m_Camera);
+	m_RainEmitter->TranslateTo( m_Camera->GetPosition().x, m_Camera->GetPosition().y + 3, m_Camera->GetPosition().z + 3 );
+	m_RainEmitter->SetRotation( Input()->GetDeltaX() / g_Engine->GetMouseSensitivityX()  * 0.0087266f, Input()->GetDeltaY() / g_Engine->GetMouseSensitivityY() * 0.0087266f, 0 );
+
 	if (m_MouseLock)
 		g_Engine->LockMouseToCentre();
+	
+	if( Input()->isKeyPressed( DIK_O ) )
+	{
+		g_Engine->ChangeState( OPTIONS_STATE );
+		return;
+	}
 
 	if( Input()->isKeyPressed( DIK_C ) )
+	{
 		g_Engine->ChangeState( GAME_STATE );
+		if (FailedToLoadLast)
+		{
+			g_Engine->DebugOutput(L"There was an error loading this state, ignoring request...\n");
+		}
+		return;
+	}
 }
 
 void MainMenuState::dRender()
 {
 	RenderTexture()->SetRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView() );
-	RenderTexture()->ClearRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView(), 0.0f, 0.0f, 0.5f, 1.0f);
+	RenderTexture()->ClearRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
 	// Render the scene (CURRENTLY WITH ALL SHADERS on the front buffer)
-	Render3D();
+	
+	D3D()->TurnOnWireFrame();
+	Render3D( false, false );
+	D3D()->TurnOffWireFrame();
 
 	m_DebugView->SetTexture( RenderTexture()->GetShaderResourceView() );
 	// Continue rendering as normal on the back buffer
@@ -154,16 +180,41 @@ void MainMenuState::dRender()
 	Render2D();
 }
 
-void MainMenuState::Render3D()
+void MainMenuState::Render3D( bool renderParticles, bool renderSkybox )
 {
 	m_Camera->RebuildView();
+	D3D()->TurnOnWireFrame();
+	if ( renderSkybox )
+	{
+		D3D()->TurnZBufferOff();
+		D3D()->TurnOffCulling();
+		m_SkyBox->Draw( D3D()->GetDeviceContext(), m_Camera );
+		D3D()->TurnOnCulling();
+		D3D()->TurnZBufferOn();
+	}
 
 	m_MarbleCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, NULL );
 
 	// Passing in a light object will make the cube draw against the light shader
-	m_MetalCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light );
+	m_MetalCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light ) ;
 
 	m_StoneCube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light );
+
+	// Put the particle system vertex and index buffers on the graphics pipeline to prepare them for drawing.
+
+	if (renderParticles)
+	{
+		D3D()->TurnOnAlphaBlending();
+		m_RainEmitter->NO_GSBillboard( m_Camera );
+		m_RainEmitter->Render(D3D()->GetDeviceContext());
+
+		// Render the model using the texture shader.
+		g_Engine->ShaderManager()->RenderTextureShader(D3D()->GetDeviceContext(), m_RainEmitter->GetIndexCount(), m_RainEmitter->GetWorld(), m_Camera->GetViewMatrix(), m_Camera->GetProjMatrix(), 
+			m_RainEmitter->GetTexture());
+		D3D()->TurnOffAlphaBlending();
+	}
+
+	D3D()->TurnOffWireFrame();
 }
 
 void MainMenuState::Render2D()
@@ -177,9 +228,9 @@ void MainMenuState::Render2D()
 		MessageBox( g_Engine->GetWindow(), L"Error drawing shitty text", L"Error", MB_OK );
 		PostQuitMessage( 0 );
 	}
-
-	m_DebugView->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_baseViewMatrix, m_OrthoMatrix ) ;
 	
 	D3D()->TurnOffAlphaBlending();
+	// The debug view should always be on top and thus, not blend with the scene
+	m_DebugView->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_baseViewMatrix, m_OrthoMatrix ) ;
 	D3D()->TurnZBufferOn();
 }

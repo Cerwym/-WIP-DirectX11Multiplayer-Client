@@ -13,6 +13,8 @@ D3DSys::D3DSys()
 	m_alphaEnableBlendingState = 0;
 	m_alphaDisableBlendingState = 0;
 	m_rasterState = 0;
+	m_RasterStateWireFrame = 0;
+	m_RasterStateCULLNONE = 0;
 }
 
 D3DSys::D3DSys(const D3DSys& other)
@@ -32,6 +34,8 @@ D3DSys::~D3DSys()
 	S_RELEASE(m_depthStencilBuffer);
 	S_RELEASE(m_alphaEnableBlendingState);
 	S_RELEASE(m_alphaDisableBlendingState);
+	S_RELEASE(m_RasterStateCULLNONE);
+	S_RELEASE(m_RasterStateWireFrame);
 	S_RELEASE(m_renderTargetView);
 	S_RELEASE(m_deviceContext);
 	S_RELEASE(m_device);
@@ -257,13 +261,14 @@ bool D3DSys::Init( int screenWidth, int screenHeight, bool vsync, HWND hwnd, boo
 	ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
 	// Create an alpha enabled blend state description.
 	blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
-	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendStateDescription.RenderTarget[0].DestBlend =  D3D11_BLEND_ONE;
 	blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
 	blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+	
 	// Create the blend state using the description.
 	result = m_device->CreateBlendState(&blendStateDescription, &m_alphaEnableBlendingState);
 	if(FAILED(result))
@@ -271,6 +276,7 @@ bool D3DSys::Init( int screenWidth, int screenHeight, bool vsync, HWND hwnd, boo
 
 	// Modify the description to create an alpha disabled blend state description.
 	blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 
 	// Create the blend state using the description.
 	result = m_device->CreateBlendState(&blendStateDescription, &m_alphaDisableBlendingState);
@@ -314,9 +320,20 @@ bool D3DSys::Init( int screenWidth, int screenHeight, bool vsync, HWND hwnd, boo
 	result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterState);
 	if (FAILED(result))
 		return false;
-
 	// Now set the rasterizer state.
 	m_deviceContext->RSSetState(m_rasterState);
+	
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+	result = m_device->CreateRasterizerState(&rasterDesc, &m_RasterStateWireFrame);
+
+
+	// Create a rasterizer state with culling disabled.
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+	result = m_device->CreateRasterizerState(&rasterDesc, &m_RasterStateCULLNONE);
+	if (FAILED(result))
+		return false;
 
 	// Setup the viewport for rendering.
 	viewport.Width = (float)screenWidth;

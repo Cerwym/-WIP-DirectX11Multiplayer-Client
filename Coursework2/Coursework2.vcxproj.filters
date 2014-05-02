@@ -40,6 +40,12 @@
     <Filter Include="DXEngine\Headers\Utilities">
       <UniqueIdentifier>{e5d4f89d-93ab-431b-9cc6-ef37727a5743}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DXEngine\Sources\Objects\UI">
+      <UniqueIdentifier>{421e7e36-dcba-40b0-a48f-4901700ee2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXEngine\Headers\Objects\UI">
+      <UniqueIdentifier>{1ae8c60e-a637-486a-9c5a-4a6e058d072d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -93,9 +99,6 @@
     <ClCompile Include="DXEngine\Utilities\CPUMonitor.cpp">
       <Filter>DXEngine\Sources\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="DXEngine\Utilities\FPSMonitor.cpp">
-      <Filter>DXEngine\Sources\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="DXEngine\Utilities\HPRTimer.cpp">
       <Filter>DXEngine\Sources\Utilities</Filter>
     </ClCompile>
@@ -116,6 +119,27 @@
     </ClCompile>
     <ClCompile Include="DXEngine\Utilities\D3DRenderToTexture.cpp">
       <Filter>DXEngine\Sources\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DSkybox.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DParticleEmitter.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\UI\D3DUIElement.cpp">
+      <Filter>DXEngine\Sources\Objects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\NWSystem.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DXEngine\Objects\D3DUI.cpp">
+      <Filter>DXEngine\Sources\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,9 +191,6 @@
     <ClInclude Include="DXEngine\Utilities\HPRTimer.h">
       <Filter>DXEngine\Headers\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="DXEngine\Utilities\FPSMonitor.h">
-      <Filter>DXEngine\Headers\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="DXEngine\Utilities\CPUMonitor.h">
       <Filter>DXEngine\Headers\Utilities</Filter>
     </ClInclude>
@@ -199,6 +220,30 @@
     </ClInclude>
     <ClInclude Include="DXEngine\EngineDefinition.h">
       <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DSkybox.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DParticleEmitter.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\UI\D3DUIElement.h">
+      <Filter>DXEngine\Headers\Objects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\NWSystem.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\NWMessages.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\Objects\D3DUI.h">
+      <Filter>DXEngine\Headers\Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

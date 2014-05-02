@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <vector>
+#include <thread>
+#include <future>
 
 #include "EngineDefinition.h"
 #include "Defines.h"
@@ -16,7 +18,12 @@
 #include "State.h"
 #include "LinkedList.h"
 
+// Change this to be contained in DXENGINE
+#include "..\LoadingState.h"
+
 using namespace std;
+
+LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
 class Engine
 {
@@ -32,6 +39,7 @@ public:
 	void AddState( State* state, bool change = true );
 	void PopState( State* state);
 	void ChangeState( unsigned long id );
+	void ThreadedLoadState( State* stateToLoad );
 	void DebugOutput(WCHAR* szFormat, ...);
 
 	// Calling this function every frame will clip the mouse's movement to the center of the screen so it does not escape the bounds of the window
@@ -53,8 +61,10 @@ private:
 	RECT m_windowRect; // A rectangle to represent the bounds of the window
 	bool m_isActive;
 
-	EngineDefinition *m_Definition;
-	State *m_currentState; // Pointer to the current state.
+	EngineDefinition* m_Definition;
+	State* m_currentState; // Pointer to the current state.
+	State* m_previousState; // Pointer to the last known state
+	State* m_loadingState;
 	bool m_stateChanged; // Indicates if the state changed in the current frame.
 
 	LinkedList< State > *m_States;

@@ -9,6 +9,8 @@ D3DModel::D3DModel()
 	m_Model = 0;
 	m_BModel = 0;
 	m_NormalMapTexture = 0;
+	m_instanceCount = 0;
+	m_instanceBuffer = 0;
 
 	m_isBumpMapped = false;
 
@@ -25,6 +27,8 @@ D3DModel::D3DModel( D3DXVECTOR3& pos )
 	m_Model = 0;
 	m_BModel = 0;
 	m_NormalMapTexture = 0;
+	m_instanceCount = 0;
+	m_instanceBuffer = 0;
 
 	m_isBumpMapped = false;
 
@@ -79,6 +83,13 @@ bool D3DModel::Init( ID3D11Device* device, char* modelFName, WCHAR* textureFName
 	return true;
 }
 
+void D3DModel::NO_GSBillboard(D3DCamera* camera)
+{
+	double angle = atan2( m_Position.x - camera->GetPosition().x, m_Position.z - camera->GetPosition().z) * ( 180 / D3DX_PI );
+	float rotation = angle * 0.0174532925f;
+	SetRotation( 0, rotation, 0 );
+}
+
 // Scale, Rotate, Translate the world matrix
 void D3DModel::RebuildTransform()
 {
@@ -93,7 +104,6 @@ void D3DModel::RebuildTransform()
 	m_WorldMatrix *= temp;
 	
 	// Rotate the temporary matrix
-	g_Engine->DebugOutput( L"Rotation Vector is %f, %f, %f\n", m_Rotation.x, m_Rotation.y, m_Rotation.z );
 	if (m_Rotation.x != 0) 
 	{ D3DXMatrixRotationX( &temp, m_Rotation.x ); m_WorldMatrix *= temp; }
 	if (m_Rotation.y != 0) 
@@ -106,8 +116,19 @@ void D3DModel::RebuildTransform()
 	m_WorldMatrix *= temp;
 }
 
-void D3DModel::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMgr, D3DCamera* camera, D3DLight* lightObj )
+bool D3DModel::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMgr, D3DCamera* camera, D3DLight* lightObj, const int cullMode )
 {
+
+	// Before doing any pipeline operations, check to see if the object is inside the camera's Frustum
+	// TODO : extend this to have the ability to set CULL_MODE on this object so it's not always checking for cube-objects
+	if ( cullMode != CULL_NEVER )
+	{
+		if ( !camera->GetFrustum()->CheckCube( m_Position.x, m_Position.y, m_Position.z, 1.0f) )
+		{
+			return false; // There is no need to put the index and buffers on the pipeline because the object is not going to be rendered
+		}
+	}
+
 	// Put the vertex and index buffers on the graphics pipeline so the colour shader will be able to render them
 	unsigned int stride;
 	unsigned int offset;
@@ -128,7 +149,6 @@ void D3DModel::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMg
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-/*
 	if (!m_isBumpMapped)
 	{
 		if (lightObj == NULL)
@@ -137,12 +157,9 @@ void D3DModel::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMg
 			sMgr->RenderLightShader(deviceContext, m_indexCount, m_WorldMatrix, camera->GetViewMatrix(), camera->GetProjMatrix(), m_Texture->GetTexture(), camera->GetPosition(), lightObj );
 	}
 	else
-		sMgr->RenderBumpMapShader(deviceContext, m_indexCount, m_WorldMatrix, camera->GetViewMatrix(), camera->GetProjMatrix(), m_Texture->GetTexture(), m_NormalMapTexture->GetTexture(), lightObj );*/
-}
+		sMgr->RenderBumpMapShader(deviceContext, m_indexCount, m_WorldMatrix, camera->GetViewMatrix(), camera->GetProjMatrix(), m_Texture->GetTexture(), m_NormalMapTexture->GetTexture(), lightObj );
 
-int D3DModel::GetIndexCount()
-{
-	return m_indexCount;
+	return true; // Object was on screen and rendered
 }
 
 void D3DModel::TranslateBy( float x, float y, float z )
@@ -163,13 +180,20 @@ void D3DModel::RotateBy( float x, float y, float z )
 	RebuildTransform();
 }
 
+void D3DModel::SetRotation( float x, float y, float z )
+{
+	m_Rotation = D3DXVECTOR3(x, y, z);
+	RebuildTransform();
+}
+
 bool D3DModel::InitBuffers(ID3D11Device* device)
 {
 	TexVertex* vertices = 0;
 	BumpVertex* Bvertices = 0;
+	InstancedData* instances = 0;
 	unsigned long* indices;
-	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData, indexData;
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc, instanceBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData, instanceData;
 	HRESULT result;
 
 	// Create the vertex array.
@@ -400,7 +424,6 @@ void D3DModel::CalculateModelVectors()
 		vertex1.ny = m_BModel[index].ny;
 		vertex1.nz = m_BModel[index].nz;
 		index++;
-
 		vertex2.x = m_BModel[index].x;
 		vertex2.y = m_BModel[index].y;
 		vertex2.z = m_BModel[index].z;
@@ -458,7 +481,6 @@ void D3DModel::CalculateTangentBinormal(TexModel vertex1, TexModel vertex2, TexM
 	float tuVector[2], tvVector[2];
 	float den;
 	float length;
-
 
 	// Calculate the two vectors for this face.
 	vector1[0] = vertex2.x - vertex1.x;

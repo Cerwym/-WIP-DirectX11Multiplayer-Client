@@ -3,29 +3,109 @@
 GameState::GameState() : State( GAME_STATE )
 {
 	m_Camera = 0;
+	m_BillBoard = 0;
+	m_GameUI = 0;
 	m_Cube = 0;
-	g_Engine->DebugOutput(L"Main Menu Initialized\n");
+	m_Light = 0;
+	m_Floor = 0;
+	m_ParticleSystem = 0;
+	m_MouseLock = true;
+	m_SkyBox = 0;
+	m_DaveDude = 0;
+	m_Network = 0;
+	g_Engine->DebugOutput(L"Game State Initialized\n");
 }
 
-void GameState::dLoad()
+bool GameState::dLoad()
 {
 	g_Engine->DebugOutput(L"Main Menu Loading...\n");
-	m_Cube = new D3DModel(D3DXVECTOR3(0, 0, 0));
+
+	m_Network = new NWSystem;
+	if (!m_Network->Init())
+	{
+		MessageBox(NULL, L"Could not init the network object.", L"Error", MB_OK);
+	}
+
+	if (!m_Network->ConnectToServer( Options()->server_addr, Options()->server_port, 2000 ))
+	{
+		MessageBox(NULL, L"Could not connect to the server", L"Error", MB_OK);
+	}
+	
+	m_Cube = new D3DModel(D3DXVECTOR3(-15,0, 0));
 	m_Cube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds", NULL );
 
+	m_Floor = new D3DModel(D3DXVECTOR3(0, -5, 0));
+	m_Floor->Init( D3D()->GetDevice(), "Data/Models/floor.txt", L"Data/Textures/floor.dds", L"Data/Textures/floor_nmap.dds");
+
+	m_BillBoard = new D3DModel(D3DXVECTOR3(0, -4, 5));
+	if (!m_BillBoard->Init( D3D()->GetDevice(), "Data/Models/square.txt", L"Data/Textures/imp.dds"))
+	{
+		MessageBox( g_Engine->GetWindow(), L"Failed to Load billboard model", L"Error", MB_OK);
+		return false;
+	}
+
+	m_DaveDude = new D3DModel(D3DXVECTOR3(0,0,0));
+	if (!m_DaveDude->Init( D3D()->GetDevice(), "Data/Models/dude.txt", L"Data/Textures/dude_texture.dds"))
+	{
+		MessageBox( g_Engine->GetWindow(), L"Failed to Load dave model correctly", L"Error", MB_OK);
+		return false;
+	}
+		
 	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
-	m_Camera->SetPosition(D3DXVECTOR3(0.0f, 0.0f, -10.0f));
-	g_Engine->DebugOutput(L"Main Menu Loaded\n");
+	m_Camera->SetPosition(D3DXVECTOR3(0.0f, -2.0f, -10.0f));
+
+	// Create the particle system object.
+	
+	m_ParticleSystem = new D3DParticleEmitter;
+	// Initialize the particle system object.
+	if(!m_ParticleSystem->Initialize(D3D()->GetDevice(), L"Data/Textures/raindrop.dds"))
+	{
+		MessageBox(g_Engine->GetWindow(), L"Could not initialize the particle shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	m_SkyBox = new D3DSkyBox;
+	if ( !m_SkyBox->Init( D3D()->GetDevice(), 10, 10, L"Data/Textures/skymap.dds", g_Engine->GetWindow()) )
+	{
+		MessageBox(g_Engine->GetWindow(), L"Error in creating the skybox", L"Error", MB_OK);
+		return false;
+	}
+
+	m_Camera->RebuildView();
+	m_GameUI = new D3DUI;
+	if (!m_GameUI->Init(D3D(), Options()->scrWidth, Options()->scrHeight, 600, 100, m_Camera->GetViewMatrix()))
+		return false;
+
+	m_GameUI->SetPosition(100, 495);
+	
+	m_Light = new D3DLight;
+	// Set to white and point down the positive x
+	m_Light->SetAmbientColour(0.25f, 0.25f, 0.25f, 1.0f); // Set the intensity of the ambient light to be 25% of colour white
+	m_Light->SetDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light->SetDirection(0.0f, -1.0f, 0.0f);
+	m_Light->SetSpecularColour(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light->SetSpecularPower(32.0f);
+
+	g_Engine->DebugOutput(L"Game State Loaded\n");
+	return true;
 }
 
 void GameState::dClose()
 {
 	S_DELETE( m_Camera );
 	S_DELETE( m_Cube );
+	S_DELETE( m_BillBoard );
+	S_DELETE( m_Floor );
+	S_DELETE( m_SkyBox );
+	S_DELETE( m_DaveDude );
+	S_DELETE( m_Light );
+	S_DELETE( m_ParticleSystem );
 
-	// Call audio cleanup
+	// Tell the server that we are disconnecting.
 
-	g_Engine->DebugOutput(L"Main Menu Closed\n");
+	m_Network->SendDisconnectMessage();
+
+	g_Engine->DebugOutput(L"Game State Closed\n");
 }
 
 void GameState::dUpdate( float dt )
@@ -51,22 +131,104 @@ void GameState::dUpdate( float dt )
 
 	if ( Input()->isKeyPressed( DIK_S, true ) )
 		m_Camera->Move_Z(-2.3f * dt);
+	
 
-	if ( Input()->GetDeltaY() != 0 )
+	//if ( Input()->isKeyPressed( DIK_L, false ) )
+		//m_MouseLock = !m_MouseLock;
+
+	if ( Input()->isKeyPressed( DIK_J, true ) )
+		m_DaveDude->TranslateBy( -2.3 * dt, 0, 0);
+	if ( Input()->isKeyPressed( DIK_L, true ) )
+		m_DaveDude->TranslateBy( 2.3 * dt, 0, 0);
+	if ( Input()->isKeyPressed( DIK_I, true ) )
+		m_DaveDude->TranslateBy( 0 , 0, 2.3 * dt);
+	if ( Input()->isKeyPressed( DIK_K, true ) )
+		m_DaveDude->TranslateBy( 0 , 0, -2.3 * dt);
+	
+	if ( Input()->isKeyPressed( DIK_T, true ) )
+		m_Floor->RotateBy(0, 0, -2.3 * dt);
+
+	if ( Input()->isKeyPressed( DIK_G, true ) )
+		m_Floor->RotateBy(0, 0, 2.3 * dt);
+	
+	if ( Input()->GetDeltaY() != 0 && m_MouseLock )
 		m_Camera->Pitch( ( Input()->GetDeltaY() / g_Engine->GetMouseSensitivityY() ) * 0.0087266f );
 
-	if ( Input()->GetDeltaX() != 0 )
+	if ( Input()->GetDeltaX() != 0 && m_MouseLock)
 		m_Camera->Roll( ( Input()->GetDeltaX() / g_Engine->GetMouseSensitivityX() ) * 0.0087266f );
 
+	if ( m_MouseLock )
+		g_Engine->LockMouseToCentre();
+	
+	m_ParticleSystem->Frame(dt *2000, D3D()->GetDeviceContext(), m_Camera);
+	m_ParticleSystem->TranslateTo( m_Camera->GetPosition().x, m_Camera->GetPosition().y + 3, m_Camera->GetPosition().z + 3 );
+	
+	m_DaveDude->RotateBy( 0, 1 * dt, 0 );
+
+	// Until I fix it, ChangeState must be called last in the dUpdate frame
+	
 	if( Input()->isKeyPressed( DIK_C ) )
+	{
 		g_Engine->ChangeState( MAINMENU_STATE );
+
+		// I will want to change this to some form of timeout, but instead i'm just going to print out the indication of previous failure.
+		if (FailedToLoadLast)
+		{
+			g_Engine->DebugOutput(L"There was an error loading this state, ignoring request...\n");
+		}
+	}
 }
 
 void GameState::dRender()
 {
+	Render3D();
+	Render2D();
+}
+
+void GameState::Render3D()
+{
 	D3D()->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	D3DXMATRIX worldMatrix;
+	D3DXMatrixIdentity(&worldMatrix);
 
 	m_Camera->RebuildView();
 
-	m_Cube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, NULL );
+	D3D()->TurnOffCulling();
+	D3D()->TurnZBufferOff();
+	D3D()->TurnOnAlphaBlending();
+	m_SkyBox->Draw( D3D()->GetDeviceContext(), m_Camera );
+	D3D()->TurnZBufferOn();
+	D3D()->TurnOffAlphaBlending();
+	D3D()->TurnOnCulling();
+
+	m_Cube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, NULL);
+
+	// Put in error checking to see the bump map has been set but no light is passed
+	m_Floor->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light);
+
+	m_DaveDude->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light, 0);
+
+	D3D()->TurnOnAlphaBlending();
+	m_BillBoard->NO_GSBillboard( m_Camera );	
+	m_BillBoard->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, NULL);
+	// Put the particle system vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_ParticleSystem->NO_GSBillboard( m_Camera );
+	m_ParticleSystem->Render(D3D()->GetDeviceContext());
+
+	// Render the model using the texture shader.
+	g_Engine->ShaderManager()->RenderTextureShader(D3D()->GetDeviceContext(), m_ParticleSystem->GetIndexCount(), m_ParticleSystem->GetWorld(), m_Camera->GetViewMatrix(), m_Camera->GetProjMatrix(), 
+		m_ParticleSystem->GetTexture());
+}
+
+
+void GameState::Render2D()
+{
+	D3D()->TurnZBufferOff();
+	D3D()->TurnOffAlphaBlending();
+
+	m_GameUI->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(),  D3D()->GetOrthoMatrix());
+	
+	D3D()->TurnOffAlphaBlending();
+	D3D()->TurnZBufferOn();
 }

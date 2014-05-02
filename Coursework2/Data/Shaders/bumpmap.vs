@@ -4,8 +4,6 @@
 
 
 /////////////
-// GLOBALS //
-/////////////
 cbuffer MatrixBuffer
 {
 	matrix worldMatrix;
@@ -13,10 +11,6 @@ cbuffer MatrixBuffer
 	matrix projectionMatrix;
 };
 
-
-//////////////
-// TYPEDEFS //
-//////////////
 struct VertexInputType
 {
     float4 position : POSITION;
@@ -36,9 +30,6 @@ struct PixelInputType
 };
 
 
-////////////////////////////////////////////////////////////////////////////////
-// Vertex Shader
-////////////////////////////////////////////////////////////////////////////////
 PixelInputType BumpMapVertexShader(VertexInputType input)
 {
     PixelInputType output;

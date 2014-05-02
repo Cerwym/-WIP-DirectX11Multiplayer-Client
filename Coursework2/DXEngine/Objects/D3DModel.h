@@ -16,7 +16,10 @@ using namespace std;
 class D3DModel
 {
 private:
-
+	enum CullMode
+	{
+		CULL_NEVER, CULL_SPHERE, CULL_CUBE, CULL_POINT 
+	};
 public:
 	D3DModel();
 	D3DModel( D3DXVECTOR3& pos );
@@ -24,17 +27,19 @@ public:
 	~D3DModel();
 
 	// Initialize the Model with the D3DDevice, Model File, Texture File ( NULLABLE ), Bump Map ( NULLABLE )
-	bool Init( ID3D11Device* device, char* modelFName, WCHAR* textureFName, WCHAR* bumpMapFname );
+	bool Init( ID3D11Device* device, char* modelFName, WCHAR* textureFName, WCHAR* bumpMapFname = NULL);
 
-	void Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMgr, D3DCamera* camera, D3DLight* lightObj );
+	bool Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMgr, D3DCamera* camera, D3DLight* lightObj, const int cullMode = CULL_CUBE );
 
-	int GetIndexCount();
 	D3DXVECTOR3 GetPosition() { return m_Position; }
 	D3DXMATRIX GetWorld() { return m_WorldMatrix; }
+
+	void NO_GSBillboard( D3DCamera* camera);
 
 	void TranslateBy( float x, float y, float z );
 	void TranslateTo( float x, float y, float z );
 	void RotateBy( float x, float y, float z );
+	void SetRotation( float x, float y, float z);
 	ID3D11ShaderResourceView* GetTexture(){return m_Texture->GetTexture();}
 
 private:
@@ -80,6 +85,11 @@ private:
 		float x, y, z;
 	};
 
+	struct InstancedData
+	{
+		D3DXVECTOR3 position;
+	};
+
 	bool InitBuffers(ID3D11Device*);
 	void RebuildTransform();
 
@@ -89,8 +99,8 @@ private:
 	void CalculateModelVectors();
 	void CalculateTangentBinormal(TexModel, TexModel, TexModel, Vector3F&, Vector3F&);
 
-	ID3D11Buffer *m_VertexBuffer, *m_indexBuffer;
-	int m_vertexCount, m_indexCount;
+	ID3D11Buffer *m_VertexBuffer, *m_indexBuffer, *m_instanceBuffer;
+	int m_vertexCount, m_indexCount, m_instanceCount;
 	D3DTexture* m_Texture;
 
 	// bump map normal texture

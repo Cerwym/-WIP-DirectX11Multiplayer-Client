@@ -8,7 +8,9 @@
 // Safely delete an array and its contents
 #define S_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 
-#define MAINMENU_STATE 0
-#define GAME_STATE 1
+#define LOADING_STATE 0
+#define MAINMENU_STATE 1
+#define OPTIONS_STATE 2
+#define GAME_STATE 3
 
 #endif

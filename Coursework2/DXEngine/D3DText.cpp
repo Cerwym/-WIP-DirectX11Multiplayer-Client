@@ -5,8 +5,6 @@ D3DText::D3DText()
 	m_Font = 0;
 	m_FontShader = 0;
 
-	m_sentence1 = 0;
-	m_sentence2 = 0;
 }
 
 D3DText::~D3DText()

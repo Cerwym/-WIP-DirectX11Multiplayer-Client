@@ -3,6 +3,7 @@
 
 #include <d3d11.h>
 #include <D3DX10math.h>
+#include <assert.h>
 
 #include "..\Defines.h"
 #include "..\D3DShaderManager.h"
@@ -12,13 +13,22 @@ class D3DBitmap
 {
 	struct Vector2I 
 	{
-		float x, y;
+		int x, y;
 	};
 public:
 	D3DBitmap();
 	D3DBitmap(const D3DBitmap&){}
 	~D3DBitmap();
 
+	/**
+    Init()
+
+    @param device - The Virtual Adapter to use
+	@param screenWidth, screenHeight - the dimensions of the screen, used to determine how far left from origin the bitmap is
+    @param bitmapFname - The filepath of where the texture is to be loaded from (NULLABLE)
+	@param bitmapWidth, bitmapHeight - the size dimensions of the texture
+	@return success of initialization
+	*/
 	bool Init(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* bitmapFName, int bitmapWidth, int bitmapHeight);
 	bool Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, D3DXMATRIX view, D3DXMATRIX proj );
 

@@ -18,8 +18,6 @@ D3DBitmap::~D3DBitmap()
 
 bool D3DBitmap::Init(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* bitmapFName, int bitmapWidth, int bitmapHeight)
 {
-	bool result;
-
 	D3DXMatrixIdentity( &m_worldMatrix );
 
 	m_screenWidth = screenWidth;
@@ -47,6 +45,9 @@ bool D3DBitmap::Init(ID3D11Device* device, int screenWidth, int screenHeight, WC
 bool D3DBitmap::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, D3DXMATRIX view, D3DXMATRIX projection )
 {
 	bool result;
+
+	// A texture cannot be drawn if the object is null
+	assert(m_Texture != NULL && "Cannot draw a NULL texture");
 
 	result = UpdateBuffers(deviceContext, m_Position.x, m_Position.y);
 	if (!result)

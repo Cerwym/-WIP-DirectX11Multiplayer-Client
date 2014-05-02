@@ -31,6 +31,10 @@ public:
 
 	void TurnZBufferOn(){m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);}
 	void TurnZBufferOff(){m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);}
+	void TurnOnCulling(){m_deviceContext->RSSetState(m_rasterState);}
+	void TurnOffCulling(){m_deviceContext->RSSetState(m_RasterStateCULLNONE);}
+	void TurnOnWireFrame(){m_deviceContext->RSSetState(m_RasterStateWireFrame);}
+	void TurnOffWireFrame(){m_deviceContext->RSSetState(m_rasterState);}
 	void TurnOnAlphaBlending();
 	void TurnOffAlphaBlending();
 
@@ -47,9 +51,11 @@ private:
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilState* m_depthDisabledStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
+	ID3D11RasterizerState* m_RasterStateCULLNONE;
 	ID3D11BlendState* m_alphaEnableBlendingState;
 	ID3D11BlendState* m_alphaDisableBlendingState;
 	ID3D11RasterizerState* m_rasterState;
+	ID3D11RasterizerState* m_RasterStateWireFrame;
 
 	D3DXMATRIX m_orthoMatrix;
 };

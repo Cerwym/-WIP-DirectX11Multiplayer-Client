@@ -1,5 +1,4 @@
-#ifndef RENDERTOTEXTURE_H
-#define RENDERTOTEXTURE_H
+#pragma once
 
 #include "..\Defines.h"
 #include <d3d11.h>
@@ -23,4 +22,3 @@ private:
 	ID3D11ShaderResourceView* m_shaderResourceView;
 };
 
-#endif

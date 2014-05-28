@@ -1,5 +1,4 @@
-#ifndef ENGINE_H
-#define ENGINE_H
+#pragma once
 
 #define DIRECTINPUT_VERSION 0x0800 // Default DirectInput to version 8
 
@@ -78,4 +77,3 @@ private:
 };
 extern Engine *g_Engine;
 
-#endif

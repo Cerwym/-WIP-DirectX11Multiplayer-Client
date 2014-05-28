@@ -1,5 +1,4 @@
-#ifndef MAINMENUSTATE
-#define MAINMENUSTATE
+#pragma once
 
 #include "DXEngine/Engine.h" // todo remove dependancy on global
 #include "DXEngine/Defines.h"
@@ -46,4 +45,3 @@ private:
 	D3DText* m_TextBatch;
 };
 
-#endif

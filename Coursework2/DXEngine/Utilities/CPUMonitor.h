@@ -1,5 +1,4 @@
-#ifndef _CPUMONITOR_H_
-#define _CPUMONITOR_H_
+#pragma once
 
 #include <pdh.h> // Performance Data Helper
 
@@ -26,4 +25,3 @@ private:
 	long m_CPUUsage;
 };
 
-#endif

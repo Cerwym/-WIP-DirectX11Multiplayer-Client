@@ -1,5 +1,4 @@
-#ifndef D3DFRUSTRUM_H 
-#define D3DFRUSTRUM_H
+#pragma once
 
 #include <D3DX10math.h>
 
@@ -23,4 +22,3 @@ private:
 };
 
 
-#endif

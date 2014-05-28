@@ -1,5 +1,4 @@
-#ifndef D3DCAMERA_H
-#define D3DCAMERA_H
+#pragma once
 
 #include <D3DX10math.h>
 #include "..\Defines.h"
@@ -25,6 +24,10 @@ public:
 	void Pitch(float angle);
 	void Roll(float angle);
 
+	float GetX(){ return m_Position.x;}
+	float GetY(){ return m_Position.y;}
+	float GetZ(){ return m_Position.z;}
+
 	D3DXMATRIX World(){return m_WorldMatrix;}
 
 	void RebuildView();
@@ -42,5 +45,3 @@ private:
 
 	float m_zNear, m_zFar;
 };
-
-#endif

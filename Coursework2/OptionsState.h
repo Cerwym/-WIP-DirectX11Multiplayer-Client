@@ -1,5 +1,4 @@
-#ifndef OPTIONSSTATE_H 
-#define OPTIONSSTATE_H
+#pragma once
 
 #include "DXEngine/Engine.h"
 #include "DXEngine/Defines.h"
@@ -28,4 +27,3 @@ private:
 	D3DXMATRIX m_baseViewMatrix;
 };
 
-#endif

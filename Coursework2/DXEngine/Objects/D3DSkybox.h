@@ -1,5 +1,4 @@
-#ifndef D3DSKYBOX_H 
-#define D3DSKYBOX_H
+#pragma once
 
 #include <d3d11.h>
 #include <D3DX10math.h>
@@ -67,4 +66,3 @@ private:
 	D3DXMATRIX m_RotationZ;
 };
 
-#endif

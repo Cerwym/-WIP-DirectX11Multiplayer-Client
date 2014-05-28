@@ -1,5 +1,4 @@
-#ifndef STATE_H 
-#define STATE_H
+#pragma once
 
 #include <process.h> // For threading
 #include "Defines.h"
@@ -101,7 +100,7 @@ private:
 	D3DRenderToTexture* m_RenderToTexture;
 	EngineDefinition* m_Definition;
 
-	// Bitmap used to store the mouse cursor's tetxure
+	// Bitmap used to store the mouse cursor's texture
 	D3DBitmap* m_MouseBitmap;
 
 	CPUMonitor* m_CpuMonitor;
@@ -113,5 +112,3 @@ private:
 private:
 	unsigned long m_ID;
 };
-
-#endif

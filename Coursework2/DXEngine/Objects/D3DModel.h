@@ -1,5 +1,4 @@
-#ifndef D3DMODEL_H
-#define	D3DMODEL_H
+#pragma once
 
 #include <d3d11.h>
 #include <D3DX10math.h>
@@ -122,4 +121,3 @@ private:
 	bool m_isBumpMapped;
 };
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef D3DSHADERMANAGER_H
-#define D3DSHADERMANAGER_H
+#pragma once
 
 #include "D3DSys.h"
 #include "Defines.h"
@@ -31,4 +30,3 @@ private:
 	D3DBumpMapShader* m_BumpMapShader;
 };
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef D3DFONTSHADER_H
-#define D3DFONTSHADER_H
+#pragma once
 
 #include "..\Defines.h"
 #include <d3d11.h>
@@ -51,4 +50,3 @@ private:
 	ID3D11Buffer* m_pixelBuffer;
 };
 
-#endif

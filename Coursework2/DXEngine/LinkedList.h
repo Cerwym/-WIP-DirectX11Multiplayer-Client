@@ -1,5 +1,4 @@
-#ifndef LINKED_LIST_H
-#define LINKED_LIST_H
+#pragma once
 
 //-----------------------------------------------------------------------------
 // Linked List Class
@@ -350,4 +349,3 @@ private:
 	unsigned long m_totalElements; // Total number of elements in the linked list.
 };
 
-#endif

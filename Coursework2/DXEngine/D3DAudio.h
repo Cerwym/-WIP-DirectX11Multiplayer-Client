@@ -1,5 +1,4 @@
-#ifndef D3DAUDIO_H 
-#define D3DAUDIO_H
+#pragma once
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -59,4 +58,3 @@ private:
 	HWND m_hwnd;
 };
 
-#endif

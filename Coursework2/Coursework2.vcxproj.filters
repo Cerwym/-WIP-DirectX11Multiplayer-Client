@@ -141,6 +141,12 @@
     <ClCompile Include="DXEngine\Objects\D3DUI.cpp">
       <Filter>DXEngine\Sources\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="DXEngine\NWEntity.cpp">
+      <Filter>DXEngine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXEngine\Engine.h">
@@ -244,6 +250,12 @@
     </ClInclude>
     <ClInclude Include="DXEngine\Objects\D3DUI.h">
       <Filter>DXEngine\Headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DXEngine\NWEntity.h">
+      <Filter>DXEngine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

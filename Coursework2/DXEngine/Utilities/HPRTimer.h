@@ -1,5 +1,4 @@
-#ifndef HPRTIMER_H_
-#define HPRTIMER_H_
+#pragma once
 
 #define WIN32_LEAN_AND_MEAN
 
@@ -45,4 +44,3 @@ private:
 	float m_FPSTimeElapsed;
 };
 
-#endif

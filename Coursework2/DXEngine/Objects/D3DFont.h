@@ -1,10 +1,12 @@
-#ifndef D3DFONT_H
-#define D3DFONT_H
+#pragma once
 
 #include <d3d11.h>
 #include <D3DX10math.h>
 #include <fstream>
 #include "D3DTexture.h"
+
+#include <memory>
+using std::unique_ptr;
 
 using namespace std;
 
@@ -43,5 +45,3 @@ private:
 	FontType* m_Font;
 	D3DTexture* m_Texture;
 };
-
-#endif

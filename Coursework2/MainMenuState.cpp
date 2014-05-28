@@ -123,6 +123,7 @@ void MainMenuState::dUpdate( float dt )
 	if ( Input()->GetDeltaX() != 0 && m_MouseLock)
 		m_Camera->Roll( ( Input()->GetDeltaX() / g_Engine->GetMouseSensitivityX() ) * 0.0087266f );
 
+	/*
 	if (! m_TextBatch->SetMousePosition( Input()->GetPosX(), Input()->GetPosY(), D3D()->GetDeviceContext() ) )
 	{
 		MessageBox( g_Engine->GetWindow(), L"Error updating shitty text", L"Error", MB_OK );
@@ -131,6 +132,8 @@ void MainMenuState::dUpdate( float dt )
 
 	m_TextBatch->SetCPU(GetCPU(), D3D()->GetDeviceContext());
 	m_TextBatch->SetFPS(GetFPS(), D3D()->GetDeviceContext());
+
+	*/
 
 	m_MarbleCube->RotateBy( 1 * dt, 0, 0 );
 	m_MetalCube->RotateBy( 0, 1 * dt, 0 );

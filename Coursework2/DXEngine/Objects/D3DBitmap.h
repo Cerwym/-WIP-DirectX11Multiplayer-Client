@@ -1,5 +1,4 @@
-#ifndef D3DBITMAP_H
-#define D3DBITMAP_H
+#pragma once
 
 #include <d3d11.h>
 #include <D3DX10math.h>
@@ -63,5 +62,3 @@ private:
 	int m_bitmapWidth, m_bitmapHeight;
 	int m_previousPosX, m_previousPosY;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef D3DINPUT_H
-#define D3DINPUT_H
+#pragma once
 
 #include <dinput.h>
 
@@ -25,6 +24,10 @@ public:
 	long GetDeltaY(){ return m_mouseState.lY; }
 	// Get the rate of change if the user has a scroll wheel on their mouse
 	long GetDeltaWheel(){ return m_mouseState.lZ; }
+	
+	// Function should only be called when each individual key is to be read. Simple checks don't need to be performed this way.
+	void UpdateKeys();
+	bool GetNewKeyPress(int &key);
 
 private:
 	HWND m_hwnd; // Handle to the application window
@@ -33,13 +36,14 @@ private:
 
 	IDirectInputDevice8* m_Keyboard;
 	char m_KeyState[256];
+	int m_newKeyPressed;
+	bool m_keyPressed, m_shiftDown;
 	unsigned long m_keyPresses[256]; // stores the last frame each key was pressed.
 
 	IDirectInputDevice8* m_Mouse;
 	DIMOUSESTATE m_mouseState;
-	unsigned long m_buttonPresses[3]; // stores the last frame each mouse button was pressed.
+	unsigned long m_buttonPresses[3]; // stores the last frame each mouse button was pressed
 	POINT m_Position;
 };
 
 
-#endif

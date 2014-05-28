@@ -1,5 +1,4 @@
-#ifndef D3DUIELEMENT_H
-#define D3DUIELEMENT_H
+#pragma once
 
 #include "..\D3DBitmap.h"
 #include "..\..\D3DInput.h"
@@ -34,5 +33,3 @@ private:
 
 
 };
-
-#endif

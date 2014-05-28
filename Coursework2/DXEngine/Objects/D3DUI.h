@@ -1,5 +1,4 @@
-#ifndef D3DUI_H
-#define D3DUI_H
+#pragma once
 
 #include "D3DBitmap.h"
 #include "..\D3DSys.h"
@@ -14,19 +13,25 @@ public:
 	D3DUI();
 	~D3DUI();
 
-	bool Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, D3DXMATRIX baseView);
+	bool Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, D3DXMATRIX baseView, int posX, int posY);
 	bool InitChat(D3DSys* d3d);
 
-
-	//bool Update();
 	void SetPosition(int x, int y);
-	void Render(ID3D11DeviceContext* context, D3DShaderManager* sMgr, D3DXMATRIX orthoMatrix);
+	bool Render(D3DSys* d3d, D3DShaderManager* sMgr, D3DXMATRIX orthoMatrix);
+	void KeyPressUpdate(int key);
+	bool UpdateChatBar();
+	void CheckForChatMessage(char* message, bool &newMessage);
+	bool AddChatMessageFromServer(char* message, int ID);
+	//void KeyPressUpdate
 
 private:
 
+	bool AddChatMessage();
+	void AddChatMessageForServer();
+
 	int m_WindowXPos, m_WindowYPos;
 	D3DBitmap* m_ChatWindowBackground;
-
+	ID3D11DeviceContext* m_context;
 	D3DXMATRIX m_baseViewMatrix;
 	D3DText* m_Text;
 	int m_TextEntryAreaPos;
@@ -44,4 +49,4 @@ private:
 
 };
 
-#endif // !D3DUI_H
+ // !D3DUI_H

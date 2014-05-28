@@ -1,5 +1,4 @@
-#ifndef NETWORKMESSAGES_H
-#define NETWORKMESSAGES_H
+#pragma once
 
 #define MSG_CONNECT 1000
 #define MSG_NEWID 1001
@@ -87,4 +86,3 @@ typedef struct
 }MSG_POSITION_DATA;
 
 
-#endif

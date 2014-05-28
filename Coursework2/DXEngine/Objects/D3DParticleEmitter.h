@@ -1,5 +1,4 @@
-#ifndef D3DPARTICLEEMITTER_H
-#define D3DPARTICLEEMITTER_H
+#pragma once
 
 #include <d3d11.h>
 #include <d3dx10math.h>
@@ -87,4 +86,3 @@ private:
 	D3DXVECTOR3 m_Scale;
 };
 
-#endif

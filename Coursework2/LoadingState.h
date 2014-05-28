@@ -1,5 +1,4 @@
-#ifndef LOADINGSTATE_H 
-#define LOADINGSTATE_H
+#pragma once
 
 #include "DXEngine/Engine.h"
 #include "DXEngine/Defines.h"
@@ -31,4 +30,3 @@ private:
 };
 
 
-#endif

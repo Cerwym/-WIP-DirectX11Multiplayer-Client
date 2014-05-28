@@ -1,5 +1,4 @@
-#ifndef D3DTEXTURE_H
-#define D3DTEXTURE_H
+#pragma once
 
 #include <d3d11.h>
 #include <D3DX11tex.h>
@@ -22,4 +21,3 @@ private:
 	ID3D11ShaderResourceView* m_Texture;
 };
 
-#endif

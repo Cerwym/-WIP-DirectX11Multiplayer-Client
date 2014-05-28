@@ -1,5 +1,4 @@
-#ifndef D3DSYS_H
-#define D3DSYS_H
+#pragma once
 
 #include <DXGI.h>
 #include <D3Dcommon.h>
@@ -60,4 +59,3 @@ private:
 	D3DXMATRIX m_orthoMatrix;
 };
 
-#endif

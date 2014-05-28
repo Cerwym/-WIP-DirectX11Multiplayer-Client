@@ -1,5 +1,4 @@
-#ifndef ENGINEDEFINITION_H 
-#define ENGINEDEFINITION_H
+#pragma once
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -35,4 +34,3 @@ struct EngineDefinition
 	}
 };
 
-#endif

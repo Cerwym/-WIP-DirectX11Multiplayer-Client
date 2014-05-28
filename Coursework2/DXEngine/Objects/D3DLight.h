@@ -1,5 +1,4 @@
-#ifndef D3DLIGHT_H
-#define D3DLIGHT_H
+#pragma once
 
 // The purpose of this class is to set and maintain the direction and colour of lights
 
@@ -35,4 +34,3 @@ private:
 	float m_specularPower;
 };
 
-#endif

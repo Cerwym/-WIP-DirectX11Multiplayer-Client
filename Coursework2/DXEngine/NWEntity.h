@@ -2,6 +2,12 @@
 
 #include <math.h>
 
+#include "Defines.h"
+#include "D3DSys.h"
+#include "D3DShaderManager.h"
+#include "Objects/D3DCamera.h"
+#include "Objects/D3DModel.h"
+
 const int MAX_ENTITIES = 100;
 const char ENTITY_TYPE_USER = 0;
 const char ENTITY_TYPE_AI = 1;
@@ -19,7 +25,10 @@ class NWEntity
 public:
 	NWEntity();
 	NWEntity(const NWEntity&){}
-	~NWEntity(){}
+	~NWEntity();
+
+	bool Init(D3DSys* sys, char* modelName, WCHAR* textureName);
+	void Render(D3DCamera* camera, D3DShaderManager* sm);
 
 	void SetOnlineStatus(bool flag){m_online = flag;}
 	void SetID(unsigned short ID){m_EntityID = ID;}
@@ -38,6 +47,8 @@ public:
 
 
 private:
+	D3DModel* m_EntityModel;
+	D3DSys* m_D3DSys;
 	bool m_online;
 	unsigned short m_EntityID;
 	char m_EntityType;

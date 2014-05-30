@@ -158,6 +158,10 @@ bool NWSystem::ConnectToServer(char* IPAddress, unsigned short portNum, int time
 	m_Latency = 0;
 	m_PingTime = timeGetTime();
 
+	if (m_GameState)
+	{
+		m_GameState->HandleNewPositionData(message->posX, message->posY, message->posZ);
+	}
 	printf("Client is now connected to the server!\n");
 	return true;
 }

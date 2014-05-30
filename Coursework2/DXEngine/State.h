@@ -39,8 +39,9 @@ public:
 		dClose();
 	}
 
-	void State::Update()
+	void State::Update( bool windowIsActive )
 	{
+		m_ActiveWindow = windowIsActive;
 		baseUpdate();
 		dUpdate( m_StateTime );
 	}
@@ -85,6 +86,7 @@ protected:
 	EngineDefinition* Options() { return m_Definition; }
 	// Temporary, clean this up
 	D3DBitmap* TEMPMOUSE() {return m_MouseBitmap; }
+	bool WindowIsActive( ) {return m_ActiveWindow;}
 	
 	bool FailedToLoadLast;
 
@@ -108,6 +110,7 @@ private:
 
 	float m_StateTime;
 	float m_MaxFramerate;
+	bool m_ActiveWindow;
 
 private:
 	unsigned long m_ID;

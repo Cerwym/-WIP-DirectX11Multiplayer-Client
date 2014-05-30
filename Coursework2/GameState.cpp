@@ -5,7 +5,6 @@ GameState::GameState() : State( GAME_STATE )
 	m_Camera = 0;
 	m_BillBoard = 0;
 	m_GameUI = 0;
-	m_Cube = 0;
 	m_Light = 0;
 	m_Floor = 0;
 	m_ParticleSystem = 0;
@@ -24,15 +23,13 @@ bool GameState::dLoad()
 	HWND appWindow = g_Engine->GetWindow();
 	g_Engine->DebugOutput(L"Main Menu Loading...\n");
 
+	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
+	m_Camera->SetPosition(D3DXVECTOR3(0.0f, -2.0f, -10.0f));
+
 	m_Network = new NWSystem;
 	if (!m_Network->Init(0,0))
 	{
 		MessageBox(appWindow, L"Could not init the network object.", L"Error", MB_OK);
-	}
-
-	if (!m_Network->ConnectToServer( Options()->server_addr, Options()->server_port, 2000 ))
-	{
-		MessageBox(appWindow, L"Could not connect to the server", L"Error", MB_OK);
 	}
 
 	m_NetworkEntityList = new NWEntity[MAX_ENTITIES];
@@ -42,9 +39,6 @@ bool GameState::dLoad()
 		return false;
 	}
 	
-	m_Cube = new D3DModel(D3DXVECTOR3(-15,0, 0));
-	m_Cube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds", NULL );
-
 	m_Floor = new D3DModel(D3DXVECTOR3(0, -5, 0));
 	m_Floor->Init( D3D()->GetDevice(), "Data/Models/floor.txt", L"Data/Textures/floor.dds", L"Data/Textures/floor_nmap.dds");
 
@@ -61,9 +55,6 @@ bool GameState::dLoad()
 		MessageBox( appWindow, L"Failed to Load dave model correctly", L"Error", MB_OK);
 		return false;
 	}
-		
-	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
-	m_Camera->SetPosition(D3DXVECTOR3(0.0f, -2.0f, -10.0f));
 
 	// Create the particle system object.
 	
@@ -106,6 +97,11 @@ bool GameState::dLoad()
 		m_Network->SetPingWaitTime(3000); // Send a ping message every 3 seconds.
 	}
 
+	if (!m_Network->ConnectToServer( Options()->server_addr, Options()->server_port, 2000 ))
+	{
+		MessageBox(appWindow, L"Could not connect to the server", L"Error", MB_OK);
+	}
+
 	g_Engine->DebugOutput(L"Game State Loaded\n");
 	return true;
 }
@@ -113,7 +109,6 @@ bool GameState::dLoad()
 void GameState::dClose()
 {
 	S_DELETE( m_Camera );
-	S_DELETE( m_Cube );
 	S_DELETE( m_BillBoard );
 	S_DELETE( m_Floor );
 	S_DELETE( m_SkyBox );
@@ -137,13 +132,19 @@ void GameState::dUpdate( float dt )
 	m_Network->SendPositionUpdate(m_Camera->GetX(), m_Camera->GetY(), m_Camera->GetZ(), 0, 0, 0);
 	
 
-	if ( m_MouseLock )
+	if ( WindowIsActive() && m_MouseLock ) // && window is active
 		g_Engine->LockMouseToCentre();
 	
 	m_ParticleSystem->Frame(dt *2000, D3D()->GetDeviceContext(), m_Camera);
 	m_ParticleSystem->TranslateTo( m_Camera->GetPosition().x, m_Camera->GetPosition().y + 3, m_Camera->GetPosition().z + 3 );
 	
 	m_DaveDude->RotateBy( 0, 1 * dt, 0 );
+
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (m_NetworkEntityList[i].IsOnline())
+			m_NetworkEntityList[i].Update(dt);
+	}
 
 	UpdateInput( dt );
 }
@@ -235,7 +236,7 @@ void GameState::Render3D()
 {
 	D3D()->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	D3DXMATRIX worldMatrix;
+	D3DXMATRIX worldMatrix, translateMatrix;
 	D3DXMatrixIdentity(&worldMatrix);
 
 	m_Camera->RebuildView();
@@ -248,12 +249,30 @@ void GameState::Render3D()
 	D3D()->TurnOffAlphaBlending();
 	D3D()->TurnOnCulling();
 
-	m_Cube->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, NULL);
-
 	// Put in error checking to see the bump map has been set but no light is passed
 	m_Floor->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light);
 
 	m_DaveDude->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light, 0);
+
+	// Render all network entities.
+	float posX, posY, posZ, rotX, rotY, rotZ;
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (m_NetworkEntityList[i].IsOnline())
+		{
+			m_NetworkEntityList[i].GetPosition(posX, posY, posZ);
+			m_NetworkEntityList[i].GetRotation(rotX, rotY, rotZ);
+
+			D3DXMatrixRotationY(&worldMatrix, rotY * ((float)D3DX_PI / 180.0f));
+			D3DXMatrixTranslation(&translateMatrix, posX, posY, posZ);
+			D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+
+			if (m_NetworkEntityList[i].GetEntityType() == ENTITY_TYPE_USER)
+			{
+				m_NetworkEntityList->Render(m_Camera, g_Engine->ShaderManager());
+			}
+		}
+	}
 
 	D3D()->TurnOnAlphaBlending();
 	m_BillBoard->NO_GSBillboard( m_Camera );	
@@ -282,6 +301,7 @@ void GameState::Render2D()
 
 void GameState::AddEntity(unsigned short entID, char entType, float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
 {
+	g_Engine->DebugOutput(L"Network entity added\n");
 	int i = 0;
 
 	while ((m_NetworkEntityList[i].IsOnline() == true) && (i < MAX_ENTITIES))
@@ -294,6 +314,9 @@ void GameState::AddEntity(unsigned short entID, char entType, float posX, float 
 	else
 	{
 		// Add the entity to the game scene
+		if (!m_NetworkEntityList[i].Init(D3D(), "Data/Models/cube.txt", L"Data/Textures/marble.dds"))
+			MessageBox(g_Engine->GetWindow(), L"Could not init network entity model", L"NetworkEntity Init", MB_OK);
+		
 		m_NetworkEntityList[i].SetOnlineStatus(true);
 		m_NetworkEntityList[i].SetID(entID);
 		m_NetworkEntityList[i].SetType(entType);
@@ -379,4 +402,10 @@ void GameState::UpdateEntityPosition(unsigned short entID, float& posX, float& p
 
 	// Update the position of the entity in the game world.
 	m_NetworkEntityList[i].UpdatePosition( posX, posY, posZ, rotX, rotY, rotZ );
+}
+
+void GameState::HandleNewPositionData(float x, float y, float z)
+{
+	m_Camera->SetPosition(D3DXVECTOR3(x,y,z));
+	g_Engine->DebugOutput(L"New Position sent by server, setting..");
 }

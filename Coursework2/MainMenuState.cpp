@@ -143,7 +143,7 @@ void MainMenuState::dUpdate( float dt )
 	m_RainEmitter->TranslateTo( m_Camera->GetPosition().x, m_Camera->GetPosition().y + 3, m_Camera->GetPosition().z + 3 );
 	m_RainEmitter->SetRotation( Input()->GetDeltaX() / g_Engine->GetMouseSensitivityX()  * 0.0087266f, Input()->GetDeltaY() / g_Engine->GetMouseSensitivityY() * 0.0087266f, 0 );
 
-	if (m_MouseLock)
+	if (WindowIsActive() && m_MouseLock)
 		g_Engine->LockMouseToCentre();
 	
 	if( Input()->isKeyPressed( DIK_O ) )

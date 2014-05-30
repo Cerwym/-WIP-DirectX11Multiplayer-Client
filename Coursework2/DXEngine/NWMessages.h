@@ -29,6 +29,7 @@ typedef struct
 	unsigned short type;
 	unsigned short idNumber;
 	unsigned short sessionId;
+	float posX, posY, posZ;
 }MSG_NEWID_DATA;
 
 typedef struct           

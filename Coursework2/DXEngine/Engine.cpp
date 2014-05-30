@@ -140,14 +140,14 @@ void Engine::Run()
 				DispatchMessage( &msg );
 			}
 
-			else if( m_isActive )
+			else 
 			{
 				m_Input->Update();
 
 				// Update the current state (if there is one), taking state changes into account
 				m_stateChanged = false;
 				if ( m_currentState != NULL )
-					m_currentState->Update( /*elapsed*/ );
+					m_currentState->Update( m_isActive );
 
 				if ( m_stateChanged == true ) continue;
 
@@ -203,7 +203,7 @@ void Engine::ThreadedLoadState( State* stateToLoad )
 		}
 
 		ShowWindow( m_window, SW_NORMAL );
-		m_loadingState->Update();
+		m_loadingState->Update( true );
 		m_loadingState->Render();
 	}
 

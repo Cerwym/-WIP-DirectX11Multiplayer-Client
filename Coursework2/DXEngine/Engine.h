@@ -34,6 +34,7 @@ public:
 
 	HWND GetWindow(){ return m_window; }
 	void SetActiveFlag( bool flag ){ m_isActive = flag; }
+	bool GetActiveFlag(){return m_isActive;}
 
 	void AddState( State* state, bool change = true );
 	void PopState( State* state);

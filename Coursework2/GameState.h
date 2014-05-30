@@ -28,6 +28,7 @@ public:
 	bool PositionUpdate(float& posX, float& posY, float& posZ, float& rotX, float& rotY, float& rotZ);
 	void UpdateEntityPosition(unsigned short entID, float& posX, float& posY, float& posZ, float& rotX, float& rotY, float& rotZ);
 	void UpdateEntityRotate(unsigned short ID, bool rotate);
+	void HandleNewPositionData(float x, float y, float z);
 
 protected:
 
@@ -44,7 +45,6 @@ private:
 	void UpdateInput( float dt );
 
 	Player* m_Player;
-	D3DModel* m_Cube;
 	D3DModel* m_BillBoard;
 	D3DModel* m_Floor;
 	D3DModel* m_DaveDude;

@@ -7,6 +7,29 @@ NWEntity::NWEntity()
 	m_movingBackward = false;
 	m_turningLeft = false;
 	m_turningRight = false;
+	m_EntityModel = 0;
+}
+
+NWEntity::~NWEntity()
+{
+	S_DELETE(m_EntityModel);
+}
+
+bool NWEntity::Init(D3DSys* sys, char* modelName, WCHAR* textureName)
+{
+	m_D3DSys = sys;
+	m_EntityModel = new D3DModel;
+	if (!m_EntityModel->Init(m_D3DSys->GetDevice(), modelName, textureName, NULL))
+		return false;
+	return true;
+}
+
+void NWEntity::Render(D3DCamera* camera, D3DShaderManager* sm)
+{
+	if (m_EntityModel != 0)
+		m_EntityModel->Render(m_D3DSys->GetDeviceContext(), sm, camera, NULL);
+	else
+		MessageBox(NULL, L"EntityModel is null", L"No Model Loaded", MB_OK);
 }
 
 void NWEntity::UpdateState(char state)

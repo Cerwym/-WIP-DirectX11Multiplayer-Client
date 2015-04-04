@@ -31,6 +31,7 @@ private:
 
 	int m_WindowXPos, m_WindowYPos;
 	D3DBitmap* m_ChatWindowBackground;
+	D3DBitmap* m_RocketLauncher;
 	ID3D11DeviceContext* m_context;
 	D3DXMATRIX m_baseViewMatrix;
 	D3DText* m_Text;

@@ -8,6 +8,7 @@ NWEntity::NWEntity()
 	m_turningLeft = false;
 	m_turningRight = false;
 	m_EntityModel = 0;
+	m_packetDifference = 0;
 }
 
 NWEntity::~NWEntity()
@@ -27,7 +28,10 @@ bool NWEntity::Init(D3DSys* sys, char* modelName, WCHAR* textureName)
 void NWEntity::Render(D3DCamera* camera, D3DShaderManager* sm)
 {
 	if (m_EntityModel != 0)
+	{
+		m_EntityModel->TranslateTo(m_Position.x, m_Position.y, m_Position.z); // Fix this shit, it's ugly and shouldn't be used, add positional data and matrix to NWENTITY
 		m_EntityModel->Render(m_D3DSys->GetDeviceContext(), sm, camera, NULL);
+	}
 	else
 		MessageBox(NULL, L"EntityModel is null", L"No Model Loaded", MB_OK);
 }
@@ -46,48 +50,42 @@ void NWEntity::UpdateState(char state)
 
 void NWEntity::Update( float deltaTime )
 {
-	float radians;
-
-	if(m_movingForward)
+	// If there has been no message from the server, begin predicting the position of this entity
+	if (!m_messageRecieved)
 	{
-		radians = m_RotY * 0.0174532925f;
-		m_PosX += sinf(radians) * 0.3f;
-		m_PosZ += cosf(radians) * 0.3f;
+		oldState = newState;
+		PredictPositionQuadratic(&oldState, &newState, deltaTime);
 	}
-
-	if(m_movingBackward)
-	{
-		radians = m_RotY * 0.0174532925f;
-		m_PosX -= sinf(radians) * 0.3f;
-		m_PosZ -= cosf(radians) * 0.3f;
-	}
-
-	if(m_turningLeft)
-	{
-		m_RotY -= 1.5f;
-		if(m_RotY < 0.0f)
-		{
-			m_RotY += 360.0f;
-		}
-	}
-
-	if(m_turningRight)
-	{
-		m_RotY += 1.5f;
-		if(m_RotY > 360.0f)
-		{
-			m_RotY -= 360.0f;
-		}
-	}
+	// Blend the two states together
+	//kinematicState *state = BlendKinematicStateLinear(&oldState, &newState, 0.75f);
+	//m_Position = state->position;
+	//m_Velocity = state->velocity;
+	//m_Acceleration = state->acceleration;
+	BlendStateLinear(&newState, &oldState, &newState, deltaTime);
 }
 
-void NWEntity::UpdatePosition(float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
+void NWEntity::PredictPositionQuadratic(kinematicState *old, kinematicState *predition, float elapsedSeconds)
 {
-	m_PosX = posX;
-	m_PosY = posY;
-	m_PosZ = posZ;
+	predition->position = old->position + (old->velocity * m_packetDifference) + (0.5f * old->acceleration * (m_packetDifference * m_packetDifference));
+}
 
-	m_RotX = rotX;
-	m_RotY = rotY;
-	m_RotZ = rotZ;
+void NWEntity::BlendStateLinear(kinematicState *out, kinematicState * oldState, kinematicState *newState, float percentageToNew)
+{
+	float percentageToOld = 1.0f - percentageToNew;
+
+	out->position = (percentageToOld * oldState->position) + (percentageToNew * newState->position);
+	out->velocity = (percentageToOld * oldState->velocity) + (percentageToNew * newState->velocity);
+	out->acceleration = (percentageToOld * oldState->acceleration) + (percentageToNew * newState->acceleration);
+}
+
+void NWEntity::UpdatePosition(D3DXVECTOR3 position, D3DXVECTOR3 rotation, D3DXVECTOR3 velocity, D3DXVECTOR3 acceleration, unsigned long timestamp)
+{
+	newState.position = position;
+	newState.velocity = velocity;
+	newState.acceleration = acceleration;
+
+	m_Position = position;
+	m_Rotation = rotation;
+	m_Acceleration = acceleration;
+	m_packetDifference = (timestamp - m_packetDifference) / 1000;
 }

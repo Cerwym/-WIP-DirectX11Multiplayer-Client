@@ -2,7 +2,6 @@
 
 GameState::GameState() : State( GAME_STATE )
 {
-	m_Camera = 0;
 	m_BillBoard = 0;
 	m_GameUI = 0;
 	m_Light = 0;
@@ -23,8 +22,9 @@ bool GameState::dLoad()
 	HWND appWindow = g_Engine->GetWindow();
 	g_Engine->DebugOutput(L"Main Menu Loading...\n");
 
-	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
-	m_Camera->SetPosition(D3DXVECTOR3(0.0f, -2.0f, -10.0f));
+	m_Player = new Player;
+	m_Player->Init( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
+	m_Player->SetPosition(0.0f, -2.0f, -10.0f);
 
 	m_Network = new NWSystem;
 	if (!m_Network->Init(0,0))
@@ -73,9 +73,10 @@ bool GameState::dLoad()
 		return false;
 	}
 
-	m_Camera->RebuildView();
+	m_Player->Camera()->RebuildView();
+
 	m_GameUI = new D3DUI;
-	if (!m_GameUI->Init(D3D(), Options()->scrWidth, Options()->scrHeight, 600, 140, m_Camera->GetViewMatrix(), 100, 455))
+	if (!m_GameUI->Init(D3D(), Options()->scrWidth, Options()->scrHeight, 600, 140, m_Player->Camera()->GetViewMatrix(), 100, 455))
 		return false;
 
 	m_GameUI->SetPosition(100, 445);
@@ -88,8 +89,6 @@ bool GameState::dLoad()
 	m_Light->SetSpecularColour(1.0f, 1.0f, 1.0f, 1.0f);
 	m_Light->SetSpecularPower(32.0f);
 
-	m_Player = new Player;
-
 	// Set the UI and GameState pointers, doing this here as one of the improvements I wish to make is allowing the state to continue loading whilst waiting for a response from the server.
 	if (m_Network)
 	{
@@ -97,9 +96,15 @@ bool GameState::dLoad()
 		m_Network->SetPingWaitTime(3000); // Send a ping message every 3 seconds.
 	}
 
-	if (!m_Network->ConnectToServer( Options()->server_addr, Options()->server_port, 2000 ))
+	bool statusConnected = m_Network->ConnectToServer( Options()->server_addr, Options()->server_port, 2000 );
+	if (!statusConnected)
 	{
-		MessageBox(appWindow, L"Could not connect to the server", L"Error", MB_OK);
+		MessageBox(NULL, L"Could not connect to the server, your game will have networking functionality!", L"Error", MB_OK);
+	}
+	else
+	{
+		if (m_Network)
+		m_Network->RequestEntityList();
 	}
 
 	g_Engine->DebugOutput(L"Game State Loaded\n");
@@ -108,7 +113,6 @@ bool GameState::dLoad()
 
 void GameState::dClose()
 {
-	S_DELETE( m_Camera );
 	S_DELETE( m_BillBoard );
 	S_DELETE( m_Floor );
 	S_DELETE( m_SkyBox );
@@ -126,23 +130,42 @@ void GameState::dClose()
 
 void GameState::dUpdate( float dt )
 {
+	// Update the player first
+	m_Player->Update(Input(), dt);
+	D3DXVECTOR3 pos = m_Player->GetPosition();
+	D3DXVECTOR3 rot = m_Player->GetRotation();
+	D3DXVECTOR3 vel = m_Player->GetVelocity();
+	D3DXVECTOR3 acc = m_Player->GetAcceleration();
 	// Update network information
+
+
+	// Set all the network entities message flag to false to see whether a message has been recived from the server on this frame.
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (m_NetworkEntityList[i].IsOnline())
+		{
+			m_NetworkEntityList[i].HasRecievedMessage(false);
+		}
+	}
+
 	m_Network->Update();
 
-	m_Network->SendPositionUpdate(m_Camera->GetX(), m_Camera->GetY(), m_Camera->GetZ(), 0, 0, 0);
+	g_Engine->DebugOutput(L"Accelerating = (%f, %f, %f), Velocity = (%f, %f, %f)\n", acc.x, acc.y, acc.z, vel.x, vel.y, vel.z);
+
+	m_Network->SendPositionUpdate(pos, rot, vel, acc);
 	
 
 	if ( WindowIsActive() && m_MouseLock ) // && window is active
 		g_Engine->LockMouseToCentre();
 	
-	m_ParticleSystem->Frame(dt *2000, D3D()->GetDeviceContext(), m_Camera);
-	m_ParticleSystem->TranslateTo( m_Camera->GetPosition().x, m_Camera->GetPosition().y + 3, m_Camera->GetPosition().z + 3 );
+	m_ParticleSystem->Frame(dt *2000, D3D()->GetDeviceContext(), m_Player->Camera());
+	m_ParticleSystem->TranslateTo( pos.x, pos.y + 3, pos.z + 3 );
 	
 	m_DaveDude->RotateBy( 0, 1 * dt, 0 );
 
 	for (int i = 0; i < MAX_ENTITIES; i++)
 	{
-		if (m_NetworkEntityList[i].IsOnline())
+		if (m_NetworkEntityList[i].IsOnline()){}
 			m_NetworkEntityList[i].Update(dt);
 	}
 
@@ -151,6 +174,7 @@ void GameState::dUpdate( float dt )
 
 void GameState::UpdateInput( float dt )
 {
+	bool positionChanged = false;
 	if (!m_TypingMessage)
 	{
 
@@ -164,17 +188,31 @@ void GameState::UpdateInput( float dt )
 			Audio()->PlayFile( "Data/Audio/sound01.wav" );
 
 		// Camera movement
+		/*
 		if ( Input()->isKeyPressed( DIK_A , true ) )
-			m_Camera->Move_X(-2.3f * dt);
+		{
+			m_Player->MoveX(-2.3f * dt);
+			positionChanged = true;
+		}
 
 		if ( Input()->isKeyPressed( DIK_D, true ) )
-			m_Camera->Move_X(2.3f * dt);
+		{
+			m_Player->MoveX(2.3f * dt);
+			positionChanged = true;
+		}
 
 		if ( Input()->isKeyPressed( DIK_W , true ) )
-			m_Camera->Move_Z(2.3f * dt);
+		{
+			m_Player->MoveZ(2.3f * dt);
+			positionChanged = true;
+		}
 
 		if ( Input()->isKeyPressed( DIK_S, true ) )
-			m_Camera->Move_Z(-2.3f * dt);
+		{
+			m_Player->MoveZ(-2.3f * dt);
+			positionChanged = true;
+		}
+		*/
 
 		if ( Input()->isKeyPressed( DIK_J, true ) )
 			m_DaveDude->TranslateBy( -2.3 * dt, 0, 0);
@@ -192,13 +230,10 @@ void GameState::UpdateInput( float dt )
 			m_Floor->RotateBy(0, 0, 2.3 * dt);
 
 		if ( Input()->GetDeltaY() != 0 && m_MouseLock )
-			m_Camera->Pitch( ( Input()->GetDeltaY() / g_Engine->GetMouseSensitivityY() ) * 0.0087266f );
+			m_Player->Camera()->Pitch( ( Input()->GetDeltaY() / g_Engine->GetMouseSensitivityY() ) * 0.0087266f );
 
 		if ( Input()->GetDeltaX() != 0 && m_MouseLock)
-			m_Camera->Roll( ( Input()->GetDeltaX() / g_Engine->GetMouseSensitivityX() ) * 0.0087266f );
-
-		//if ( Input()->isKeyPressed( DIK_L, false ) )
-		//m_MouseLock = !m_MouseLock;
+			m_Player->Camera()->Roll( ( Input()->GetDeltaX() / g_Engine->GetMouseSensitivityX() ) * 0.0087266f );
 
 		if( Input()->isKeyPressed( DIK_C ) )
 		{
@@ -224,6 +259,15 @@ void GameState::UpdateInput( float dt )
 	{
 		m_TypingMessage = !m_TypingMessage;
 	}
+
+	if (m_Network)
+	{
+		if (positionChanged)
+		{
+			D3DXVECTOR3 pos = m_Player->GetPosition();
+			//m_Network->SendPositionUpdate(pos.x, pos.y, pos.z, 0,0,0);
+		}
+	}
 }
 
 void GameState::dRender()
@@ -239,50 +283,43 @@ void GameState::Render3D()
 	D3DXMATRIX worldMatrix, translateMatrix;
 	D3DXMatrixIdentity(&worldMatrix);
 
-	m_Camera->RebuildView();
+	// Cache camera;
+	m_Player->Camera()->RebuildView();
 
 	D3D()->TurnOffCulling();
 	D3D()->TurnZBufferOff();
 	D3D()->TurnOnAlphaBlending();
-	m_SkyBox->Draw( D3D()->GetDeviceContext(), m_Camera );
+	m_SkyBox->Draw( D3D()->GetDeviceContext(), m_Player->Camera() );
 	D3D()->TurnZBufferOn();
 	D3D()->TurnOffAlphaBlending();
 	D3D()->TurnOnCulling();
 
 	// Put in error checking to see the bump map has been set but no light is passed
-	m_Floor->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light);
+	m_Floor->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Player->Camera(), m_Light);
 
-	m_DaveDude->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, m_Light, 0);
+	m_DaveDude->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Player->Camera(), m_Light, 0);
 
 	// Render all network entities.
-	float posX, posY, posZ, rotX, rotY, rotZ;
 	for (int i = 0; i < MAX_ENTITIES; i++)
 	{
 		if (m_NetworkEntityList[i].IsOnline())
-		{
-			m_NetworkEntityList[i].GetPosition(posX, posY, posZ);
-			m_NetworkEntityList[i].GetRotation(rotX, rotY, rotZ);
-
-			D3DXMatrixRotationY(&worldMatrix, rotY * ((float)D3DX_PI / 180.0f));
-			D3DXMatrixTranslation(&translateMatrix, posX, posY, posZ);
-			D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-
+		{	
 			if (m_NetworkEntityList[i].GetEntityType() == ENTITY_TYPE_USER)
 			{
-				m_NetworkEntityList->Render(m_Camera, g_Engine->ShaderManager());
+				m_NetworkEntityList->Render(m_Player->Camera(), g_Engine->ShaderManager());
 			}
 		}
 	}
 
 	D3D()->TurnOnAlphaBlending();
-	m_BillBoard->NO_GSBillboard( m_Camera );	
-	m_BillBoard->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Camera, NULL);
+	m_BillBoard->NO_GSBillboard( m_Player->Camera() );	
+	m_BillBoard->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_Player->Camera(), NULL);
 	// Put the particle system vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_ParticleSystem->NO_GSBillboard( m_Camera );
+	m_ParticleSystem->NO_GSBillboard( m_Player->Camera() );
 	m_ParticleSystem->Render(D3D()->GetDeviceContext());
 
 	// Render the model using the texture shader.
-	g_Engine->ShaderManager()->RenderTextureShader(D3D()->GetDeviceContext(), m_ParticleSystem->GetIndexCount(), m_ParticleSystem->GetWorld(), m_Camera->GetViewMatrix(), m_Camera->GetProjMatrix(), 
+	g_Engine->ShaderManager()->RenderTextureShader(D3D()->GetDeviceContext(), m_ParticleSystem->GetIndexCount(), m_ParticleSystem->GetWorld(), m_Player->Camera()->GetViewMatrix(), m_Player->Camera()->GetProjMatrix(), 
 		m_ParticleSystem->GetTexture());
 }
 
@@ -299,7 +336,7 @@ void GameState::Render2D()
 
 // Networking functions
 
-void GameState::AddEntity(unsigned short entID, char entType, float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
+void GameState::AddEntity(unsigned short entID, char entType, D3DXVECTOR3 position, D3DXVECTOR3 rotation)
 {
 	g_Engine->DebugOutput(L"Network entity added\n");
 	int i = 0;
@@ -320,8 +357,8 @@ void GameState::AddEntity(unsigned short entID, char entType, float posX, float 
 		m_NetworkEntityList[i].SetOnlineStatus(true);
 		m_NetworkEntityList[i].SetID(entID);
 		m_NetworkEntityList[i].SetType(entType);
-		m_NetworkEntityList[i].SetPosition(posX, posY, posZ);
-		m_NetworkEntityList[i].SetRotation(rotX, rotY, rotZ);
+		m_NetworkEntityList[i].SetPosition(position);
+		m_NetworkEntityList[i].SetRotation(rotation);
 	}
 }
 
@@ -379,7 +416,7 @@ bool GameState::PositionUpdate(float& posX, float& posY, float& posZ, float& rot
 	if (m_positionUpdateReady)
 	{
 		m_Player->GetPosition(posX, posY, posZ);
-		m_Player->GetRotation(rotX, rotY, rotZ);
+		//m_Player->GetRotation(rotX, rotY, rotZ);
 		m_positionUpdateReady = false;
 		return true;
 	}
@@ -387,7 +424,7 @@ bool GameState::PositionUpdate(float& posX, float& posY, float& posZ, float& rot
 		return false;
 }
 
-void GameState::UpdateEntityPosition(unsigned short entID, float& posX, float& posY, float& posZ, float& rotX, float& rotY, float& rotZ)
+void GameState::UpdateEntityPosition(unsigned short entID, D3DXVECTOR3& pos, D3DXVECTOR3& rot, D3DXVECTOR3& vel, D3DXVECTOR3& acc, unsigned long& timestamp)
 {
 	int i = 0;
 	bool found = false;
@@ -401,11 +438,12 @@ void GameState::UpdateEntityPosition(unsigned short entID, float& posX, float& p
 	}
 
 	// Update the position of the entity in the game world.
-	m_NetworkEntityList[i].UpdatePosition( posX, posY, posZ, rotX, rotY, rotZ );
+	m_NetworkEntityList[i].HasRecievedMessage(true);
+	m_NetworkEntityList[i].UpdatePosition( pos, rot, vel, acc , timestamp);
 }
 
 void GameState::HandleNewPositionData(float x, float y, float z)
 {
-	m_Camera->SetPosition(D3DXVECTOR3(x,y,z));
+	m_Player->SetPosition(x,y,z);
 	g_Engine->DebugOutput(L"New Position sent by server, setting..");
 }

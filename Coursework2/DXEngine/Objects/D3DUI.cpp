@@ -4,6 +4,7 @@
 D3DUI::D3DUI()
 {
 	m_ChatWindowBackground = 0;
+	m_RocketLauncher = 0;
 	m_Text = 0;
 }
 
@@ -15,11 +16,8 @@ D3DUI::~D3DUI()
 		m_Text = 0;
 	}
 
-	if (m_ChatWindowBackground)
-	{
-		delete m_ChatWindowBackground;
-		m_ChatWindowBackground = 0;
-	}
+	S_DELETE(m_ChatWindowBackground);
+	S_DELETE(m_RocketLauncher);
 }
 
 bool D3DUI::Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, D3DXMATRIX baseView, int posY, int posX)
@@ -36,6 +34,11 @@ bool D3DUI::Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int ch
 
 	if (!m_ChatWindowBackground->Init(d3d->GetDevice(), scrWidth, scrHeight, L"Data/Textures/ChatWindow.dds", chatWidth, chatHeight))
 		return false;
+
+	m_RocketLauncher = new D3DBitmap;
+	if (!m_RocketLauncher->Init(d3d->GetDevice(), scrWidth, scrHeight, L"Data/Textures/rlauncher.dds", 330, 260))
+		return false;
+	m_RocketLauncher->SetPosition((scrWidth / 2) - 165, scrHeight - 260);
 
 	m_Text = new D3DText;
 	if (!m_Text)
@@ -274,13 +277,21 @@ bool D3DUI::InitChat(D3DSys* d3d)
 
 bool D3DUI::Render(D3DSys* d3d, D3DShaderManager* sMgr, D3DXMATRIX orthoMatrix)
 {
+	d3d->TurnOffAlphaBlending();
+	
+	// Change this to have a fadeout effect so that it doesn't obscure the gun.
+
 	if (!m_ChatWindowBackground->Render(d3d->GetDeviceContext(), sMgr, m_baseViewMatrix, orthoMatrix))
 		return false;
 
 	d3d->TurnOnAlphaBlending();
 
+	if (!m_RocketLauncher->Render(d3d->GetDeviceContext(), sMgr, m_baseViewMatrix, orthoMatrix))
+		return false;
+
 	if (!m_Text->Render(d3d->GetDeviceContext(), orthoMatrix))
 		return false;
 
 	d3d->TurnOffAlphaBlending();
+	return true;
 }

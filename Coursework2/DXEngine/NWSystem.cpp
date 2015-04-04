@@ -338,24 +338,19 @@ void NWSystem::HandleEntityInfoMessage(int queuePosition)
 	MSG_ENTITY_INFO_DATA* message;
 	unsigned short entityID;
 	char entityType;
-	float posX, posY, posZ;
-	float rotX, rotY, rotZ;
+	D3DXVECTOR3 position, rotation;
 
 	// Get contents of the message.
 	message = (MSG_ENTITY_INFO_DATA*)m_networkMessageQueue[queuePosition].message;
 	entityID   = message->entityId;
 	entityType = message->entityType;
-	posX  = message->positionX;
-	posY  = message->positionY;
-	posZ  = message->positionZ;
-	rotX  = message->rotationX;
-	rotY  = message->rotationY;
-	rotZ  = message->rotationZ;
+	position = message->position;
+	rotation = message->rotation;
 
 	// If the game state has been set, add an entity to it.
 	if (m_GameState)
 	{
-		m_GameState->AddEntity(entityID, entityType, posX, posY, posZ, rotX, rotY, rotZ);
+		m_GameState->AddEntity(entityID, entityType, position, rotation);
 	}
 }
 
@@ -364,22 +359,17 @@ void NWSystem::HandleNewUserLoginMessage(int queuePosition)
 	MSG_ENTITY_INFO_DATA* message;
 	unsigned short entityID;
 	char entityType;
-	float posX, posY, posZ;
-	float rotX, rotY, rotZ;
+	D3DXVECTOR3 position, rotation;
 
 	message = (MSG_ENTITY_INFO_DATA*)m_networkMessageQueue[queuePosition].message;
 
 	entityID = message->entityId;
 	entityType = message->entityType;
-	posX  = message->positionX;
-	posY  = message->positionY;
-	posZ  = message->positionZ;
-	rotX  = message->rotationX;
-	rotY  = message->rotationY;
-	rotZ  = message->rotationZ;
+	position = message->position;
+	rotation = message->rotation;
 
 	if (m_GameState)
-		m_GameState->AddEntity( entityID, entityType, posX, posY, posZ, rotX, rotY, rotZ);
+		m_GameState->AddEntity( entityID, entityType, position, rotation);
 }
 
 void NWSystem::HandleUserDisconnectMessage( int queuePosition )
@@ -413,21 +403,22 @@ void NWSystem::HandlePositionMessage( int queuePosition )
 {
 	MSG_POSITION_DATA* message;
 	unsigned short entityID;
-	float posX, posY, posZ, rotX, rotY, rotZ;
+	D3DXVECTOR3 incPos, incRot, inVel, inAcc;
+
+	unsigned long timeStamp;
 
 	message = (MSG_POSITION_DATA*)m_networkMessageQueue[queuePosition].message;
 
 	entityID = message->idNumber;
-	posX = message->positionX;
-	posY = message->positionY;
-	posZ = message->positionZ;
-	rotX = message->rotationX;
-	rotY = message->rotationY;
-	rotZ = message->rotationZ;
+	incPos = message->position;
+	incRot = message->rotation;
+	inVel = message->velocity;
+	inAcc = message->acceleration;
+	timeStamp = message->timeStamp;
 
 	if (m_GameState)
 	{
-		m_GameState->UpdateEntityPosition( entityID, posX, posY, posZ, rotX, rotY, rotZ);
+		m_GameState->UpdateEntityPosition( entityID, incPos, incRot, inVel, inAcc, timeStamp);
 	}
 }
 
@@ -500,20 +491,19 @@ void NWSystem::SendDisconnectMessage()
 	return;
 }
 
-bool NWSystem::SendPositionUpdate(float x, float y, float z, float Rx, float Ry, float Rz)
+bool NWSystem::SendPositionUpdate(D3DXVECTOR3 position, D3DXVECTOR3 rotation, D3DXVECTOR3 velocity, D3DXVECTOR3 acceleration)
 {
 	MSG_POSITION_DATA message;
 
 	// create the message itself.
 	message.type = MSG_POSITION;
+	message.timeStamp = timeGetTime();
 	message.idNumber = m_IDNumber;
 	message.sessionId = m_sessionID;
-	message.positionX = x;
-	message.positionY = y;
-	message.positionZ = z;
-	message.rotationX = Rx;
-	message.rotationY = Ry;
-	message.rotationZ = Rz;
+	message.position = position;
+	message.rotation = rotation;
+	message.velocity = velocity;
+	message.acceleration = acceleration;
 
 	int bytesSent = sendto(m_clientSocket, (char*)&message, sizeof(MSG_POSITION_DATA), 0, (struct sockaddr*)&m_serverAddress, m_addressLength);
 	if (bytesSent != sizeof(MSG_POSITION_DATA))

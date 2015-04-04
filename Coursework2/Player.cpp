@@ -1,14 +1,18 @@
 #include "Player.h"
 
+#include <iostream>
+
 Player::Player()
 {
-	m_Position.x = 0.0f;
-	m_Position.y = 0.0f;
-	m_Position.z = 0.0f;
+	m_Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Right = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+	m_Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	m_LookAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_velocity = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	m_Rotation.x = 0.0f;
-	m_Rotation.y = 0.0f;
-	m_Rotation.z = 0.0f;
+	D3DXMatrixIdentity(&m_ViewMatrix);
+	D3DXMatrixIdentity(&m_ProjectionMatrix);
+	D3DXMatrixIdentity(&m_WorldMatrix);
 
 	m_frameTime = 0.0f;
 
@@ -23,26 +27,85 @@ Player::Player()
 	m_movingForward = false;
 	m_moveBackwardStateChange = false;
 	m_movingBackward = false;
+
+	m_Camera = 0;
+}
+
+Player::~Player()
+{
+	S_DELETE(m_Camera);
+}
+
+void Player::Init(float FOV, float aspect, float zNear, float zFar)
+{
+	m_Camera = new D3DCamera(FOV, aspect, zNear, zFar);
 }
 
 void Player::SetPosition(float x, float y, float z)
 {
 	m_Position.x = x; m_Position.y = y; m_Position.z = z;
-}
-
-void Player::SetRotation(float x, float y, float z)
-{
-	m_Rotation.x = x; m_Rotation.y = y; m_Rotation.z = z;
+	RebuildTransform();
 }
 
 void Player::GetPosition(float& x, float& y, float& z)
 {
-	x = m_Position.x; y = m_Position.y; z = m_Position.z;
+	x = m_Position.x;
+	y = m_Position.y;
+	z = m_Position.z;
 }
 
-void Player::GetRotation(float& x, float& y, float& z)
+void Player::MoveX(float dt)
 {
-	x = m_Rotation.x; y = m_Rotation.y; z = m_Rotation.z;
+	/*
+	m_Position += (m_velocity.x)*m_Right;
+	D3DXMatrixIdentity( &m_WorldMatrix );
+
+	D3DXMATRIX temp;
+	D3DXMatrixIdentity( &temp );
+
+	D3DXMatrixTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+
+	// Scale the temporary matrix
+	m_WorldMatrix *= temp * m_ViewMatrix * m_ProjectionMatrix;
+	*/
+	m_Camera->Move_X(m_velocity.x);
+	m_Position = m_Camera->GetPosition();
+}
+
+
+void Player::MoveZ(float dt)
+{
+	/*
+	m_Position += (m_velocity.z * dt)*m_LookAt;
+	D3DXMatrixIdentity( &m_WorldMatrix );
+
+	D3DXMATRIX temp;
+	D3DXMatrixIdentity( &temp );
+
+	D3DXMatrixTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+
+	// Scale the temporary matrix
+	m_WorldMatrix *= temp * m_ViewMatrix * m_ProjectionMatrix;
+	*/
+	m_Camera->Move_Z(m_velocity.z);
+	m_Position = m_Camera->GetPosition();
+}
+
+void Player::SetRotation(float x, float y, float z)
+{
+	//m_Rotation.x = x; m_Rotation.y = y; m_Rotation.z = z;
+}
+
+void Player::RebuildTransform()
+{
+	D3DXMatrixIdentity(&m_WorldMatrix);
+	D3DXMATRIX temp;
+	D3DXMatrixIdentity(&temp);
+	D3DXMatrixTranslation(&temp, m_Position.x, m_Position.y, m_Position.z);
+	
+	// Scale the world matrix;
+	m_WorldMatrix *= temp * m_ViewMatrix * m_ProjectionMatrix;
+	m_Camera->SetPosition(m_Position);
 }
 
 void Player::SetFrameTime(float time)
@@ -50,6 +113,86 @@ void Player::SetFrameTime(float time)
 	m_frameTime = time;
 }
 
+void Player::Update(D3DInput* input, float deltaTime)
+{
+	m_oldVelocity = m_velocity; 
+	// Forward & backward
+	if (input->isKeyPressed(DIK_W, true))
+	{
+		m_velocity.z += (PLAYER_ACCELERATION_RATE * deltaTime);
+		if (m_velocity.z  > PLAYER_MAX_SPEED)
+			m_velocity.z = PLAYER_MAX_SPEED;
+	}
+
+	else if (input->isKeyPressed(DIK_S, true))
+	{
+		m_velocity.z -= (PLAYER_ACCELERATION_RATE * deltaTime);
+		if (m_velocity.z < -PLAYER_MAX_SPEED)
+			m_velocity.z = -PLAYER_MAX_SPEED;
+	}
+
+	// If neither the 'forward' or 'backward' key has been pressed, then slow down acceleration
+	else
+	{
+		std::cout << "No forward or backward movement" << std::endl;
+		if (m_velocity.z < 0)
+		{
+			m_velocity.z += (PLAYER_ACCELERATION_RATE * deltaTime) * 2;
+			if (m_velocity.z >= 0)
+				m_velocity.z = 0.0f;
+		}
+		else
+		{
+			m_velocity.z -= (PLAYER_ACCELERATION_RATE * deltaTime) * 2;
+			if (m_velocity.z <= 0)
+				m_velocity.z = 0.0f;
+		}
+	}
+
+	// Strafe left & right
+	if (input->isKeyPressed(DIK_A, true))
+	{
+		m_velocity.x -= (PLAYER_ACCELERATION_RATE * deltaTime);
+		if (m_velocity.x  <= -PLAYER_MAX_SPEED)
+			m_velocity.x = -PLAYER_MAX_SPEED;
+	}
+
+	else if (input->isKeyPressed(DIK_D, true))
+	{
+		m_velocity.x += (PLAYER_ACCELERATION_RATE * deltaTime);
+		if (m_velocity.x > PLAYER_MAX_SPEED)
+			m_velocity.x = PLAYER_MAX_SPEED;
+	}
+
+	// If neither the 'left' or 'right' key has been pressed, then slow down acceleration
+	else
+	{
+		if (m_velocity.x < 0)
+		{
+			m_velocity.x += (PLAYER_ACCELERATION_RATE * deltaTime) * 2;
+			if (m_velocity.x >= 0)
+				m_velocity.x = 0.0f;
+		}
+		else
+		{
+			m_velocity.x -= (PLAYER_ACCELERATION_RATE * deltaTime) * 2;
+			if (m_velocity.x <= 0)
+				m_velocity.x = 0.0f;
+		}
+	}
+
+	MoveX(deltaTime);
+	MoveZ(deltaTime);
+
+	std::cout << "Velocity (" << m_velocity.x << "," << m_velocity.y << "," << m_velocity.z	 << ")" << std::endl;
+
+	// Get Rotation from player's camera
+	D3DXMATRIX world = m_Camera->GetWorld();
+	m_Rotation = HELPER_RotVectorFrom4x4Mat(world);
+	m_acceleration = m_velocity - m_oldVelocity;
+}
+
+/*
 void Player::MoveForward(bool keydown)
 {
 	float radians;
@@ -245,6 +388,7 @@ void Player::LookDownward(bool keydown)
 
 	return;
 }
+*/
 
 
 bool Player::TurnLeftStateChange(char& newState)
@@ -364,4 +508,16 @@ bool Player::MoveBackwardStateChange(char& newState)
 	}
 
 	return result;
+}
+
+D3DXVECTOR3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat)
+{
+	//theta1 = atan2(m01, m11)
+	double theta1 = atan2(mat._23, mat._33);
+	double c2 = sqrt((mat._11 * mat._11) + (mat._12 * mat._12));
+	double theta2 = atan2((double)-mat._13, c2);
+	double s1 = sin(theta1); double c1 = cos(theta1);
+	double theta3 = atan2( (s1 * mat._31) - (c1 * mat._31), (c1 * mat._22) - (s1 * mat._31) );
+
+	return D3DXVECTOR3(theta1, theta2, theta3);
 }

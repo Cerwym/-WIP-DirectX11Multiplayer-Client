@@ -1,5 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <stdio.h>
+#include <shellapi.h>
 
 #include "DXEngine/Engine.h"
 #include "DXEngine/Defines.h"
@@ -16,17 +18,40 @@ void ApplicationSetup()
 
 int WINAPI WinMain(  _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd )
 {
+	LPWSTR *szArgList;
+	int argCount;
+
+	szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
+
 	EngineDefinition eDef;
 	eDef.hInstance = hInstance;
 	eDef.name = L"0901632 - Coursework - Programming Games - Engine2";
 	eDef.vSync = false;
+
+	/*
+	if (szArgList != NULL)
+	{	
+		LPWSTR ipAddr = szArgList[0];
+		char ipConv[20] = {0};
+		wcstombs(ipConv, ipAddr, wcslen(ipAddr));
+		eDef.server_addr = ipConv;
+	}
+	else 
+	{
+		eDef.server_addr = "127.0.0.1";
+	}*/
+
 	eDef.server_addr = "127.0.0.1";
+
 	eDef.server_port = 5555;
 	eDef.StateInit = ApplicationSetup;
 	eDef.mouseSensitivityX = 5;
 	eDef.mouseSensitivityY = 5;
 	new Engine( &eDef );
 	g_Engine->Run();
+
+	// Free memory allocated for CommandLineToArtgvW arguments
+	LocalFree(szArgList);
 
 	return 0;
 }

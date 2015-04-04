@@ -1,7 +1,9 @@
 #pragma once
 
-#include <math.h>
+#include <D3DX10math.h>
 #include "DXEngine/Defines.h"
+#include "DXEngine/D3DInput.h"
+#include "DXEngine/Objects/D3DCamera.h"
 
 const char STATE_TURNING_LEFT = 0;
 const char STATE_NOT_TURNING_LEFT = 1;
@@ -12,21 +14,39 @@ const char STATE_NOT_MOVING_FORWARD = 5;
 const char STATE_MOVING_BACKWARD = 6;
 const char STATE_NOT_MOVING_BACKWARD = 7;
 
+const float PLAYER_MAX_SPEED = 0.275f;
+const float PLAYER_ACCELERATION_RATE = 0.2f;
+
+D3DXVECTOR3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat);
+
 class Player
 {
 public:
 
 	Player();
 	Player(const Player&){}
-	~Player(){}
+	~Player();
+
+	void Init(float FOV, float aspect, float zNear, float zFar);
 
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float x, float y, float z);
 
-	void GetPosition(float& x, float& y, float& z);
+	void MoveX(float d);
+	void MoveZ(float d);
+
+	D3DXVECTOR3 GetPosition(){return m_Position;}
+	D3DXVECTOR3 GetRotation(){return m_Rotation;}
+	D3DXVECTOR3 GetVelocity(){return m_velocity;}
+	D3DXVECTOR3 GetAcceleration(){return m_acceleration;}
+	void GetPosition(float &x, float& y, float& z);
 	void GetRotation(float& x, float& y, float& z);
 
+	D3DCamera* Camera(){return m_Camera;}
+
 	void SetFrameTime(float time);
+
+	void Update(D3DInput* input, float deltaTime);
 
 	void MoveForward(bool keydown);
 	void MoveBackward(bool keydown);
@@ -42,8 +62,12 @@ public:
 
 private:
 
-	Vector2 m_Position;
-	Vector2 m_Rotation;
+	void RebuildTransform();
+
+	D3DCamera* m_Camera;
+	D3DXMATRIX m_ViewMatrix, m_ProjectionMatrix, m_WorldMatrix;
+	D3DXVECTOR3 m_Position, m_LookAt, m_Right, m_Up, m_velocity, m_oldVelocity, m_acceleration;
+	D3DXVECTOR3 m_Rotation;
 
 	float m_frameTime;
 	float m_lookUpSpeed, m_lookDownSpeed;

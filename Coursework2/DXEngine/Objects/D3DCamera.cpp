@@ -83,6 +83,7 @@ void D3DCamera::Roll(float angle)
 	D3DXVec3TransformNormal(&m_Right, &m_Right, &rot);
 	D3DXVec3TransformNormal(&m_Up, &m_Up, &rot);
 	D3DXVec3TransformNormal(&m_LookAt, &m_LookAt, &rot);
+
 }
 
 void D3DCamera::RebuildView()

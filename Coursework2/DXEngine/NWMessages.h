@@ -59,8 +59,8 @@ typedef struct
 	unsigned short type;
 	unsigned short entityId;
 	char entityType;
-	float positionX, positionY, positionZ;
-	float rotationX, rotationY, rotationZ;
+	D3DXVECTOR3 position;
+	D3DXVECTOR3 rotation;
 }MSG_ENTITY_INFO_DATA;
 
 typedef struct           
@@ -78,12 +78,15 @@ typedef struct
 }MSG_STATE_CHANGE_DATA;
 
 typedef struct           
-{                        
+{       
 	unsigned short type;
+	unsigned long timeStamp;
 	unsigned short idNumber;
 	unsigned short sessionId;
-	float positionX, positionY, positionZ;
-	float rotationX, rotationY, rotationZ;
+	D3DXVECTOR3 position;
+	D3DXVECTOR3 rotation;
+	D3DXVECTOR3 velocity;
+	D3DXVECTOR3 acceleration;
 }MSG_POSITION_DATA;
 
 

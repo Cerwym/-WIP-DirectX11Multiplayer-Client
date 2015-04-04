@@ -43,12 +43,16 @@ public:
 	void SendDisconnectMessage();
 	void SetVerbosity(bool flag){m_VerboseOutput = flag;}
 	void SetUIAndGS(void* gs, D3DUI* ui);
+	bool RequestEntityList();
+
+	void HasRecievedMessage(bool flag){m_MessageRecieved = flag;}
+	bool RecievedMessage(){return m_MessageRecieved;}
 
 	// Set the amount of time in SECONDS to wait before sending another ping message.
 	void SetPingWaitTime(float time){m_TickRate = time;}
 
 	bool SendStateChange(char state);
-	bool SendPositionUpdate(float x, float y, float z, float Rx, float Ry, float Rz);
+	bool SendPositionUpdate(D3DXVECTOR3 position, D3DXVECTOR3 rotation, D3DXVECTOR3 velocity, D3DXVECTOR3 acceleration);
 	
 private:
 	void AddMessageToQueue(char* message, int messageSize, struct sockaddr_in serverAddress);
@@ -67,9 +71,8 @@ private:
 	bool SendChatMessage(char* message);
 	void SendPing();
 
-	bool RequestEntityList();
-
 	bool m_VerboseOutput;
+	bool m_MessageRecieved;
 	float m_TickRate;
 	SOCKET m_clientSocket;
 	D3DUI* m_uiPtr;

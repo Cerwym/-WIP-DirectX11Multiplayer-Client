@@ -24,7 +24,7 @@ bool MainMenuState::dLoad()
 	m_OrthoMatrix = D3D()->GetOrthoMatrix();
 
 	// Might want to check to see if the objects already exists as loading a new state will change what the object points to
-	m_MarbleCube = new D3DModel(D3DXVECTOR3(-3.5f, 0, 0));
+	m_MarbleCube = new D3DModel(XMFLOAT3(-3.5f, 0, 0));
 	if(!m_MarbleCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds"))
 		return false;
 
@@ -32,7 +32,7 @@ bool MainMenuState::dLoad()
 	if (!m_MetalCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/metal.dds"))
 		return false;
 
-	m_StoneCube = new D3DModel(D3DXVECTOR3(3.5f, 0, 0));
+	m_StoneCube = new D3DModel(XMFLOAT3(3.5f, 0, 0));
 	if (!m_StoneCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/stone.dds", L"Data/Models/cube_normal.dds" ))
 		return false;
 
@@ -41,7 +41,7 @@ bool MainMenuState::dLoad()
 		return false;
 	
 	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) Options()->scrWidth / Options()->scrHeight, 0.1f, 1000.0f );
-	m_Camera->SetPosition(D3DXVECTOR3(0.0f, 0.0f, -10.0f));
+	m_Camera->SetPosition(XMFLOAT3(0.0f, 0.0f, -10.0f));
 	
 	// RebuildView must be called after instantiation so that the text will be drawn correctly.
 	m_Camera->RebuildView();

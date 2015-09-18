@@ -62,7 +62,7 @@ bool D3DFrustum::CheckPoint(float x, float y, float z)
 	// Check to see if the given point is inside all six planes of the view frustum
 	for (int i = 0; i < 6; i++)
 	{
-		if (D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3(x,y,z)) < 0.0f)
+		if (D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3(x,y,z)) < 0.0f)
 			return false;
 	}
 
@@ -74,7 +74,7 @@ bool D3DFrustum::CheckSphere(float xCenter, float yCenter, float zCenter, float 
 	// Check if the radius of the sphere is inside the view frustum.
 	for(int i = 0; i < 6; i++) 
 	{
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3(xCenter, yCenter, zCenter)) < -radius)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3(xCenter, yCenter, zCenter)) < -radius)
 		{
 			return false;
 		}
@@ -88,21 +88,21 @@ bool D3DFrustum::CheckCube(float xCentre, float yCentre, float zCentre, float ra
 	// Check to see if any point of the cube is in the frustum, if it is, continue execution, if no point is valid, return false
 	for (int i = 0; i < 6; i++)
 	{
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre - radius), (yCentre - radius), (zCentre - radius))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre - radius), (yCentre - radius), (zCentre - radius))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre + radius), (yCentre - radius), (zCentre - radius))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre + radius), (yCentre - radius), (zCentre - radius))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre - radius), (yCentre + radius), (zCentre - radius))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre - radius), (yCentre + radius), (zCentre - radius))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre + radius), (yCentre + radius), (zCentre - radius))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre + radius), (yCentre + radius), (zCentre - radius))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre - radius), (yCentre - radius), (zCentre + radius))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre - radius), (yCentre - radius), (zCentre + radius))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre + radius), (yCentre - radius), (zCentre + radius))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre + radius), (yCentre - radius), (zCentre + radius))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre - radius), (yCentre + radius), (zCentre + radius))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre - radius), (yCentre + radius), (zCentre + radius))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre + radius), (yCentre + radius), (zCentre + radius))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre + radius), (yCentre + radius), (zCentre + radius))) >= 0.0f)
 			continue;
 
 		return false;
@@ -116,21 +116,21 @@ bool D3DFrustum::CheckRectangle(float xCentre, float yCentre, float zCentre, flo
 	// Check to see if any point of the cube is in the frustum, if it is, continue execution, if no point is valid, return false
 	for(int i = 0; i < 6; i++)
 	{
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre - xSize), (yCentre - ySize), (zCentre - zSize))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre - xSize), (yCentre - ySize), (zCentre - zSize))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre + xSize), (yCentre - ySize), (zCentre - zSize))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre + xSize), (yCentre - ySize), (zCentre - zSize))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre - xSize), (yCentre + ySize), (zCentre - zSize))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre - xSize), (yCentre + ySize), (zCentre - zSize))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre - xSize), (yCentre - ySize), (zCentre + zSize))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre - xSize), (yCentre - ySize), (zCentre + zSize))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre + xSize), (yCentre + ySize), (zCentre - zSize))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre + xSize), (yCentre + ySize), (zCentre - zSize))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre + xSize), (yCentre - ySize), (zCentre + zSize))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre + xSize), (yCentre - ySize), (zCentre + zSize))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre - xSize), (yCentre + ySize), (zCentre + zSize))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre - xSize), (yCentre + ySize), (zCentre + zSize))) >= 0.0f)
 			continue;
-		if(D3DXPlaneDotCoord(&m_Planes[i], &D3DXVECTOR3((xCentre + xSize), (yCentre + ySize), (zCentre + zSize))) >= 0.0f)
+		if(D3DXPlaneDotCoord(&m_Planes[i], &XMFLOAT3((xCentre + xSize), (yCentre + ySize), (zCentre + zSize))) >= 0.0f)
 			continue;
 
 		return false;

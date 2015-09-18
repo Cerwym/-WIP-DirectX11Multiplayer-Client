@@ -338,7 +338,7 @@ void NWSystem::HandleEntityInfoMessage(int queuePosition)
 	MSG_ENTITY_INFO_DATA* message;
 	unsigned short entityID;
 	char entityType;
-	D3DXVECTOR3 position, rotation;
+	XMFLOAT3 position, rotation;
 
 	// Get contents of the message.
 	message = (MSG_ENTITY_INFO_DATA*)m_networkMessageQueue[queuePosition].message;
@@ -359,7 +359,7 @@ void NWSystem::HandleNewUserLoginMessage(int queuePosition)
 	MSG_ENTITY_INFO_DATA* message;
 	unsigned short entityID;
 	char entityType;
-	D3DXVECTOR3 position, rotation;
+	XMFLOAT3 position, rotation;
 
 	message = (MSG_ENTITY_INFO_DATA*)m_networkMessageQueue[queuePosition].message;
 
@@ -403,7 +403,7 @@ void NWSystem::HandlePositionMessage( int queuePosition )
 {
 	MSG_POSITION_DATA* message;
 	unsigned short entityID;
-	D3DXVECTOR3 incPos, incRot, inVel, inAcc;
+	XMFLOAT3 incPos, incRot, inVel, inAcc;
 
 	unsigned long timeStamp;
 
@@ -491,7 +491,7 @@ void NWSystem::SendDisconnectMessage()
 	return;
 }
 
-bool NWSystem::SendPositionUpdate(D3DXVECTOR3 position, D3DXVECTOR3 rotation, D3DXVECTOR3 velocity, D3DXVECTOR3 acceleration)
+bool NWSystem::SendPositionUpdate(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 velocity, XMFLOAT3 acceleration)
 {
 	MSG_POSITION_DATA message;
 

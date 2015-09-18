@@ -3,7 +3,7 @@
 #include <DXGI.h>
 #include <D3Dcommon.h>
 #include <d3d11.h>
-#include <d3dx10math.h>
+#include <DirectXMath.h>
 #include "Defines.h"
 
 class D3DSys
@@ -24,7 +24,7 @@ public:
 	ID3D11DeviceContext* GetDeviceContext();
 	ID3D11DepthStencilView* GetDepthStencilView(){return m_depthStencilView;}
 
-	D3DXMATRIX GetOrthoMatrix();
+	XMMATRIX GetOrthoMatrix();
 	void GetVideoCardInfo(char*, int&);
 	void SetBackBufferRenderTarget(){m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);}
 
@@ -56,6 +56,6 @@ private:
 	ID3D11RasterizerState* m_rasterState;
 	ID3D11RasterizerState* m_RasterStateWireFrame;
 
-	D3DXMATRIX m_orthoMatrix;
+	XMMATRIX m_orthoMatrix;
 };
 

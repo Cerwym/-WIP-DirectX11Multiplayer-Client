@@ -13,7 +13,7 @@ bool LoadingState::dLoad()
 	g_Engine->DebugOutput(L"State->Loading...\n");
 
 	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
-	m_Camera->SetPosition(D3DXVECTOR3(0.0f, 0.0f, -10.0f));
+	m_Camera->SetPosition(XMFLOAT3(0.0f, 0.0f, -10.0f));
 	m_Camera->RebuildView();
 	m_baseViewMatrix = m_Camera->GetViewMatrix();
 

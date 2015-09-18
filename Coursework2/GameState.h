@@ -22,12 +22,12 @@ public:
 	GameState();
 
 	// Networking functions
-	void AddEntity(unsigned short entID, char endType, D3DXVECTOR3 position, D3DXVECTOR3 rotation);
+	void AddEntity(unsigned short entID, char endType, XMFLOAT3 position, XMFLOAT3 rotation);
 	void RemoveEntity(unsigned short entID);
 	bool GetStateChange( char& state);
 	void UpdateEntityState( unsigned short entID, char state);
 	bool PositionUpdate(float& posX, float& posY, float& posZ, float& rotX, float& rotY, float& rotZ);
-	void UpdateEntityPosition(unsigned short entID, D3DXVECTOR3& pos, D3DXVECTOR3& rot, D3DXVECTOR3& vel, D3DXVECTOR3& acc, unsigned long& timestamp);
+	void UpdateEntityPosition(unsigned short entID, XMFLOAT3& pos, XMFLOAT3& rot, XMFLOAT3& vel, XMFLOAT3& acc, unsigned long& timestamp);
 	void UpdateEntityRotate(unsigned short ID, bool rotate);
 	void HandleNewPositionData(float x, float y, float z);
 

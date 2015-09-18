@@ -78,7 +78,7 @@ void NWEntity::BlendStateLinear(kinematicState *out, kinematicState * oldState, 
 	out->acceleration = (percentageToOld * oldState->acceleration) + (percentageToNew * newState->acceleration);
 }
 
-void NWEntity::UpdatePosition(D3DXVECTOR3 position, D3DXVECTOR3 rotation, D3DXVECTOR3 velocity, D3DXVECTOR3 acceleration, unsigned long timestamp)
+void NWEntity::UpdatePosition(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 velocity, XMFLOAT3 acceleration, unsigned long timestamp)
 {
 	newState.position = position;
 	newState.velocity = velocity;

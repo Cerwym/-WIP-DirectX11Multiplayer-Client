@@ -2,10 +2,10 @@
 
 D3DCamera::D3DCamera(float FoVy, float aspect, float zNear, float zFar)
 {
-	m_Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_Right = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
-	m_Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	m_LookAt = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+	m_Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	m_Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	m_LookAt = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 	D3DXMatrixIdentity(&m_ViewMatrix);
 	D3DXMatrixIdentity(&m_ProjMatrix);
@@ -45,7 +45,7 @@ void D3DCamera::Move_X(float d)
 
 }
 
-void D3DCamera::SetPosition(D3DXVECTOR3& pos)
+void D3DCamera::SetPosition(XMFLOAT3& pos)
 {
 	m_Position = pos;
 }

@@ -14,7 +14,7 @@ void D3DLight::SetAmbientColour(float r, float g, float b, float a)
 
 void D3DLight::SetDirection(float x, float y, float z)
 {
-	m_direction = D3DXVECTOR3(x,y,z);
+	m_direction = XMFLOAT3(x,y,z);
 	return;
 }
 

@@ -40,7 +40,7 @@ bool D3DSkyBox::Init(ID3D11Device* d3d11Device, int LatLines, int LongLines, WCH
 
 	std::vector<Vertex> vertices(m_Vertices);
 
-	D3DXVECTOR3 currVertPos = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+	XMFLOAT3 currVertPos = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 	vertices[0].Position.x = 0.0f;
 	vertices[0].Position.y = 0.0f;
@@ -54,7 +54,7 @@ bool D3DSkyBox::Init(ID3D11Device* d3d11Device, int LatLines, int LongLines, WCH
 		{
 			sphereYaw = (float)(j * (6.28/(LongLines)));
 			D3DXMatrixRotationZ(&m_RotationY, sphereYaw);
-			D3DXVec3TransformNormal( &currVertPos, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), &(m_RotationX * m_RotationY) );
+			D3DXVec3TransformNormal( &currVertPos, &XMFLOAT3(0.0f, 0.0f, 1.0f), &(m_RotationX * m_RotationY) );
 			D3DXVec3Normalize(&currVertPos, &currVertPos);
 			
 			vertices[i*LongLines+j+1].Position.x = currVertPos.x;

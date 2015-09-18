@@ -1,7 +1,7 @@
 #pragma once
 
 #include <d3d11.h>
-#include <d3dx10math.h>
+#include <DirectXMath.h>
 
 #include "D3DTexture.h"
 #include "D3DCamera.h"
@@ -18,7 +18,7 @@ private:
 
 	struct VertexType
 	{
-		D3DXVECTOR3 position;
+		XMFLOAT3 position;
 		D3DXVECTOR2 texture;
 		D3DXVECTOR4 color;
 	};
@@ -32,11 +32,11 @@ public:
 	bool Frame(float, ID3D11DeviceContext*, D3DCamera* cam );
 	void Render(ID3D11DeviceContext*);
 
-	D3DXVECTOR3 GetPosition() { return m_Position; }
+	XMFLOAT3 GetPosition() { return m_Position; }
 	D3DXMATRIX GetWorld(){ return m_WorldMatrix; }
 
 	void TranslateTo( float x, float y, float z );
-	void TranslateTo( D3DXVECTOR3& pos );
+	void TranslateTo( XMFLOAT3& pos );
 	void RotateBy( float x, float y, float z );
 	void SetRotation( float x, float y, float z);
 	void NO_GSBillboard( D3DCamera* camera);
@@ -81,8 +81,8 @@ private:
 	D3DXMATRIX m_WorldMatrix;
 
 	// This instance of the particle emitter's local rotation data
-	D3DXVECTOR3 m_Rotation;
-	D3DXVECTOR3 m_Position;
-	D3DXVECTOR3 m_Scale;
+	XMFLOAT3 m_Rotation;
+	XMFLOAT3 m_Position;
+	XMFLOAT3 m_Scale;
 };
 

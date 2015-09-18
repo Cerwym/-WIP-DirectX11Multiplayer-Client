@@ -52,7 +52,7 @@ public:
 	void SetPingWaitTime(float time){m_TickRate = time;}
 
 	bool SendStateChange(char state);
-	bool SendPositionUpdate(D3DXVECTOR3 position, D3DXVECTOR3 rotation, D3DXVECTOR3 velocity, D3DXVECTOR3 acceleration);
+	bool SendPositionUpdate(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 velocity, XMFLOAT3 acceleration);
 	
 private:
 	void AddMessageToQueue(char* message, int messageSize, struct sockaddr_in serverAddress);

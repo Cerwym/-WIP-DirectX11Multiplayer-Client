@@ -1,6 +1,6 @@
 #pragma once
 
-#include <D3DX10math.h>
+#include <DirectXMath.h>
 
 class D3DFrustum
 {
@@ -9,7 +9,7 @@ public:
 	D3DFrustum(const D3DFrustum&){}
 	~D3DFrustum(){}
 
-	void ConstructFrustrum(float, D3DXMATRIX, D3DXMATRIX);
+	void ConstructFrustrum(float, , D3DXMATRIX);
 
 	bool CheckPoint(float, float, float);
 	bool CheckCube(float, float, float, float);

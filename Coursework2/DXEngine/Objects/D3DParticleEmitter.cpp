@@ -9,9 +9,9 @@ D3DParticleEmitter::D3DParticleEmitter()
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
 
-	m_Scale = D3DXVECTOR3( 1.0f, 1.0f, 1.0f );
-	m_Position = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
-	m_Rotation = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
+	m_Scale = XMFLOAT3( 1.0f, 1.0f, 1.0f );
+	m_Position = XMFLOAT3( 0.0f, 0.0f, 0.0f );
+	m_Rotation = XMFLOAT3( 0.0f, 0.0f, 0.0f );
 }
 
 
@@ -75,11 +75,11 @@ void D3DParticleEmitter::NO_GSBillboard(D3DCamera* camera)
 
 void D3DParticleEmitter::TranslateTo( float x, float y, float z )
 {
-	m_Position = D3DXVECTOR3( x, y, z );
+	m_Position = XMFLOAT3( x, y, z );
 	RebuildTransform();
 }
 
-void D3DParticleEmitter::TranslateTo( D3DXVECTOR3& pos )
+void D3DParticleEmitter::TranslateTo( XMFLOAT3& pos )
 {
 	m_Position = pos;
 	RebuildTransform();
@@ -87,13 +87,13 @@ void D3DParticleEmitter::TranslateTo( D3DXVECTOR3& pos )
 
 void D3DParticleEmitter::RotateBy( float x, float y, float z )
 {
-	m_Rotation += D3DXVECTOR3( x, y, z );
+	m_Rotation += XMFLOAT3( x, y, z );
 	RebuildTransform();
 }
 
 void D3DParticleEmitter::SetRotation( float x, float y, float z )
 {
-	m_Rotation = D3DXVECTOR3(x, y, z);
+	m_Rotation = XMFLOAT3(x, y, z);
 	RebuildTransform();
 }
 
@@ -501,32 +501,32 @@ bool D3DParticleEmitter::UpdateBuffers(ID3D11DeviceContext* deviceContext)
 	for(i = 0; i < m_currentParticleCount; i++)
 	{
 		// Bottom left.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
+		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
 		m_vertices[index].texture = D3DXVECTOR2(0.0f, 1.0f);
 		index++;
 
 		// Top left.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
+		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
 		m_vertices[index].texture = D3DXVECTOR2(0.0f, 0.0f);
 		index++;
 
 		// Bottom right.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
+		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
 		m_vertices[index].texture = D3DXVECTOR2(1.0f, 1.0f);
 		index++;
 
 		// Bottom right.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
+		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
 		m_vertices[index].texture = D3DXVECTOR2(1.0f, 1.0f);
 		index++;
 
 		// Top left.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
+		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
 		m_vertices[index].texture = D3DXVECTOR2(0.0f, 0.0f);
 		index++;
 
 		// Top right.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
+		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
 		m_vertices[index].texture = D3DXVECTOR2(1.0f, 0.0f);
 		index++;
 	}

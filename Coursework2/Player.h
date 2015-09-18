@@ -1,6 +1,6 @@
 #pragma once
 
-#include <D3DX10math.h>
+#include <DirectXMath.h>
 #include "DXEngine/Defines.h"
 #include "DXEngine/D3DInput.h"
 #include "DXEngine/Objects/D3DCamera.h"
@@ -17,7 +17,7 @@ const char STATE_NOT_MOVING_BACKWARD = 7;
 const float PLAYER_MAX_SPEED = 0.275f;
 const float PLAYER_ACCELERATION_RATE = 0.2f;
 
-D3DXVECTOR3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat);
+XMFLOAT3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat);
 
 class Player
 {
@@ -35,10 +35,10 @@ public:
 	void MoveX(float d);
 	void MoveZ(float d);
 
-	D3DXVECTOR3 GetPosition(){return m_Position;}
-	D3DXVECTOR3 GetRotation(){return m_Rotation;}
-	D3DXVECTOR3 GetVelocity(){return m_velocity;}
-	D3DXVECTOR3 GetAcceleration(){return m_acceleration;}
+	XMFLOAT3 GetPosition(){return m_Position;}
+	XMFLOAT3 GetRotation(){return m_Rotation;}
+	XMFLOAT3 GetVelocity(){return m_velocity;}
+	XMFLOAT3 GetAcceleration(){return m_acceleration;}
 	void GetPosition(float &x, float& y, float& z);
 	void GetRotation(float& x, float& y, float& z);
 
@@ -65,9 +65,9 @@ private:
 	void RebuildTransform();
 
 	D3DCamera* m_Camera;
-	D3DXMATRIX m_ViewMatrix, m_ProjectionMatrix, m_WorldMatrix;
-	D3DXVECTOR3 m_Position, m_LookAt, m_Right, m_Up, m_velocity, m_oldVelocity, m_acceleration;
-	D3DXVECTOR3 m_Rotation;
+	XMMATRIX m_ViewMatrix, m_ProjectionMatrix, m_WorldMatrix;
+	XMFLOAT3 m_Position, m_LookAt, m_Right, m_Up, m_velocity, m_oldVelocity, m_acceleration;
+	XMFLOAT3 m_Rotation;
 
 	float m_frameTime;
 	float m_lookUpSpeed, m_lookDownSpeed;

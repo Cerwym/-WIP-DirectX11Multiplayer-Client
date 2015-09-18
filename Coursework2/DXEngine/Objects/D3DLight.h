@@ -2,7 +2,7 @@
 
 // The purpose of this class is to set and maintain the direction and colour of lights
 
-#include <D3DX10math.h>
+#include <DirectXMath.h>
 
 class D3DLight
 {
@@ -22,14 +22,14 @@ public:
 
 	D3DXVECTOR4 GetDiffuseColour(){return m_diffuseColour;}
 	D3DXVECTOR4 GetAmbientColour(){return m_ambientColour;}
-	D3DXVECTOR3 GetDirection(){return m_direction;}
+	XMFLOAT3 GetDirection(){return m_direction;}
 	D3DXVECTOR4 GetSpecularColour(){return m_specularColour;}
 	float GetSpecularPower(){return m_specularPower;}
 
 private:
 	D3DXVECTOR4 m_ambientColour;
 	D3DXVECTOR4 m_diffuseColour;
-	D3DXVECTOR3 m_direction;
+	XMFLOAT3 m_direction;
 	D3DXVECTOR4 m_specularColour;
 	float m_specularPower;
 };

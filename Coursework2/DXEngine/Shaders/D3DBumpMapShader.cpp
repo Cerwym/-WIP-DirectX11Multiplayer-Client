@@ -45,7 +45,7 @@ bool D3DBumpMapShader::Init(ID3D11Device* device, HWND hwnd)
 
 bool D3DBumpMapShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
 								D3DXMATRIX projectionMatrix, ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalMapTexture, 
-								D3DXVECTOR3 lightDirection, D3DXVECTOR4 diffuseColor)
+								XMFLOAT3 lightDirection, D3DXVECTOR4 diffuseColor)
 {
 	bool result;
 
@@ -304,7 +304,7 @@ void D3DBumpMapShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 bool D3DBumpMapShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, 
 											 D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
 											 ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalMapTexture, 
-											 D3DXVECTOR3 lightDirection, D3DXVECTOR4 diffuseColor)
+											 XMFLOAT3 lightDirection, D3DXVECTOR4 diffuseColor)
 {
 	HRESULT result;
     D3D11_MAPPED_SUBRESOURCE mappedResource;

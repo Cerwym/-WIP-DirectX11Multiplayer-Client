@@ -14,12 +14,12 @@ D3DModel::D3DModel()
 
 	m_isBumpMapped = false;
 
-	m_Scale = D3DXVECTOR3( 1.0f, 1.0f, 1.0f );
-	m_Position = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
-	m_Rotation = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
+	m_Scale = XMFLOAT3( 1.0f, 1.0f, 1.0f );
+	m_Position = XMFLOAT3( 0.0f, 0.0f, 0.0f );
+	m_Rotation = XMFLOAT3( 0.0f, 0.0f, 0.0f );
 }
 
-D3DModel::D3DModel( D3DXVECTOR3& pos )
+D3DModel::D3DModel( XMFLOAT3& pos )
 {
 	m_VertexBuffer = 0;
 	m_indexBuffer = 0;
@@ -32,9 +32,9 @@ D3DModel::D3DModel( D3DXVECTOR3& pos )
 
 	m_isBumpMapped = false;
 
-	m_Scale = D3DXVECTOR3( 1.0f, 1.0f, 1.0f );
-	m_Position = D3DXVECTOR3( pos.x, pos.y, pos.z );
-	m_Rotation = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
+	m_Scale = XMFLOAT3( 1.0f, 1.0f, 1.0f );
+	m_Position = XMFLOAT3( pos.x, pos.y, pos.z );
+	m_Rotation = XMFLOAT3( 0.0f, 0.0f, 0.0f );
 }
 
 D3DModel::~D3DModel() 
@@ -164,25 +164,25 @@ bool D3DModel::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMg
 
 void D3DModel::TranslateBy( float x, float y, float z )
 {
-	m_Position += D3DXVECTOR3( x, y, z );
+	m_Position += XMFLOAT3( x, y, z );
 	RebuildTransform();
 }
 
 void D3DModel::TranslateTo( float x, float y, float z )
 {
-	m_Position = D3DXVECTOR3( x, y, z );
+	m_Position = XMFLOAT3( x, y, z );
 	RebuildTransform();
 }
 
 void D3DModel::RotateBy( float x, float y, float z )
 {
-	m_Rotation += D3DXVECTOR3( x, y, z );
+	m_Rotation += XMFLOAT3( x, y, z );
 	RebuildTransform();
 }
 
 void D3DModel::SetRotation( float x, float y, float z )
 {
-	m_Rotation = D3DXVECTOR3(x, y, z);
+	m_Rotation = XMFLOAT3(x, y, z);
 	RebuildTransform();
 }
 
@@ -221,9 +221,9 @@ bool D3DModel::InitBuffers(ID3D11Device* device)
 		// Fill the index buffer with data
 		for (int i = 0; i < m_vertexCount; i++)
 		{
-			vertices[i].position = D3DXVECTOR3(m_Model[i].x, m_Model[i].y, m_Model[i].z);
+			vertices[i].position = XMFLOAT3(m_Model[i].x, m_Model[i].y, m_Model[i].z);
 			vertices[i].texture = D3DXVECTOR2(m_Model[i].tu, m_Model[i].tv);
-			vertices[i].normal = D3DXVECTOR3(m_Model[i].nx, m_Model[i].ny, m_Model[i].nz);
+			vertices[i].normal = XMFLOAT3(m_Model[i].nx, m_Model[i].ny, m_Model[i].nz);
 			indices[i] = i;
 		}
 	}
@@ -231,11 +231,11 @@ bool D3DModel::InitBuffers(ID3D11Device* device)
 	{
 		for( int i = 0; i < m_vertexCount; i++ )
 		{
-			Bvertices[i].position = D3DXVECTOR3(m_BModel[i].x, m_BModel[i].y, m_BModel[i].z);
+			Bvertices[i].position = XMFLOAT3(m_BModel[i].x, m_BModel[i].y, m_BModel[i].z);
 			Bvertices[i].texture = D3DXVECTOR2(m_BModel[i].tu, m_BModel[i].tv);
-			Bvertices[i].normal = D3DXVECTOR3(m_BModel[i].nx, m_BModel[i].ny, m_BModel[i].nz);
-			Bvertices[i].tangent = D3DXVECTOR3(m_BModel[i].tx, m_BModel[i].ty, m_BModel[i].tz);
-			Bvertices[i].binormal = D3DXVECTOR3(m_BModel[i].bx, m_BModel[i].by, m_BModel[i].bz);
+			Bvertices[i].normal = XMFLOAT3(m_BModel[i].nx, m_BModel[i].ny, m_BModel[i].nz);
+			Bvertices[i].tangent = XMFLOAT3(m_BModel[i].tx, m_BModel[i].ty, m_BModel[i].tz);
+			Bvertices[i].binormal = XMFLOAT3(m_BModel[i].bx, m_BModel[i].by, m_BModel[i].bz);
 
 			indices[i] = i;
 		}

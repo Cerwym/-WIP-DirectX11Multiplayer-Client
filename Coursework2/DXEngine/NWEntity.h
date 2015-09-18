@@ -26,9 +26,9 @@ class NWEntity
 private:
 	struct kinematicState  
 	{
-		D3DXVECTOR3 position;
-		D3DXVECTOR3 velocity;
-		D3DXVECTOR3 acceleration;
+		XMFLOAT3 position;
+		XMFLOAT3 velocity;
+		XMFLOAT3 acceleration;
 	};
 public:
 	NWEntity();
@@ -41,17 +41,17 @@ public:
 	void SetOnlineStatus(bool flag){m_online = flag;}
 	void SetID(unsigned short ID){m_EntityID = ID;}
 	void SetType(char type){m_EntityType = type;}
-	void SetPosition(D3DXVECTOR3 &pos){ m_Position = pos; }
-	void SetRotation(D3DXVECTOR3 &rot){ m_Rotation = rot; }
-	void SetAcceleration(D3DXVECTOR3 &acc){m_Velocity = acc;}
+	void SetPosition(XMFLOAT3 &pos){ m_Position = pos; }
+	void SetRotation(XMFLOAT3 &rot){ m_Rotation = rot; }
+	void SetAcceleration(XMFLOAT3 &acc){m_Velocity = acc;}
 	bool IsOnline(){return m_online;}
 	unsigned short GetID(){return m_EntityID;}
 	char GetEntityType(){return m_EntityType;}
-	void GetPosition(D3DXVECTOR3& position){ position = m_Position;}
-	void GetRotation(D3DXVECTOR3& rotation){ rotation = m_Rotation;}
+	void GetPosition(XMFLOAT3& position){ position = m_Position;}
+	void GetRotation(XMFLOAT3& rotation){ rotation = m_Rotation;}
 	void UpdateState(char state);
 	void Update( float deltaTime );
-	void UpdatePosition(D3DXVECTOR3 position, D3DXVECTOR3 rotation, D3DXVECTOR3 velocity, D3DXVECTOR3 acceleration, unsigned long timestamp);
+	void UpdatePosition(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 velocity, XMFLOAT3 acceleration, unsigned long timestamp);
 	void UpdateRotateState(bool rotate){m_turningRight = rotate;}
 	void HasRecievedMessage(bool flag){m_messageRecieved = flag;}
 
@@ -70,10 +70,10 @@ private:
 
 	kinematicState oldState, newState;
 
-	D3DXVECTOR3 m_Position;
-	D3DXVECTOR3 m_Rotation;
-	D3DXVECTOR3 m_Velocity;
-	D3DXVECTOR3 m_Acceleration;
+	XMFLOAT3 m_Position;
+	XMFLOAT3 m_Rotation;
+	XMFLOAT3 m_Velocity;
+	XMFLOAT3 m_Acceleration;
 
 	bool m_movingForward, m_movingBackward, m_turningLeft, m_turningRight;
 };

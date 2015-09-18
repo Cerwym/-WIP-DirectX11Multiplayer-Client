@@ -1,6 +1,6 @@
 #pragma once
 
-#include <D3DX10math.h>
+#include <DirectXMath.h>
 #include "..\Defines.h"
 #include "D3DFrustum.h"
 
@@ -11,9 +11,9 @@ public:
 	D3DCamera(const D3DCamera&){}
 	~D3DCamera();
 
-	void SetPosition(D3DXVECTOR3& pos);
+	void SetPosition(XMFLOAT3& pos);
 	D3DFrustum* GetFrustum(){ return m_Frustum; }
-	D3DXVECTOR3& GetPosition(){return m_Position;}
+	XMFLOAT3& GetPosition(){return m_Position;}
 	D3DXMATRIX GetViewMatrix()const{return m_ViewMatrix;}
 	D3DXMATRIX GetProjMatrix()const{return m_ProjMatrix;}
 	D3DXMATRIX GetWorld()const{return m_WorldMatrix;}
@@ -35,10 +35,10 @@ public:
 private:
 
 	D3DFrustum* m_Frustum;
-	D3DXVECTOR3 m_Position;
-	D3DXVECTOR3 m_LookAt;
-	D3DXVECTOR3 m_Right;
-	D3DXVECTOR3 m_Up;
+	XMFLOAT3 m_Position;
+	XMFLOAT3 m_LookAt;
+	XMFLOAT3 m_Right;
+	XMFLOAT3 m_Up;
 	D3DXMATRIX m_ViewMatrix;
 	D3DXMATRIX m_ProjMatrix;
 	D3DXMATRIX m_WorldMatrix;

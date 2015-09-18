@@ -74,7 +74,7 @@ bool D3DShaderManager::RenderTextureShader( ID3D11DeviceContext* device, int ind
 
 
 bool D3DShaderManager::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
-										   ID3D11ShaderResourceView* texture, D3DXVECTOR3 &camPosition, D3DLight* lightObject)
+										   ID3D11ShaderResourceView* texture, XMFLOAT3 &camPosition, D3DLight* lightObject)
 {
 	// Render the model using the light shader.
 	if(! m_D3DLightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, lightObject->GetDirection(), lightObject->GetAmbientColour(), lightObject->GetDiffuseColour(), camPosition, 

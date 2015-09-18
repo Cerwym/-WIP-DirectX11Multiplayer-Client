@@ -1,7 +1,7 @@
 #pragma once
 
 #include <d3d11.h>
-#include <D3DX10math.h>
+#include <DirectXMath.h>
 #include <D3DX11async.h> // To compile the shader
 #include <vector>
 #include "..\Defines.h"
@@ -29,9 +29,9 @@ private:
 		Vertex(){}
 		Vertex(float x, float y, float z, float u, float v, float nx, float ny, float nz) : Position(x,y,z), TextureC(u, v), Normals(nx, ny, nz){}
 
-		D3DXVECTOR3 Position;
+		XMFLOAT3 Position;
 		D3DXVECTOR2 TextureC;
-		D3DXVECTOR3 Normals;
+		XMFLOAT3 Normals;
 	};
 
 	struct ConstantBuffer

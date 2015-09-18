@@ -39,17 +39,17 @@ bool GameState::dLoad()
 		return false;
 	}
 	
-	m_Floor = new D3DModel(D3DXVECTOR3(0, -5, 0));
+	m_Floor = new D3DModel(XMFLOAT3(0, -5, 0));
 	m_Floor->Init( D3D()->GetDevice(), "Data/Models/floor.txt", L"Data/Textures/floor.dds", L"Data/Textures/floor_nmap.dds");
 
-	m_BillBoard = new D3DModel(D3DXVECTOR3(0, -4, 5));
+	m_BillBoard = new D3DModel(XMFLOAT3(0, -4, 5));
 	if (!m_BillBoard->Init( D3D()->GetDevice(), "Data/Models/square.txt", L"Data/Textures/imp.dds"))
 	{
 		MessageBox( appWindow, L"Failed to Load billboard model", L"Error", MB_OK);
 		return false;
 	}
 
-	m_DaveDude = new D3DModel(D3DXVECTOR3(0,0,0));
+	m_DaveDude = new D3DModel(XMFLOAT3(0,0,0));
 	if (!m_DaveDude->Init( D3D()->GetDevice(), "Data/Models/dude.txt", L"Data/Textures/dude_texture.dds"))
 	{
 		MessageBox( appWindow, L"Failed to Load dave model correctly", L"Error", MB_OK);
@@ -132,10 +132,10 @@ void GameState::dUpdate( float dt )
 {
 	// Update the player first
 	m_Player->Update(Input(), dt);
-	D3DXVECTOR3 pos = m_Player->GetPosition();
-	D3DXVECTOR3 rot = m_Player->GetRotation();
-	D3DXVECTOR3 vel = m_Player->GetVelocity();
-	D3DXVECTOR3 acc = m_Player->GetAcceleration();
+	XMFLOAT3 pos = m_Player->GetPosition();
+	XMFLOAT3 rot = m_Player->GetRotation();
+	XMFLOAT3 vel = m_Player->GetVelocity();
+	XMFLOAT3 acc = m_Player->GetAcceleration();
 	// Update network information
 
 
@@ -264,7 +264,7 @@ void GameState::UpdateInput( float dt )
 	{
 		if (positionChanged)
 		{
-			D3DXVECTOR3 pos = m_Player->GetPosition();
+			XMFLOAT3 pos = m_Player->GetPosition();
 			//m_Network->SendPositionUpdate(pos.x, pos.y, pos.z, 0,0,0);
 		}
 	}
@@ -336,7 +336,7 @@ void GameState::Render2D()
 
 // Networking functions
 
-void GameState::AddEntity(unsigned short entID, char entType, D3DXVECTOR3 position, D3DXVECTOR3 rotation)
+void GameState::AddEntity(unsigned short entID, char entType, XMFLOAT3 position, XMFLOAT3 rotation)
 {
 	g_Engine->DebugOutput(L"Network entity added\n");
 	int i = 0;
@@ -424,7 +424,7 @@ bool GameState::PositionUpdate(float& posX, float& posY, float& posZ, float& rot
 		return false;
 }
 
-void GameState::UpdateEntityPosition(unsigned short entID, D3DXVECTOR3& pos, D3DXVECTOR3& rot, D3DXVECTOR3& vel, D3DXVECTOR3& acc, unsigned long& timestamp)
+void GameState::UpdateEntityPosition(unsigned short entID, XMFLOAT3& pos, XMFLOAT3& rot, XMFLOAT3& vel, XMFLOAT3& acc, unsigned long& timestamp)
 {
 	int i = 0;
 	bool found = false;

@@ -4,11 +4,11 @@
 
 Player::Player()
 {
-	m_Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_Right = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
-	m_Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	m_LookAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_velocity = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	m_Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	m_LookAt = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 	D3DXMatrixIdentity(&m_ViewMatrix);
 	D3DXMatrixIdentity(&m_ProjectionMatrix);
@@ -510,7 +510,7 @@ bool Player::MoveBackwardStateChange(char& newState)
 	return result;
 }
 
-D3DXVECTOR3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat)
+XMFLOAT3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat)
 {
 	//theta1 = atan2(m01, m11)
 	double theta1 = atan2(mat._23, mat._33);
@@ -519,5 +519,5 @@ D3DXVECTOR3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat)
 	double s1 = sin(theta1); double c1 = cos(theta1);
 	double theta3 = atan2( (s1 * mat._31) - (c1 * mat._31), (c1 * mat._22) - (s1 * mat._31) );
 
-	return D3DXVECTOR3(theta1, theta2, theta3);
+	return XMFLOAT3(theta1, theta2, theta3);
 }

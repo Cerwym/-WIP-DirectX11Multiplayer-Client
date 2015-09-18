@@ -1,7 +1,7 @@
 #pragma once
 
 #include <d3d11.h>
-#include <D3DX10math.h>
+#include <DirectXMath.h>
 #include <assert.h>
 
 #include "..\Defines.h"
@@ -43,7 +43,7 @@ public:
 private:
 	struct VertexType
 	{
-		D3DXVECTOR3 position;
+		XMFLOAT3 position;
 		D3DXVECTOR2 texture;
 	};
 

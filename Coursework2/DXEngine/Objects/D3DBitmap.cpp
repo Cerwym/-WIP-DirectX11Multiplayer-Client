@@ -154,23 +154,23 @@ bool D3DBitmap::UpdateBuffers(ID3D11DeviceContext* deviceContext, int posX, int 
 		return false;
 
 	// First triangle data
-	verts[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+	verts[0].position = XMFLOAT3(left, top, 0.0f);  // Top left.
 	verts[0].texture = D3DXVECTOR2(0.0f, 0.0f);
 
-	verts[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+	verts[1].position = XMFLOAT3(right, bottom, 0.0f);  // Bottom right.
 	verts[1].texture = D3DXVECTOR2(1.0f, 1.0f);
 
-	verts[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
+	verts[2].position = XMFLOAT3(left, bottom, 0.0f);  // Bottom left.
 	verts[2].texture = D3DXVECTOR2(0.0f, 1.0f);
 
 	// Second triangle.
-	verts[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+	verts[3].position = XMFLOAT3(left, top, 0.0f);  // Top left.
 	verts[3].texture = D3DXVECTOR2(0.0f, 0.0f);
 
-	verts[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
+	verts[4].position = XMFLOAT3(right, top, 0.0f);  // Top right.
 	verts[4].texture = D3DXVECTOR2(1.0f, 0.0f);
 
-	verts[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+	verts[5].position = XMFLOAT3(right, bottom, 0.0f);  // Bottom right.
 	verts[5].texture = D3DXVECTOR2(1.0f, 1.0f);
 
 	// Lock the vertex buffer for writing

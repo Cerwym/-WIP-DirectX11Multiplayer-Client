@@ -1,7 +1,7 @@
 #pragma once
 
 #include <d3d11.h>
-#include <D3DX10math.h>
+#include <DirectXMath.h>
 #include <fstream>
 
 #include "..\Defines.h"
@@ -21,7 +21,7 @@ private:
 	};
 public:
 	D3DModel();
-	D3DModel( D3DXVECTOR3& pos );
+	D3DModel( XMFLOAT3& pos );
 	D3DModel(const D3DModel&){}
 	~D3DModel();
 
@@ -30,7 +30,7 @@ public:
 
 	bool Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMgr, D3DCamera* camera, D3DLight* lightObj, const int cullMode = CULL_CUBE );
 
-	D3DXVECTOR3 GetPosition() { return m_Position; }
+	XMFLOAT3 GetPosition() { return m_Position; }
 	D3DXMATRIX GetWorld() { return m_WorldMatrix; }
 
 	void NO_GSBillboard( D3DCamera* camera);
@@ -46,19 +46,19 @@ private:
 	// Vertex Structure for an object using texture mapping
 	struct TexVertex
 	{
-		D3DXVECTOR3 position;
+		XMFLOAT3 position;
 		D3DXVECTOR2 texture;
-		D3DXVECTOR3 normal;
+		XMFLOAT3 normal;
 	};
 
 	// Vertex Structure for an object using bump mapping
 	struct BumpVertex
 	{
-		D3DXVECTOR3 position;
+		XMFLOAT3 position;
 		D3DXVECTOR2 texture;
-		D3DXVECTOR3 normal;
-		D3DXVECTOR3 tangent;
-		D3DXVECTOR3 binormal;
+		XMFLOAT3 normal;
+		XMFLOAT3 tangent;
+		XMFLOAT3 binormal;
 	};
 
 	// Model structure for an object using texture mapping
@@ -86,7 +86,7 @@ private:
 
 	struct InstancedData
 	{
-		D3DXVECTOR3 position;
+		XMFLOAT3 position;
 	};
 
 	bool InitBuffers(ID3D11Device*);
@@ -110,11 +110,11 @@ private:
 	BumpModel* m_BModel;
 
 	// The object's position in local space
-	D3DXVECTOR3 m_Position;
+	XMFLOAT3 m_Position;
 	// The object's scale
-	D3DXVECTOR3 m_Scale;
+	XMFLOAT3 m_Scale;
 	// The object's rotation data
-	D3DXVECTOR3 m_Rotation;
+	XMFLOAT3 m_Rotation;
 	// The object's local world matrix;
 	D3DXMATRIX m_WorldMatrix;
 

@@ -24,6 +24,6 @@ private:
 	D3DBitmap* m_BackgroundTexture;
 	D3DBitmap* m_Button;
 
-	XMatrix m_baseViewMatrix;
+	XMMATRIX m_baseViewMatrix;
 };
 

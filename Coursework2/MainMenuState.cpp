@@ -20,20 +20,21 @@ MainMenuState::MainMenuState() : State( MAINMENU_STATE )
 
 bool MainMenuState::dLoad()
 {
+	/*
 	g_Engine->DebugOutput(L"Main Menu Loading...\n");
 	m_OrthoMatrix = D3D()->GetOrthoMatrix();
 
 	// Might want to check to see if the objects already exists as loading a new state will change what the object points to
 	m_MarbleCube = new D3DModel(XMFLOAT3(-3.5f, 0, 0));
-	if(!m_MarbleCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/marble.dds"))
+	if(!m_MarbleCube->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Models/cube.txt", "Data/Textures/marble.dds"))
 		return false;
 
 	m_MetalCube = new D3DModel();
-	if (!m_MetalCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/metal.dds"))
+	if (!m_MetalCube->Init(D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Models/cube.txt", "Data/Textures/metal.dds"))
 		return false;
 
 	m_StoneCube = new D3DModel(XMFLOAT3(3.5f, 0, 0));
-	if (!m_StoneCube->Init( D3D()->GetDevice(), "Data/Models/cube.txt", L"Data/Textures/stone.dds", L"Data/Models/cube_normal.dds" ))
+	if (!m_StoneCube->Init(D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Models/cube.txt", "Data/Textures/stone.dds", "Data/Models/cube_normal.dds"))
 		return false;
 
 	m_SkyBox = new D3DSkyBox;
@@ -60,15 +61,15 @@ bool MainMenuState::dLoad()
 		return false;
 
 	m_DebugView = new D3DBitmap;
-	if (!m_DebugView->Init( D3D()->GetDevice(), Options()->scrWidth, Options()->scrHeight, NULL, 100, 100 ))
+	if (!m_DebugView->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), Options()->scrWidth, Options()->scrHeight, NULL, 100, 100 ))
 		return false;
 
 	m_DebugView->SetPosition(50, 50);
 
 	m_RainEmitter = new	D3DParticleEmitter;
-	if (!m_RainEmitter->Initialize( D3D()->GetDevice(), L"Data/Textures/raindrop.dds"))
+	if (!m_RainEmitter->Initialize( D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Textures/raindrop.dds"))
 		return false;
-
+ */
 	g_Engine->DebugOutput(L"Main Menu Loaded\n"); 
 	return true;
 }
@@ -91,7 +92,7 @@ void MainMenuState::dClose()
 
 void MainMenuState::dUpdate( float dt )
 {
-
+	/*
 	if (Input()->isKeyPressed( DIK_ESCAPE) )
 	{
 		MessageBox( g_Engine->GetWindow(), L"Quitting Application", L"Quitting...", MB_ICONINFORMATION );
@@ -123,6 +124,10 @@ void MainMenuState::dUpdate( float dt )
 	if ( Input()->GetDeltaX() != 0 && m_MouseLock)
 		m_Camera->Roll( ( Input()->GetDeltaX() / g_Engine->GetMouseSensitivityX() ) * 0.0087266f );
 
+	*/
+
+
+
 	/*
 	if (! m_TextBatch->SetMousePosition( Input()->GetPosX(), Input()->GetPosY(), D3D()->GetDeviceContext() ) )
 	{
@@ -135,6 +140,8 @@ void MainMenuState::dUpdate( float dt )
 
 	*/
 
+
+	/*
 	m_MarbleCube->RotateBy( 1 * dt, 0, 0 );
 	m_MetalCube->RotateBy( 0, 1 * dt, 0 );
 	m_StoneCube->RotateBy( 1 * dt , 0, 1 * dt );
@@ -161,10 +168,14 @@ void MainMenuState::dUpdate( float dt )
 		}
 		return;
 	}
+
+	*/
 }
 
 void MainMenuState::dRender()
 {
+
+	/*
 	RenderTexture()->SetRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView() );
 	RenderTexture()->ClearRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
 	// Render the scene (CURRENTLY WITH ALL SHADERS on the front buffer)
@@ -181,6 +192,8 @@ void MainMenuState::dRender()
 	
 	Render3D();
 	Render2D();
+
+	*/
 }
 
 void MainMenuState::Render3D( bool renderParticles, bool renderSkybox )

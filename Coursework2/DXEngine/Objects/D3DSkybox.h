@@ -3,6 +3,9 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 //#include <D3DX11async.h> // To compile the shader
+// Temporary
+#include <d3dcompiler.h>
+#include <d3dx11effect.h>
 #include <vector>
 #include "..\Defines.h"
 #include "D3DCamera.h"

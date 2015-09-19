@@ -15,8 +15,8 @@ public:
 	D3DText(const D3DText&){}
 	~D3DText();
 
-	bool Init(ID3D11Device*, ID3D11DeviceContext*, HWND, int, int, XMMATRIX);
-	bool Render(ID3D11DeviceContext*, XMMATRIX);
+	bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWND hwnd, int screenWidth, int screenHeight, const XMMATRIX &baseViewMatrix);
+	bool Render(ID3D11DeviceContext* deviceContext, const XMMATRIX &orthoMatrix);
 	bool CreateSentence(D3DSys* d3d, int ID, int maxLength, char* text, int posX, int posY, float r, float g, float b);
 	bool UpdateSentence(int ID, char*, int, int, float, float, float, ID3D11DeviceContext*);
 	
@@ -37,13 +37,13 @@ private:
 	struct VertexType
 	{
 		XMFLOAT3 position;
-		D3DXVECTOR2 texture;
+		XMFLOAT2 texture;
 	};
 
 	bool InitSentence(int ID, int, ID3D11Device*);
 
 	void ReleaseSentence(int ID);
-	bool RenderSentence(ID3D11DeviceContext*, int ID, XMMATRIX);
+	bool RenderSentence(ID3D11DeviceContext* deviceContext, int ID, const XMMATRIX &orthoMatrix);
 
 	D3DFont* m_Font;
 	D3DFontShader* m_FontShader;

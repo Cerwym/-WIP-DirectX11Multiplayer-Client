@@ -40,7 +40,7 @@ bool State::baseLoad( EngineDefinition* eDef, D3DSys* d3d, D3DAudio* audio, D3DI
 		return false;
 
 	m_MouseBitmap = new D3DBitmap;
-	if ( !m_MouseBitmap->Init( m_Device->GetDevice(), eDef->scrWidth, eDef->scrHeight, L"Data/Textures/mouseCursor.dds", 32, 28 ) )
+	if ( !m_MouseBitmap->Init( m_Device->GetDevice(), m_Device->GetDeviceContext(), eDef->scrWidth, eDef->scrHeight, "Data/Textures/mouseCursor.tga", 32, 28 ) )
 		return false;
 
 	return true;

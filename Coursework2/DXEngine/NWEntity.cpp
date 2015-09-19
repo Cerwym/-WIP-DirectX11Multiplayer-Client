@@ -16,11 +16,11 @@ NWEntity::~NWEntity()
 	S_DELETE(m_EntityModel);
 }
 
-bool NWEntity::Init(D3DSys* sys, char* modelName, WCHAR* textureName)
+bool NWEntity::Init(D3DSys* sys, char* modelName, char* textureName)
 {
 	m_D3DSys = sys;
 	m_EntityModel = new D3DModel;
-	if (!m_EntityModel->Init(m_D3DSys->GetDevice(), modelName, textureName, NULL))
+	if (!m_EntityModel->Init(m_D3DSys->GetDevice(), m_D3DSys->GetDeviceContext(), modelName, textureName, NULL))
 		return false;
 	return true;
 }
@@ -62,6 +62,52 @@ void NWEntity::Update( float deltaTime )
 	//m_Velocity = state->velocity;
 	//m_Acceleration = state->acceleration;
 	BlendStateLinear(&newState, &oldState, &newState, deltaTime);
+}
+
+// scalar multiply
+XMFLOAT3 operator*(float scalar, XMFLOAT3 a)
+{
+	XMFLOAT3 ret;
+	ret.x = a.x * scalar;
+	ret.y = a.y * scalar;
+	ret.z = a.z * scalar;
+	return ret;
+}
+
+
+XMFLOAT3 operator*(XMFLOAT3 a, float scalar)
+{
+	XMFLOAT3 ret;
+	ret.x = a.x * scalar;
+	ret.y = a.y * scalar;
+	ret.z = a.z * scalar;
+	return ret;
+}
+XMFLOAT3 operator*(unsigned long scalar, XMFLOAT3 a)
+{
+	XMFLOAT3 ret;
+	ret.x = a.x * scalar;
+	ret.y = a.y * scalar;
+	ret.z = a.z * scalar;
+	return ret;
+}
+
+XMFLOAT3 operator+(float scalar, XMFLOAT3 a)
+{
+	XMFLOAT3 ret;
+	ret.x = a.x + scalar;
+	ret.y = a.y + scalar;
+	ret.z = a.z + scalar;
+	return ret;
+}
+
+XMFLOAT3 operator+(XMFLOAT3 a, XMFLOAT3 b)
+{
+	XMFLOAT3 ret;
+	ret.x = a.x + b.x;
+	ret.y = a.y + b.y;
+	ret.z = a.z + b.z;
+	return ret;
 }
 
 void NWEntity::PredictPositionQuadratic(kinematicState *old, kinematicState *predition, float elapsedSeconds)

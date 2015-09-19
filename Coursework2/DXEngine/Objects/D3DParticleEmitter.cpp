@@ -33,13 +33,13 @@ D3DParticleEmitter::~D3DParticleEmitter()
 }
 
 
-bool D3DParticleEmitter::Initialize(ID3D11Device* device, WCHAR* textureFilename)
+bool D3DParticleEmitter::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, char* textureFilename)
 {
 	bool result;
 
 
 	// Load the texture that is used for the particles.
-	result = LoadTexture(device, textureFilename);
+	result = LoadTexture(device, context, textureFilename);
 	if(!result)
 	{
 		return false;
@@ -68,7 +68,7 @@ bool D3DParticleEmitter::Initialize(ID3D11Device* device, WCHAR* textureFilename
 
 void D3DParticleEmitter::NO_GSBillboard(D3DCamera* camera)
 {
-	double angle = atan2( m_Position.x - camera->GetPosition().x, m_Position.z - camera->GetPosition().z) * ( 180 / D3DX_PI );
+	double angle = atan2( m_Position.x - camera->GetPosition().x, m_Position.z - camera->GetPosition().z) * ( 180 / XM_PI );
 	float rotation = angle * 0.0174532925f;
 	SetRotation( 0, rotation, 0 );
 }
@@ -87,7 +87,9 @@ void D3DParticleEmitter::TranslateTo( XMFLOAT3& pos )
 
 void D3DParticleEmitter::RotateBy( float x, float y, float z )
 {
-	m_Rotation += XMFLOAT3( x, y, z );
+	m_Rotation.x += x;
+	m_Rotation.y += y;
+	m_Rotation.z += z;
 	RebuildTransform();
 }
 
@@ -101,25 +103,29 @@ void D3DParticleEmitter::SetRotation( float x, float y, float z )
 void D3DParticleEmitter::RebuildTransform()
 {
 	// Set the current world matrix to the identity matrix
-	XMMATRIXIdentity( &m_WorldMatrix );
-
-	XMMATRIX temp;
-	XMMATRIXIdentity( &temp );
+	m_WorldMatrix = XMMatrixIdentity();
+	XMMATRIX temp = XMMatrixIdentity();
 
 	// Scale the temporary matrix
-	XMMATRIXScaling( &temp, m_Scale.x, m_Scale.y, m_Scale.z );
+	temp = XMMatrixScaling(m_Scale.x, m_Scale.y, m_Scale.z);
 	m_WorldMatrix *= temp;
 
 	// Rotate the temporary matrix
 	if (m_Rotation.x != 0) 
-	{ XMMATRIXRotationX( &temp, m_Rotation.x ); m_WorldMatrix *= temp; }
+	{ 
+		temp = XMMatrixRotationX(m_Rotation.x); m_WorldMatrix *= temp;
+	}
 	if (m_Rotation.y != 0) 
-	{ XMMATRIXRotationY( &temp, m_Rotation.y ); m_WorldMatrix *= temp; }
+	{
+		temp = XMMatrixRotationY(m_Rotation.y); m_WorldMatrix *= temp;
+	}
 	if (m_Rotation.z != 0) 
-	{ XMMATRIXRotationZ( &temp, m_Rotation.z ); m_WorldMatrix *= temp; }
+	{ 
+		temp = XMMatrixRotationZ(m_Rotation.z); m_WorldMatrix *= temp;
+	}
 
 	// Translate the temporary matrix
-	XMMATRIXTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+	temp = XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z );
 	m_WorldMatrix *= temp;
 }
 
@@ -182,7 +188,7 @@ int D3DParticleEmitter::GetIndexCount()
 }
 
 
-bool D3DParticleEmitter::LoadTexture(ID3D11Device* device, WCHAR* filename)
+bool D3DParticleEmitter::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* context, char* filename)
 {
 	bool result;
 
@@ -195,7 +201,7 @@ bool D3DParticleEmitter::LoadTexture(ID3D11Device* device, WCHAR* filename)
 	}
 
 	// Initialize the texture object.
-	result = m_Texture->Init(device, filename);
+	result = m_Texture->Init(device, context, filename);
 	if(!result)
 	{
 		return false;
@@ -502,32 +508,32 @@ bool D3DParticleEmitter::UpdateBuffers(ID3D11DeviceContext* deviceContext)
 	{
 		// Bottom left.
 		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
-		m_vertices[index].texture = D3DXVECTOR2(0.0f, 1.0f);
+		m_vertices[index].texture = XMFLOAT2(0.0f, 1.0f);
 		index++;
 
 		// Top left.
 		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
-		m_vertices[index].texture = D3DXVECTOR2(0.0f, 0.0f);
+		m_vertices[index].texture = XMFLOAT2(0.0f, 0.0f);
 		index++;
 
 		// Bottom right.
 		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
-		m_vertices[index].texture = D3DXVECTOR2(1.0f, 1.0f);
+		m_vertices[index].texture = XMFLOAT2(1.0f, 1.0f);
 		index++;
 
 		// Bottom right.
 		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
-		m_vertices[index].texture = D3DXVECTOR2(1.0f, 1.0f);
+		m_vertices[index].texture = XMFLOAT2(1.0f, 1.0f);
 		index++;
 
 		// Top left.
 		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
-		m_vertices[index].texture = D3DXVECTOR2(0.0f, 0.0f);
+		m_vertices[index].texture = XMFLOAT2(0.0f, 0.0f);
 		index++;
 
 		// Top right.
 		m_vertices[index].position = XMFLOAT3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);
-		m_vertices[index].texture = D3DXVECTOR2(1.0f, 0.0f);
+		m_vertices[index].texture = XMFLOAT2(1.0f, 0.0f);
 		index++;
 	}
 	

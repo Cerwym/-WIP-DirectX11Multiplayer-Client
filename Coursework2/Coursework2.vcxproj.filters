@@ -147,8 +147,8 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXEngineMathHelper.cpp">
-      <Filter>DXEngine\Sources</Filter>
+    <ClCompile Include="DXEngine\DXEngineMathHelper.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -260,8 +260,11 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DXEngineMathHelper.h">
-      <Filter>DXEngine\Headers</Filter>
+    <ClInclude Include="DXEngine\DXEngineMathHelper.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

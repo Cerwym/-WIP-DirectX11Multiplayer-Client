@@ -3,12 +3,12 @@
 #include "..\Defines.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <d3dx11async.h>
 #include <fstream>
 #include <sstream>
 #include <io.h>
 
 using namespace std;
+using namespace DirectX;
 
 class D3DFontShader
 {
@@ -19,7 +19,8 @@ public:
 	~D3DFontShader();
 
 	bool Init(ID3D11Device*, HWND);
-	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, XMFLOAT4);
+	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix,
+					const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColour);
 
 private:
 
@@ -38,7 +39,8 @@ private:
 	bool InitShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
-	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, XMFLOAT4);
+	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix,
+		const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColour);
 	void RenderShader(ID3D11DeviceContext*, int);
 
 	ID3D11VertexShader* m_vertexShader;

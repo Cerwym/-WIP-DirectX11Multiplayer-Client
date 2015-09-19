@@ -15,8 +15,8 @@ public:
 	D3DText(const D3DText&){}
 	~D3DText();
 
-	bool Init(ID3D11Device*, ID3D11DeviceContext*, HWND, int, int, D3DXMATRIX);
-	bool Render(ID3D11DeviceContext*, D3DXMATRIX);
+	bool Init(ID3D11Device*, ID3D11DeviceContext*, HWND, int, int, XMMATRIX);
+	bool Render(ID3D11DeviceContext*, XMMATRIX);
 	bool CreateSentence(D3DSys* d3d, int ID, int maxLength, char* text, int posX, int posY, float r, float g, float b);
 	bool UpdateSentence(int ID, char*, int, int, float, float, float, ID3D11DeviceContext*);
 	
@@ -43,13 +43,13 @@ private:
 	bool InitSentence(int ID, int, ID3D11Device*);
 
 	void ReleaseSentence(int ID);
-	bool RenderSentence(ID3D11DeviceContext*, int ID, D3DXMATRIX);
+	bool RenderSentence(ID3D11DeviceContext*, int ID, XMMATRIX);
 
 	D3DFont* m_Font;
 	D3DFontShader* m_FontShader;
 	int m_screenWidth, m_screenHeight;
-	D3DXMATRIX m_baseViewMatrix;
-	D3DXMATRIX m_worldMatrix;
+	XMMATRIX m_baseViewMatrix;
+	XMMATRIX m_worldMatrix;
 
 	SentanceType* m_sentenceArray;
 

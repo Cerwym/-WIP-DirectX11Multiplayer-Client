@@ -2,7 +2,7 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <D3DX11async.h> // To compile the shader
+//#include <D3DX11async.h> // To compile the shader
 #include <vector>
 #include "..\Defines.h"
 #include "D3DCamera.h"
@@ -30,14 +30,14 @@ private:
 		Vertex(float x, float y, float z, float u, float v, float nx, float ny, float nz) : Position(x,y,z), TextureC(u, v), Normals(nx, ny, nz){}
 
 		XMFLOAT3 Position;
-		D3DXVECTOR2 TextureC;
+		XMFLOAT2 TextureC;
 		XMFLOAT3 Normals;
 	};
 
 	struct ConstantBuffer
 	{
-		D3DXMATRIX WVP;
-		D3DXMATRIX World;
+		XMMATRIX WVP;
+		XMMATRIX World;
 	}; ConstantBuffer m_CB;
 
 	bool LoadTexture(ID3D11Device* d3d11Device, WCHAR* skyTexture, HWND hwnd);
@@ -57,12 +57,12 @@ private:
 
 	int m_Vertices, m_Faces;
 
-	D3DXMATRIX m_WorldMatrix;
-	D3DXMATRIX m_ScaleMatrix;
-	D3DXMATRIX m_TranslationMatrix;
+	XMMATRIX m_WorldMatrix;
+	XMMATRIX m_ScaleMatrix;
+	XMMATRIX m_TranslationMatrix;
 
-	D3DXMATRIX m_RotationX;
-	D3DXMATRIX m_RotationY;
-	D3DXMATRIX m_RotationZ;
+	XMMATRIX m_RotationX;
+	XMMATRIX m_RotationY;
+	XMMATRIX m_RotationZ;
 };
 

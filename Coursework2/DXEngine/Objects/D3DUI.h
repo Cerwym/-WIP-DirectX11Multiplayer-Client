@@ -13,11 +13,11 @@ public:
 	D3DUI();
 	~D3DUI();
 
-	bool Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, D3DXMATRIX baseView, int posX, int posY);
+	bool Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, XMMATRIX baseView, int posX, int posY);
 	bool InitChat(D3DSys* d3d);
 
 	void SetPosition(int x, int y);
-	bool Render(D3DSys* d3d, D3DShaderManager* sMgr, D3DXMATRIX orthoMatrix);
+	bool Render(D3DSys* d3d, D3DShaderManager* sMgr, XMMATRIX orthoMatrix);
 	void KeyPressUpdate(int key);
 	bool UpdateChatBar();
 	void CheckForChatMessage(char* message, bool &newMessage);
@@ -33,7 +33,7 @@ private:
 	D3DBitmap* m_ChatWindowBackground;
 	D3DBitmap* m_RocketLauncher;
 	ID3D11DeviceContext* m_context;
-	D3DXMATRIX m_baseViewMatrix;
+	XMMATRIX m_baseViewMatrix;
 	D3DText* m_Text;
 	int m_TextEntryAreaPos;
 

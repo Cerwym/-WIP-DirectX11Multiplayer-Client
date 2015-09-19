@@ -20,7 +20,7 @@ private:
 	{
 		XMFLOAT3 position;
 		D3DXVECTOR2 texture;
-		D3DXVECTOR4 color;
+		XMFLOAT4 color;
 	};
 
 public:
@@ -33,7 +33,7 @@ public:
 	void Render(ID3D11DeviceContext*);
 
 	XMFLOAT3 GetPosition() { return m_Position; }
-	D3DXMATRIX GetWorld(){ return m_WorldMatrix; }
+	XMMATRIX GetWorld(){ return m_WorldMatrix; }
 
 	void TranslateTo( float x, float y, float z );
 	void TranslateTo( XMFLOAT3& pos );
@@ -78,7 +78,7 @@ private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 
 	// This instance of the particle emitter's local world matrix
-	D3DXMATRIX m_WorldMatrix;
+	XMMATRIX m_WorldMatrix;
 
 	// This instance of the particle emitter's local rotation data
 	XMFLOAT3 m_Rotation;

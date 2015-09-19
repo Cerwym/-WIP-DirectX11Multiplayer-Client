@@ -42,8 +42,8 @@ bool D3DLightShader::Init(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
-bool D3DLightShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
-							  D3DXMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection,D3DXVECTOR4 ambientColour, D3DXVECTOR4 diffuseColour, XMFLOAT3 cameraPosition, D3DXVECTOR4 specularColour, float specularPower)
+bool D3DLightShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix,
+	const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColour, XMFLOAT4 diffuseColour, XMFLOAT3 cameraPosition, XMFLOAT4 specularColour, float specularPower)
 {
 	bool result;
 
@@ -282,9 +282,9 @@ void D3DLightShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwn
 }
 
 
-bool D3DLightShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
-										   D3DXMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection, 
-										   D3DXVECTOR4 ambientColour,D3DXVECTOR4 diffuseColor, XMFLOAT3 cameraPosition, D3DXVECTOR4 specularColour, float specularPower)
+bool D3DLightShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix,
+	const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection,
+	XMFLOAT4 ambientColour, XMFLOAT4 diffuseColor, XMFLOAT3 cameraPosition, XMFLOAT4 specularColour, float specularPower)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -295,9 +295,9 @@ bool D3DLightShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3D
 
 
 	// Transpose the matrices to prepare them for the shader.
-	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
-	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
-	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
+	XMMatrixTranspose(worldMatrix);
+	XMMatrixTranspose(viewMatrix);
+	XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

@@ -10,9 +10,9 @@ Player::Player()
 	m_LookAt = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-	D3DXMatrixIdentity(&m_ViewMatrix);
-	D3DXMatrixIdentity(&m_ProjectionMatrix);
-	D3DXMatrixIdentity(&m_WorldMatrix);
+	m_ViewMatrix = XMMatrixIdentity();
+	m_ProjectionMatrix = XMMatrixIdentity();
+	m_WorldMatrix = XMMatrixIdentity();
 
 	m_frameTime = 0.0f;
 
@@ -58,12 +58,12 @@ void Player::MoveX(float dt)
 {
 	/*
 	m_Position += (m_velocity.x)*m_Right;
-	D3DXMatrixIdentity( &m_WorldMatrix );
+	XMMATRIXIdentity( &m_WorldMatrix );
 
-	D3DXMATRIX temp;
-	D3DXMatrixIdentity( &temp );
+	XMMATRIX temp;
+	XMMATRIXIdentity( &temp );
 
-	D3DXMatrixTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+	XMMATRIXTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
 
 	// Scale the temporary matrix
 	m_WorldMatrix *= temp * m_ViewMatrix * m_ProjectionMatrix;
@@ -77,12 +77,12 @@ void Player::MoveZ(float dt)
 {
 	/*
 	m_Position += (m_velocity.z * dt)*m_LookAt;
-	D3DXMatrixIdentity( &m_WorldMatrix );
+	XMMATRIXIdentity( &m_WorldMatrix );
 
-	D3DXMATRIX temp;
-	D3DXMatrixIdentity( &temp );
+	XMMATRIX temp;
+	XMMATRIXIdentity( &temp );
 
-	D3DXMatrixTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+	XMMATRIXTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
 
 	// Scale the temporary matrix
 	m_WorldMatrix *= temp * m_ViewMatrix * m_ProjectionMatrix;
@@ -98,10 +98,8 @@ void Player::SetRotation(float x, float y, float z)
 
 void Player::RebuildTransform()
 {
-	D3DXMatrixIdentity(&m_WorldMatrix);
-	D3DXMATRIX temp;
-	D3DXMatrixIdentity(&temp);
-	D3DXMatrixTranslation(&temp, m_Position.x, m_Position.y, m_Position.z);
+	m_WorldMatrix = XMMatrixIdentity();
+	XMMATRIX temp = XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z);
 	
 	// Scale the world matrix;
 	m_WorldMatrix *= temp * m_ViewMatrix * m_ProjectionMatrix;
@@ -187,9 +185,14 @@ void Player::Update(D3DInput* input, float deltaTime)
 	std::cout << "Velocity (" << m_velocity.x << "," << m_velocity.y << "," << m_velocity.z	 << ")" << std::endl;
 
 	// Get Rotation from player's camera
-	D3DXMATRIX world = m_Camera->GetWorld();
-	m_Rotation = HELPER_RotVectorFrom4x4Mat(world);
-	m_acceleration = m_velocity - m_oldVelocity;
+	XMMATRIX world = m_Camera->GetWorld();
+	//m_Rotation = HELPER_RotVectorFrom4x4Mat(world);
+
+	// TODO : this properly.
+	m_acceleration.x = m_velocity.x - m_oldVelocity.x;
+	m_acceleration.y = m_velocity.y - m_oldVelocity.y;
+	m_acceleration.z = m_velocity.z - m_oldVelocity.z;
+
 }
 
 /*
@@ -510,9 +513,11 @@ bool Player::MoveBackwardStateChange(char& newState)
 	return result;
 }
 
-XMFLOAT3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat)
+/*
+XMFLOAT3 HELPER_RotVectorFrom4x4Mat(const XMMATRIX &mat)
 {
 	//theta1 = atan2(m01, m11)
+
 	double theta1 = atan2(mat._23, mat._33);
 	double c2 = sqrt((mat._11 * mat._11) + (mat._12 * mat._12));
 	double theta2 = atan2((double)-mat._13, c2);
@@ -521,3 +526,5 @@ XMFLOAT3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat)
 
 	return XMFLOAT3(theta1, theta2, theta3);
 }
+
+*/

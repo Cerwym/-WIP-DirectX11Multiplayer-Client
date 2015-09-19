@@ -4,6 +4,7 @@
 
 #include <DirectXMath.h>
 
+using namespace DirectX;
 class D3DLight
 {
 public:
@@ -20,17 +21,17 @@ public:
 
 	void SetSpecularPower(float);
 
-	D3DXVECTOR4 GetDiffuseColour(){return m_diffuseColour;}
-	D3DXVECTOR4 GetAmbientColour(){return m_ambientColour;}
+	XMFLOAT4 GetDiffuseColour(){return m_diffuseColour;}
+	XMFLOAT4 GetAmbientColour(){return m_ambientColour;}
 	XMFLOAT3 GetDirection(){return m_direction;}
-	D3DXVECTOR4 GetSpecularColour(){return m_specularColour;}
+	XMFLOAT4 GetSpecularColour(){return m_specularColour;}
 	float GetSpecularPower(){return m_specularPower;}
 
 private:
-	D3DXVECTOR4 m_ambientColour;
-	D3DXVECTOR4 m_diffuseColour;
+	XMFLOAT4 m_ambientColour;
+	XMFLOAT4 m_diffuseColour;
 	XMFLOAT3 m_direction;
-	D3DXVECTOR4 m_specularColour;
+	XMFLOAT4 m_specularColour;
 	float m_specularPower;
 };
 

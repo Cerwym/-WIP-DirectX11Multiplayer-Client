@@ -41,7 +41,7 @@ private:
 	float m_cubeRotation;
 	bool m_MouseLock;
 
-	D3DXMATRIX m_WorldMatrix, m_baseViewMatrix, m_ProjectionMatrix, m_OrthoMatrix;
+	XMMATRIX m_WorldMatrix, m_baseViewMatrix, m_ProjectionMatrix, m_OrthoMatrix;
 	D3DText* m_TextBatch;
 };
 

@@ -2,14 +2,14 @@
 
 D3DCamera::D3DCamera(float FoVy, float aspect, float zNear, float zFar)
 {
-	m_Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	m_Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	m_LookAt = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	m_Position = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	m_Right = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	m_Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	m_LookAt = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
-	D3DXMatrixIdentity(&m_ViewMatrix);
-	D3DXMatrixIdentity(&m_ProjMatrix);
-	D3DXMatrixIdentity(&m_WorldMatrix);
+	m_ViewMatrix = XMMatrixIdentity();
+	m_ProjMatrix = XMMatrixIdentity();
+	m_WorldMatrix = XMMatrixIdentity();
 
 	m_zNear = zNear;
 	m_zFar = zFar;
@@ -20,47 +20,40 @@ D3DCamera::D3DCamera(float FoVy, float aspect, float zNear, float zFar)
 
 D3DCamera::~D3DCamera()
 {
-	S_DELETE(m_Frustum);
+	//S_DELETE(m_Frustum);
 }
 
 void D3DCamera::SetFOV(float FoVy, float aspect, float z_near, float z_far)
 {
-	D3DXMatrixPerspectiveFovLH(&m_ProjMatrix, FoVy, aspect, z_near, z_far);
+	m_ProjMatrix = XMMatrixPerspectiveFovLH(FoVy, aspect, z_near, z_far);
 }
 
 void D3DCamera::Move_X(float d)
 {
-	m_Position += d*m_Right;
+	//m_Position += d*m_Right;
 
 	// Set the current world matrix to the identity matrix
-	D3DXMatrixIdentity( &m_WorldMatrix );
+	m_WorldMatrix = XMMatrixIdentity();
 
-	D3DXMATRIX temp;
-	D3DXMatrixIdentity( &temp );
-
-	D3DXMatrixTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+	XMMATRIX temp = XMMatrixTranslation(XMVectorGetX(m_Position), XMVectorGetY(m_Position), XMVectorGetZ(m_Position));
 
 	// Scale the temporary matrix
 	m_WorldMatrix *= temp * m_ViewMatrix * m_ProjMatrix;
-
 }
 
 void D3DCamera::SetPosition(XMFLOAT3& pos)
 {
-	m_Position = pos;
+	m_Position = XMVectorSet(pos.x, pos.y, pos.z, 0);
 }
 
 void D3DCamera::Move_Z(float d)
 {
-	m_Position += d*m_LookAt;
+	//m_Position += d*m_LookAt;
 
 	// Set the current world matrix to the identity matrix
-	D3DXMatrixIdentity( &m_WorldMatrix );
+	m_WorldMatrix = XMMatrixIdentity();
 
-	D3DXMATRIX temp;
-	D3DXMatrixIdentity( &temp );
-
-	D3DXMatrixTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+	XMMATRIX temp = XMMatrixTranslation(XMVectorGetX(m_Position), XMVectorGetY(m_Position), XMVectorGetZ(m_Position));
 
 	// Scale the temporary matrix
 	m_WorldMatrix *= temp * m_ViewMatrix * m_ProjMatrix;
@@ -68,60 +61,61 @@ void D3DCamera::Move_Z(float d)
 
 void D3DCamera::Pitch(float angle)
 {
-	D3DXMATRIX rot;
-	D3DXMatrixRotationAxis(&rot, &m_Right, angle);
+	XMMATRIX rot = XMMatrixRotationAxis(m_Right, angle);
 
-	D3DXVec3TransformNormal(&m_Up, &m_Up, &rot);
-	D3DXVec3TransformNormal(&m_LookAt, &m_LookAt, &rot);
+	m_Up = XMVector3TransformNormal(m_Up, rot);
+	m_LookAt = XMVector3TransformNormal(m_LookAt, rot);
 }
 
 void D3DCamera::Roll(float angle)
 {
-	D3DXMATRIX rot;
-	D3DXMatrixRotationY(&rot, angle);
+	XMMATRIX rot = XMMatrixRotationY(angle);
 
-	D3DXVec3TransformNormal(&m_Right, &m_Right, &rot);
-	D3DXVec3TransformNormal(&m_Up, &m_Up, &rot);
-	D3DXVec3TransformNormal(&m_LookAt, &m_LookAt, &rot);
-
+	m_Right = XMVector3TransformNormal(m_Right, rot);
+	m_Up = XMVector3TransformNormal(m_Up, rot);
+	m_LookAt = XMVector3TransformNormal(m_LookAt, rot);
 }
 
 void D3DCamera::RebuildView()
 {
 	// Keep camera's axes orthogonal to each other and of unit length.
-	D3DXVec3Normalize(&m_LookAt, &m_LookAt);
+	m_LookAt = XMVector3Normalize(m_LookAt);
 
-	D3DXVec3Cross(&m_Up, &m_LookAt, &m_Right);
-	D3DXVec3Normalize(&m_Up, &m_Up);
+	m_Up = XMVector3Cross(m_LookAt, m_Right);
+	m_Up = XMVector3Normalize(m_Up);
 
-	D3DXVec3Cross(&m_Right, &m_Up, &m_LookAt);
-	D3DXVec3Normalize(&m_Right, &m_Right);
+	m_Right = XMVector3Cross(m_Up, m_LookAt);
+	m_Right = XMVector3Normalize(m_Right);
 
 	// Fill in the view matrix entries.
-	float x = -D3DXVec3Dot(&m_Position, &m_Right);
-	float y = -D3DXVec3Dot(&m_Position, &m_Up);
-	float z = -D3DXVec3Dot(&m_Position, &m_LookAt);
+	float x = -XMVectorGetX(XMVector3Dot(m_Position, m_Right));
+	float y = -XMVectorGetX(XMVector3Dot(m_Position, m_Up));
+	float z = -XMVectorGetX(XMVector3Dot(m_Position, m_LookAt));
 
-	m_ViewMatrix(0,0) = m_Right.x;
-	m_ViewMatrix(1,0) = m_Right.y;
-	m_ViewMatrix(2,0) = m_Right.z;
-	m_ViewMatrix(3,0) = x;
+	XMFLOAT4X4 tempView;
 
-	m_ViewMatrix(0,1) = m_Up.x;
-	m_ViewMatrix(1,1) = m_Up.y;
-	m_ViewMatrix(2,1) = m_Up.z;
-	m_ViewMatrix(3,1) = y;
+	tempView(0, 0) = XMVectorGetX(m_Right);
+	tempView(1, 0) = XMVectorGetY(m_Right);
+	tempView(2, 0) = XMVectorGetZ(m_Right);
+	tempView(3, 0) = x;
 
-	m_ViewMatrix(0,2) = m_LookAt.x;
-	m_ViewMatrix(1,2) = m_LookAt.y;
-	m_ViewMatrix(2,2) = m_LookAt.z;
-	m_ViewMatrix(3,2) = z;
+	tempView(0, 1) = XMVectorGetX(m_Up);
+	tempView(1, 1) = XMVectorGetY(m_Up);
+	tempView(2, 1) = XMVectorGetZ(m_Up);
+	tempView(3, 1) = y;
 
-	m_ViewMatrix(0,3) = 0.0f;
-	m_ViewMatrix(1,3) = 0.0f;
-	m_ViewMatrix(2,3) = 0.0f;
-	m_ViewMatrix(3,3) = 1.0f;
+	tempView(0, 2) = XMVectorGetX(m_LookAt);
+	tempView(1, 2) = XMVectorGetX(m_LookAt);
+	tempView(2, 2) = XMVectorGetX(m_LookAt);
+	tempView(3, 2) = z;
 
+	tempView(0, 3) = 0.0f;
+	tempView(1, 3) = 0.0f;
+	tempView(2, 3) = 0.0f;
+	tempView(3, 3) = 1.0f;
+
+	m_ViewMatrix = XMLoadFloat4x4(&tempView);
+	
 	// Reconstuct the viewing frustum.
 	m_Frustum->ConstructFrustrum( m_zFar, m_ProjMatrix, m_ViewMatrix );
 }

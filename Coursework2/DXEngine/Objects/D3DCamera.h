@@ -13,10 +13,16 @@ public:
 
 	void SetPosition(XMFLOAT3& pos);
 	D3DFrustum* GetFrustum(){ return m_Frustum; }
-	XMFLOAT3& GetPosition(){return m_Position;}
-	D3DXMATRIX GetViewMatrix()const{return m_ViewMatrix;}
-	D3DXMATRIX GetProjMatrix()const{return m_ProjMatrix;}
-	D3DXMATRIX GetWorld()const{return m_WorldMatrix;}
+	XMFLOAT3 GetPosition()
+	{
+		retPos.x = XMVectorGetX(m_Position);
+		retPos.y = XMVectorGetY(m_Position);
+		retPos.z = XMVectorGetZ(m_Position);
+		return retPos;
+	}
+	XMMATRIX GetViewMatrix()const{return m_ViewMatrix;}
+	XMMATRIX GetProjMatrix()const{return m_ProjMatrix;}
+	XMMATRIX GetWorld()const{return m_WorldMatrix;}
 
 	void SetFOV(float FoVy, float aspect, float z_near, float z_far);
 	void Move_X(float dt);
@@ -24,24 +30,23 @@ public:
 	void Pitch(float angle);
 	void Roll(float angle);
 
-	float GetX(){ return m_Position.x;}
-	float GetY(){ return m_Position.y;}
-	float GetZ(){ return m_Position.z;}
-
-	D3DXMATRIX World(){return m_WorldMatrix;}
+	XMMATRIX World(){return m_WorldMatrix;}
 
 	void RebuildView();
 
 private:
 
 	D3DFrustum* m_Frustum;
-	XMFLOAT3 m_Position;
-	XMFLOAT3 m_LookAt;
-	XMFLOAT3 m_Right;
-	XMFLOAT3 m_Up;
-	D3DXMATRIX m_ViewMatrix;
-	D3DXMATRIX m_ProjMatrix;
-	D3DXMATRIX m_WorldMatrix;
+	XMVECTOR m_Position;
+	XMVECTOR m_LookAt;
+	XMVECTOR m_Right;
+	XMVECTOR m_Up;
+
+	XMFLOAT3 retPos;
+
+	XMMATRIX m_ViewMatrix;
+	XMMATRIX m_ProjMatrix;
+	XMMATRIX m_WorldMatrix;
 
 	float m_zNear, m_zFar;
 };

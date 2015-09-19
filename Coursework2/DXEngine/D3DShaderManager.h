@@ -16,12 +16,12 @@ public:
 
 	bool Init(ID3D11Device*, HWND);
 
-	bool RenderTextureShader( ID3D11DeviceContext* device, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, ID3D11ShaderResourceView* texture );
+	bool RenderTextureShader( ID3D11DeviceContext* device, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture );
 
-	bool RenderLightShader( ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
+	bool RenderLightShader( ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, 
 		ID3D11ShaderResourceView* texture, XMFLOAT3 &camPosition, D3DLight* lightObject );
 
-	bool RenderBumpMapShader( ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
+	bool RenderBumpMapShader( ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, 
 		ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalTexture, D3DLight* lightObject );
 
 private:

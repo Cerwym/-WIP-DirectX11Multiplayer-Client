@@ -2,7 +2,6 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-//#include <D3DX11async.h>
 #include <fstream>
 #include <sstream>
 #include <io.h>
@@ -20,13 +19,15 @@ public:
 	~D3DTextureShader();
 
 	bool Init(ID3D11Device*, HWND);
-	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
+	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix,
+		const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture);
 
 private:
 	bool InitShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
-	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
+	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix,
+		const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture);
 	void RenderShader(ID3D11DeviceContext*, int);
 
 	struct MatrixBufferType // Naming convention to match the shader file

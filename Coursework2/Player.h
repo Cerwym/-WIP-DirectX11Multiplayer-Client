@@ -5,6 +5,8 @@
 #include "DXEngine/D3DInput.h"
 #include "DXEngine/Objects/D3DCamera.h"
 
+using namespace DirectX;
+
 const char STATE_TURNING_LEFT = 0;
 const char STATE_NOT_TURNING_LEFT = 1;
 const char STATE_TURNING_RIGHT = 2;
@@ -17,7 +19,7 @@ const char STATE_NOT_MOVING_BACKWARD = 7;
 const float PLAYER_MAX_SPEED = 0.275f;
 const float PLAYER_ACCELERATION_RATE = 0.2f;
 
-XMFLOAT3 HELPER_RotVectorFrom4x4Mat(D3DXMATRIX mat);
+//XMFLOAT3 HELPER_RotVectorFrom4x4Mat(const XMMATRIX &mat);
 
 class Player
 {

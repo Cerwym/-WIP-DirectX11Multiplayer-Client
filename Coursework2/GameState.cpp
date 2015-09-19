@@ -280,8 +280,8 @@ void GameState::Render3D()
 {
 	D3D()->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	D3DXMATRIX worldMatrix, translateMatrix;
-	D3DXMatrixIdentity(&worldMatrix);
+	XMMATRIX worldMatrix, translateMatrix;
+	XMMATRIXIdentity(&worldMatrix);
 
 	// Cache camera;
 	m_Player->Camera()->RebuildView();

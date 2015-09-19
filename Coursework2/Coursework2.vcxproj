@@ -20,7 +20,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DXEngine\DXEngineMathHelper.cpp" />
     <ClCompile Include="DXEngine\D3DAudio.cpp" />
     <ClCompile Include="DXEngine\D3DSys.cpp" />
     <ClCompile Include="DXEngine\D3DShaderManager.cpp" />
@@ -119,6 +120,7 @@
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DXEngine\DXEngineMathHelper.h" />
     <ClInclude Include="DXEngine\D3DAudio.h" />
     <ClInclude Include="DXEngine\D3DSys.h" />
     <ClInclude Include="DXEngine\D3DShaderManager.h" />

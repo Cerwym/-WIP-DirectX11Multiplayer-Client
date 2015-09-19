@@ -94,25 +94,25 @@ void D3DModel::NO_GSBillboard(D3DCamera* camera)
 void D3DModel::RebuildTransform()
 {
 	// Set the current world matrix to the identity matrix
-	D3DXMatrixIdentity( &m_WorldMatrix );
+	XMMATRIXIdentity( &m_WorldMatrix );
 
-	D3DXMATRIX temp;
-	D3DXMatrixIdentity( &temp );
+	XMMATRIX temp;
+	XMMATRIXIdentity( &temp );
 	
 	// Scale the temporary matrix
-	D3DXMatrixScaling( &temp, m_Scale.x, m_Scale.y, m_Scale.z );
+	XMMATRIXScaling( &temp, m_Scale.x, m_Scale.y, m_Scale.z );
 	m_WorldMatrix *= temp;
 	
 	// Rotate the temporary matrix
 	if (m_Rotation.x != 0) 
-	{ D3DXMatrixRotationX( &temp, m_Rotation.x ); m_WorldMatrix *= temp; }
+	{ XMMATRIXRotationX( &temp, m_Rotation.x ); m_WorldMatrix *= temp; }
 	if (m_Rotation.y != 0) 
-	{ D3DXMatrixRotationY( &temp, m_Rotation.y ); m_WorldMatrix *= temp; }
+	{ XMMATRIXRotationY( &temp, m_Rotation.y ); m_WorldMatrix *= temp; }
 	if (m_Rotation.z != 0) 
-	{ D3DXMatrixRotationZ( &temp, m_Rotation.z ); m_WorldMatrix *= temp; }
+	{ XMMATRIXRotationZ( &temp, m_Rotation.z ); m_WorldMatrix *= temp; }
 	
 	// Translate the temporary matrix
-	D3DXMatrixTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+	XMMATRIXTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
 	m_WorldMatrix *= temp;
 }
 

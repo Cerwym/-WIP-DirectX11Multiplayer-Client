@@ -2,8 +2,8 @@
 
 D3DSkyBox::D3DSkyBox()
 {
-	D3DXMatrixIdentity(&m_WorldMatrix);
-	D3DXMatrixScaling(&m_ScaleMatrix, 5.0f, 5.0f, 5.0f);
+	m_WorldMatrix = XMMatrixIdentity();
+	m_ScaleMatrix = XMMatrixScaling(5.0f, 5.0f, 5.0f);
 
 	m_sampleState = 0;
 }
@@ -40,7 +40,8 @@ bool D3DSkyBox::Init(ID3D11Device* d3d11Device, int LatLines, int LongLines, WCH
 
 	std::vector<Vertex> vertices(m_Vertices);
 
-	XMFLOAT3 currVertPos = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	XMVECTOR currVertPos = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	XMVECTOR ident = XMVECTOR(currVertPos);
 
 	vertices[0].Position.x = 0.0f;
 	vertices[0].Position.y = 0.0f;
@@ -49,17 +50,19 @@ bool D3DSkyBox::Init(ID3D11Device* d3d11Device, int LatLines, int LongLines, WCH
 	for(int i = 0; i < LatLines-2; ++i)
 	{
 		spherePitch = (float)((i+1) * (3.14/(LatLines-1)));
-		D3DXMatrixRotationX(&m_RotationX, spherePitch);
+		m_RotationX = XMMatrixRotationX(spherePitch);
 		for(int j = 0; j < LongLines; ++j)
 		{
 			sphereYaw = (float)(j * (6.28/(LongLines)));
-			D3DXMatrixRotationZ(&m_RotationY, sphereYaw);
-			D3DXVec3TransformNormal( &currVertPos, &XMFLOAT3(0.0f, 0.0f, 1.0f), &(m_RotationX * m_RotationY) );
-			D3DXVec3Normalize(&currVertPos, &currVertPos);
+			m_RotationY = XMMatrixRotationZ(sphereYaw);
+			currVertPos = XMVector3TransformNormal(ident, (m_RotationX * m_RotationY));
+			//D3DXVec3TransformNormal( &currVertPos, &XMFLOAT3(0.0f, 0.0f, 1.0f), &(m_RotationX * m_RotationY) );
 			
-			vertices[i*LongLines+j+1].Position.x = currVertPos.x;
-			vertices[i*LongLines+j+1].Position.y = currVertPos.y;
-			vertices[i*LongLines+j+1].Position.z = currVertPos.z;
+			XMVector3Normalize(currVertPos);
+			
+			vertices[i*LongLines+j+1].Position.x = XMVectorGetX(currVertPos);
+			vertices[i*LongLines+j+1].Position.y = XMVectorGetY(currVertPos);
+			vertices[i*LongLines+j+1].Position.z = XMVectorGetZ(currVertPos);
 		}
 	}
 
@@ -239,7 +242,7 @@ void D3DSkyBox::Draw( ID3D11DeviceContext* deviceContext, D3DCamera* camera )
 	stride = sizeof(Vertex);
 	offset = 0;
 
-	D3DXMatrixTranslation(&m_TranslationMatrix, camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z);
+	m_TranslationMatrix = XMMatrixTranslation(camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z);
 	m_WorldMatrix = m_ScaleMatrix * m_TranslationMatrix;
 
 	deviceContext->IASetIndexBuffer( m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -247,9 +250,10 @@ void D3DSkyBox::Draw( ID3D11DeviceContext* deviceContext, D3DCamera* camera )
 	deviceContext->IASetVertexBuffers( 0, 1, &m_VertexBuffer, &stride, &offset );
 
 	//Set the WVP matrix and send it to the constant buffer in effect file
-	D3DXMATRIX WVP = m_WorldMatrix * camera->GetViewMatrix() * camera->GetProjMatrix();
-	D3DXMatrixTranspose(&m_CB.WVP, &WVP);
-	D3DXMatrixTranspose(&m_CB.World, &m_WorldMatrix);
+	XMMATRIX WVP = m_WorldMatrix * camera->GetViewMatrix() * camera->GetProjMatrix();
+	m_CB.WVP = XMMatrixTranspose(WVP);
+	// out , source
+	m_CB.World = XMMatrixTranspose(m_WorldMatrix);
 	
 	deviceContext->UpdateSubresource( m_MatrixBuffer, 0, NULL, &m_CB, 0, 0 );
 	

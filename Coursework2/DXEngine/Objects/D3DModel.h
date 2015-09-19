@@ -31,7 +31,7 @@ public:
 	bool Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMgr, D3DCamera* camera, D3DLight* lightObj, const int cullMode = CULL_CUBE );
 
 	XMFLOAT3 GetPosition() { return m_Position; }
-	D3DXMATRIX GetWorld() { return m_WorldMatrix; }
+	XMMATRIX GetWorld() { return m_WorldMatrix; }
 
 	void NO_GSBillboard( D3DCamera* camera);
 
@@ -116,7 +116,7 @@ private:
 	// The object's rotation data
 	XMFLOAT3 m_Rotation;
 	// The object's local world matrix;
-	D3DXMATRIX m_WorldMatrix;
+	XMMATRIX m_WorldMatrix;
 
 	bool m_isBumpMapped;
 };

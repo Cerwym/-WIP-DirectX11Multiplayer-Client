@@ -6,6 +6,8 @@
 #include <DirectXMath.h>
 #include "Defines.h"
 
+using namespace DirectX;
+
 class D3DSys
 {
 public:

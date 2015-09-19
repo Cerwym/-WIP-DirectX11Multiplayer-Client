@@ -18,7 +18,7 @@ D3DBitmap::~D3DBitmap()
 
 bool D3DBitmap::Init(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* bitmapFName, int bitmapWidth, int bitmapHeight)
 {
-	D3DXMatrixIdentity( &m_worldMatrix );
+	XMMATRIXIdentity( &m_worldMatrix );
 
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
@@ -42,7 +42,7 @@ bool D3DBitmap::Init(ID3D11Device* device, int screenWidth, int screenHeight, WC
 	return true;
 }
 
-bool D3DBitmap::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, D3DXMATRIX view, D3DXMATRIX projection )
+bool D3DBitmap::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, XMMATRIX view, XMMATRIX projection )
 {
 	bool result;
 

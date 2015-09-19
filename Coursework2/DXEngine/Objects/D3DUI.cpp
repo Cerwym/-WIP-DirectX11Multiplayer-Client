@@ -20,7 +20,7 @@ D3DUI::~D3DUI()
 	S_DELETE(m_RocketLauncher);
 }
 
-bool D3DUI::Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, D3DXMATRIX baseView, int posY, int posX)
+bool D3DUI::Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, XMMATRIX baseView, int posY, int posX)
 {
 	m_baseViewMatrix = baseView;
 	m_context = d3d->GetDeviceContext();
@@ -275,7 +275,7 @@ bool D3DUI::InitChat(D3DSys* d3d)
 
 }
 
-bool D3DUI::Render(D3DSys* d3d, D3DShaderManager* sMgr, D3DXMATRIX orthoMatrix)
+bool D3DUI::Render(D3DSys* d3d, D3DShaderManager* sMgr, XMMATRIX orthoMatrix)
 {
 	d3d->TurnOffAlphaBlending();
 	

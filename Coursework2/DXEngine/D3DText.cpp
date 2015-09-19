@@ -23,14 +23,14 @@ D3DText::~D3DText()
 	}
 }
 
-bool D3DText::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWND hwnd, int screenWidth, int screenHeight, D3DXMATRIX baseViewMatrix)
+bool D3DText::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWND hwnd, int screenWidth, int screenHeight, XMMATRIX baseViewMatrix)
 {
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
 
 	// Store the base view matrix.
 	m_baseViewMatrix = baseViewMatrix;
-	D3DXMatrixIdentity(&m_worldMatrix);
+	XMMATRIXIdentity(&m_worldMatrix);
 
 	m_Font = new D3DFont;
 	if(!m_Font)
@@ -95,7 +95,7 @@ bool D3DText::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWN
 	return true;
 }
 
-bool D3DText::Render(ID3D11DeviceContext* deviceContext, D3DXMATRIX orthoMatrix)
+bool D3DText::Render(ID3D11DeviceContext* deviceContext, XMMATRIX orthoMatrix)
 {
 	/*
 	//Todo change this to draw all sentences in a given vector instead of m_sentenceX
@@ -286,10 +286,10 @@ void D3DText::ReleaseSentence(int ID)
 	return;
 }
 
-bool D3DText::RenderSentence(ID3D11DeviceContext* deviceContext, int ID,  D3DXMATRIX orthoMatrix)
+bool D3DText::RenderSentence(ID3D11DeviceContext* deviceContext, int ID,  XMMATRIX orthoMatrix)
 {
 	unsigned int stride, offset;
-	D3DXVECTOR4 pixelColour;
+	XMFLOAT4 pixelColour;
 
 	// Set vertex buffer stride and offset.
 	stride = sizeof(VertexType); 
@@ -305,7 +305,7 @@ bool D3DText::RenderSentence(ID3D11DeviceContext* deviceContext, int ID,  D3DXMA
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Create a pixel colour vector with the input sentence colour.
-	pixelColour = D3DXVECTOR4(m_sentenceArray[ID].r, m_sentenceArray[ID].g, m_sentenceArray[ID].b, 1.0f);
+	pixelColour = XMFLOAT4(m_sentenceArray[ID].r, m_sentenceArray[ID].g, m_sentenceArray[ID].b, 1.0f);
 
 	// Render the text using the font shader.
 	if(!m_FontShader->Render(deviceContext, m_sentenceArray[ID].indexCount, m_worldMatrix, m_baseViewMatrix, orthoMatrix, m_Font->GetTexture(), pixelColour))

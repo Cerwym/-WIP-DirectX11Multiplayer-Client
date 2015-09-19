@@ -19,26 +19,26 @@ public:
 	~D3DFontShader();
 
 	bool Init(ID3D11Device*, HWND);
-	bool Render(ID3D11DeviceContext*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, ID3D11ShaderResourceView*, D3DXVECTOR4);
+	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, XMFLOAT4);
 
 private:
 
 	struct ConstantBufferType 
 	{
-		D3DXMATRIX world;
-		D3DXMATRIX view;
-		D3DXMATRIX projection;
+		XMMATRIX world;
+		XMMATRIX view;
+		XMMATRIX projection;
 	};
 
 	struct PixelBufferType
 	{
-		D3DXVECTOR4 pixelColour;
+		XMFLOAT4 pixelColour;
 	};
 
 	bool InitShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
-	bool SetShaderParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, ID3D11ShaderResourceView*, D3DXVECTOR4);
+	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, XMFLOAT4);
 	void RenderShader(ID3D11DeviceContext*, int);
 
 	ID3D11VertexShader* m_vertexShader;

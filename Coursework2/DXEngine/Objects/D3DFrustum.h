@@ -1,6 +1,10 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <DirectXCollision.h>
+#include "..\DXEngineMathHelper.h"
+
+using namespace DirectX;
 
 class D3DFrustum
 {
@@ -9,7 +13,7 @@ public:
 	D3DFrustum(const D3DFrustum&){}
 	~D3DFrustum(){}
 
-	void ConstructFrustrum(float, , D3DXMATRIX);
+	void ConstructFrustrum(float screenDepth, const XMMATRIX &projMatrix, const XMMATRIX &vMatrix);
 
 	bool CheckPoint(float, float, float);
 	bool CheckCube(float, float, float, float);
@@ -18,7 +22,8 @@ public:
 
 private:
 
-	D3DXPLANE m_Planes[6];
+	XMFLOAT4 m_Planes[6];
+	BoundingFrustum m_Frustrum;
 };
 
 

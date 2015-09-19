@@ -63,7 +63,7 @@ bool D3DShaderManager::Init(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
-bool D3DShaderManager::RenderTextureShader( ID3D11DeviceContext* device, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, ID3D11ShaderResourceView* texture )
+bool D3DShaderManager::RenderTextureShader(ID3D11DeviceContext* device, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
 {
 	// Render the model using the texture shader.
 	if(!m_TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture))
@@ -73,8 +73,8 @@ bool D3DShaderManager::RenderTextureShader( ID3D11DeviceContext* device, int ind
 }
 
 
-bool D3DShaderManager::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
-										   ID3D11ShaderResourceView* texture, XMFLOAT3 &camPosition, D3DLight* lightObject)
+bool D3DShaderManager::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix,
+											ID3D11ShaderResourceView* texture, XMFLOAT3 &camPosition, D3DLight* lightObject)
 {
 	// Render the model using the light shader.
 	if(! m_D3DLightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, lightObject->GetDirection(), lightObject->GetAmbientColour(), lightObject->GetDiffuseColour(), camPosition, 
@@ -85,8 +85,8 @@ bool D3DShaderManager::RenderLightShader(ID3D11DeviceContext* deviceContext, int
 }
 
 
-bool D3DShaderManager::RenderBumpMapShader(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, 
-											 ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalTexture, D3DLight* lightObject)
+bool D3DShaderManager::RenderBumpMapShader(ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix,
+												ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalTexture, D3DLight* lightObject)
 {
 	if(!m_BumpMapShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, colorTexture, normalTexture, lightObject->GetDirection(), lightObject->GetDiffuseColour()))
 		return false;

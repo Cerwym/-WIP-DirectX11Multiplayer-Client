@@ -154,7 +154,7 @@ bool D3DSkyBox::Init(ID3D11Device* d3d11Device, int LatLines, int LongLines, WCH
 	iinitData.pSysMem = &indices[0];
 	d3d11Device->CreateBuffer(&indexBufferDesc, &iinitData, &m_IndexBuffer);
 
-	if (FAILED(D3DCompileFromFile(L"Data/Shaders/skybox.fx", 0, 0, "SKYMAP_VS", "vs_5_0", 0, 0, &SKYBOX_VS_Buffer, &errorMessage)))
+	if(FAILED(D3DX11CompileFromFile(L"Data/Shaders/skybox.fx", 0, 0, "SKYMAP_VS", "vs_5_0", 0, 0, 0, &SKYBOX_VS_Buffer, &errorMessage, 0)))
 	{
 		// If the shader failed to compile it should have written something to the error message.
 		if(errorMessage)
@@ -165,7 +165,7 @@ bool D3DSkyBox::Init(ID3D11Device* d3d11Device, int LatLines, int LongLines, WCH
 		return false;
 	}
 	
-	if (FAILED(D3DCompileFromFile(L"Data/Shaders/skybox.fx", 0, 0, "SKYMAP_PS", "ps_5_0", 0, 0, &SKYBOX_PS_Buffer, &errorMessage)))
+	if (FAILED(D3DX11CompileFromFile(L"Data/Shaders/skybox.fx", 0, 0, "SKYMAP_PS", "ps_5_0", 0, 0, 0, &SKYBOX_PS_Buffer, &errorMessage, 0)))
 	{
 		// If the shader failed to compile it should have written something to the error message.
 		if(errorMessage)
@@ -209,7 +209,6 @@ bool D3DSkyBox::Init(ID3D11Device* d3d11Device, int LatLines, int LongLines, WCH
 
 bool D3DSkyBox::LoadTexture(ID3D11Device* d3d11Device, WCHAR* skyTexture, HWND hwnd)
 {
-	/*
 	D3DX11_IMAGE_LOAD_INFO loadSMinfo;
 	loadSMinfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
@@ -227,13 +226,9 @@ bool D3DSkyBox::LoadTexture(ID3D11Device* d3d11Device, WCHAR* skyTexture, HWND h
 
 	if (FAILED(d3d11Device->CreateShaderResourceView(SMTexture, &SMViewDesc, &m_Texture)))
 	{
-	*/
-	{ // Failed to load texture.
-		MessageBox(hwnd, L"NOT IMPLEMENTED : SKYBOX!", L"D3DSkybox.cpp", MB_OK);
+		MessageBox(hwnd, L"Failed to Load Texture", L"Skybox", MB_OK);
 		return false;
 	}
-
-
 	return true;
 }
 

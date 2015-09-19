@@ -117,5 +117,5 @@ void D3DCamera::RebuildView()
 	m_ViewMatrix = XMLoadFloat4x4(&tempView);
 	
 	// Reconstuct the viewing frustum.
-	//m_Frustum->ConstructFrustrum( m_zFar, m_ProjMatrix, m_ViewMatrix );
+	m_Frustum->ConstructFrustrum( m_zFar, m_ProjMatrix, m_ViewMatrix );
 }

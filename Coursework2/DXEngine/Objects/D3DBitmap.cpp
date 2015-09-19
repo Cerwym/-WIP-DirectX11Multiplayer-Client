@@ -16,9 +16,9 @@ D3DBitmap::~D3DBitmap()
 	S_DELETE( m_Texture );
 }
 
-bool D3DBitmap::Init(ID3D11Device* device, ID3D11DeviceContext* context, int screenWidth, int screenHeight, char* bitmapFName, int bitmapWidth, int bitmapHeight)
+bool D3DBitmap::Init(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* bitmapFName, int bitmapWidth, int bitmapHeight)
 {
-	m_worldMatrix = XMMatrixIdentity();
+	XMMATRIXIdentity( &m_worldMatrix );
 
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
@@ -35,14 +35,14 @@ bool D3DBitmap::Init(ID3D11Device* device, ID3D11DeviceContext* context, int scr
 
 	if (bitmapFName!= NULL) // if the filename of the bitmap is not NULL, that means we're passing in external data, i.e a file
 	{
-		if (!LoadTexture(device, context, bitmapFName))
+		if (!LoadTexture(device, bitmapFName))
 			return false;
 	}
 	
 	return true;
 }
 
-bool D3DBitmap::Render(ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, XMMATRIX &view, XMMATRIX &proj)
+bool D3DBitmap::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, XMMATRIX view, XMMATRIX projection )
 {
 	bool result;
 
@@ -55,7 +55,7 @@ bool D3DBitmap::Render(ID3D11DeviceContext* deviceContext, D3DShaderManager* sm,
 
 	RenderBuffers(deviceContext);
 
-	sm->RenderTextureShader(deviceContext, m_indexCount, m_worldMatrix, view, proj, m_Texture->GetTexture() );
+	sm->RenderTextureShader(deviceContext, m_indexCount, m_worldMatrix, view, projection, m_Texture->GetTexture() );
 	
 	return true;
 }
@@ -155,23 +155,23 @@ bool D3DBitmap::UpdateBuffers(ID3D11DeviceContext* deviceContext, int posX, int 
 
 	// First triangle data
 	verts[0].position = XMFLOAT3(left, top, 0.0f);  // Top left.
-	verts[0].texture = XMFLOAT2(0.0f, 0.0f);
+	verts[0].texture = D3DXVECTOR2(0.0f, 0.0f);
 
 	verts[1].position = XMFLOAT3(right, bottom, 0.0f);  // Bottom right.
-	verts[1].texture = XMFLOAT2(1.0f, 1.0f);
+	verts[1].texture = D3DXVECTOR2(1.0f, 1.0f);
 
 	verts[2].position = XMFLOAT3(left, bottom, 0.0f);  // Bottom left.
-	verts[2].texture = XMFLOAT2(0.0f, 1.0f);
+	verts[2].texture = D3DXVECTOR2(0.0f, 1.0f);
 
 	// Second triangle.
 	verts[3].position = XMFLOAT3(left, top, 0.0f);  // Top left.
-	verts[3].texture = XMFLOAT2(0.0f, 0.0f);
+	verts[3].texture = D3DXVECTOR2(0.0f, 0.0f);
 
 	verts[4].position = XMFLOAT3(right, top, 0.0f);  // Top right.
-	verts[4].texture = XMFLOAT2(1.0f, 0.0f);
+	verts[4].texture = D3DXVECTOR2(1.0f, 0.0f);
 
 	verts[5].position = XMFLOAT3(right, bottom, 0.0f);  // Bottom right.
-	verts[5].texture = XMFLOAT2(1.0f, 1.0f);
+	verts[5].texture = D3DXVECTOR2(1.0f, 1.0f);
 
 	// Lock the vertex buffer for writing
 	result = deviceContext->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -203,14 +203,14 @@ void D3DBitmap::RenderBuffers( ID3D11DeviceContext* deviceContext )
 	deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-bool D3DBitmap::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* context, char* fName)
+bool D3DBitmap::LoadTexture(ID3D11Device* device, WCHAR* fName)
 {
 	bool result;
 	m_Texture = new D3DTexture;
 	if (!m_Texture)
 		return false;
 
-	result = m_Texture->Init(device, context, fName);
+	result = m_Texture->Init(device, fName);
 	if (!result)
 		return false;
 

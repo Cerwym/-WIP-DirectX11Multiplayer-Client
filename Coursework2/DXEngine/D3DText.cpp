@@ -23,21 +23,21 @@ D3DText::~D3DText()
 	}
 }
 
-bool D3DText::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWND hwnd, int screenWidth, int screenHeight, const XMMATRIX &baseViewMatrix)
+bool D3DText::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWND hwnd, int screenWidth, int screenHeight, XMMATRIX baseViewMatrix)
 {
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
 
 	// Store the base view matrix.
 	m_baseViewMatrix = baseViewMatrix;
-	m_worldMatrix = XMMatrixIdentity();
+	XMMATRIXIdentity(&m_worldMatrix);
 
 	m_Font = new D3DFont;
 	if(!m_Font)
 		return false;
 
 	// Initialize the font object.
-	if(!m_Font->Init(device, deviceContext, "Data/Fonts/font_1.txt", "Data/Fonts/font_1.tga") )
+	if(!m_Font->Init(device, "Data/Fonts/font_1.txt", L"Data/Fonts/font_1.dds") )
 	{
 		MessageBox(hwnd, L"Could not initialize the font object.", L"Error", MB_OK);
 		return false;
@@ -95,7 +95,7 @@ bool D3DText::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWN
 	return true;
 }
 
-bool D3DText::Render(ID3D11DeviceContext* deviceContext, const XMMATRIX &orthoMatrix)
+bool D3DText::Render(ID3D11DeviceContext* deviceContext, XMMATRIX orthoMatrix)
 {
 	/*
 	//Todo change this to draw all sentences in a given vector instead of m_sentenceX
@@ -286,7 +286,7 @@ void D3DText::ReleaseSentence(int ID)
 	return;
 }
 
-bool D3DText::RenderSentence(ID3D11DeviceContext* deviceContext, int ID,  const XMMATRIX &orthoMatrix)
+bool D3DText::RenderSentence(ID3D11DeviceContext* deviceContext, int ID,  XMMATRIX orthoMatrix)
 {
 	unsigned int stride, offset;
 	XMFLOAT4 pixelColour;

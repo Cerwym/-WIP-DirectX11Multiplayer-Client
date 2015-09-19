@@ -27,8 +27,8 @@ bool D3DTextureShader::Init(ID3D11Device* device, HWND hwnd)
 }
 
 
-bool D3DTextureShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX &worldMatrix, XMMATRIX &viewMatrix, 
-								XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
+bool D3DTextureShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, 
+								const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
 {
 	// Set the shader parameters that it will use for rendering.
 	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture);
@@ -58,7 +58,8 @@ bool D3DTextureShader::InitShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFile
 	pixelShaderBuffer = 0;
 
 	// Compile the vertex shader code.
-	result = D3DCompileFromFile(vsFilename, NULL, NULL, "TextureVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage);
+	result = D3DX11CompileFromFile(vsFilename, NULL, NULL, "TextureVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
+		&vertexShaderBuffer, &errorMessage, NULL);
 	if(FAILED(result))
 	{
 		// If the shader failed to compile it should have written something to the error message.
@@ -71,7 +72,7 @@ bool D3DTextureShader::InitShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFile
 	}
 
 	// Compile the pixel shader code.
-	result = D3DCompileFromFile(psFilename, NULL, NULL, "TexturePixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
+	result = D3DX11CompileFromFile(psFilename, NULL, NULL, "TexturePixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);
 	if(FAILED(result))
 	{
 		// If the shader failed to compile it should have written something to the error message.
@@ -215,8 +216,8 @@ void D3DTextureShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 	MessageBox(hwnd, L"Error compiling shader.  Check the 'Error Logs' directory for error messages.", shaderFilename, MB_OK);
 }
 
-bool D3DTextureShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX &worldMatrix, XMMATRIX &viewMatrix,
-	XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
+bool D3DTextureShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix,
+	const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -225,9 +226,9 @@ bool D3DTextureShader::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 
 	// Transpose the matrices to prepare them for the shader.
-	worldMatrix = XMMatrixTranspose(worldMatrix);
-	worldMatrix = XMMatrixTranspose(viewMatrix);
-	worldMatrix = XMMatrixTranspose(projectionMatrix);
+	XMMatrixTranspose(worldMatrix);
+	XMMatrixTranspose(viewMatrix);
+	XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

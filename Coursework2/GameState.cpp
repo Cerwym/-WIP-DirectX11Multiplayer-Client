@@ -40,17 +40,17 @@ bool GameState::dLoad()
 	}
 	
 	m_Floor = new D3DModel(XMFLOAT3(0, -5, 0));
-	m_Floor->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Models/floor.txt", "Data/Textures/floor.tga", "Data/Textures/floor_nmap.tga");
+	m_Floor->Init( D3D()->GetDevice(), "Data/Models/floor.txt", L"Data/Textures/floor.dds", L"Data/Textures/floor_nmap.dds");
 
 	m_BillBoard = new D3DModel(XMFLOAT3(0, -4, 5));
-	if (!m_BillBoard->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Models/square.txt", "Data/Textures/imp.tga"))
+	if (!m_BillBoard->Init( D3D()->GetDevice(), "Data/Models/square.txt", L"Data/Textures/imp.dds"))
 	{
 		MessageBox( appWindow, L"Failed to Load billboard model", L"Error", MB_OK);
 		return false;
 	}
 
 	m_DaveDude = new D3DModel(XMFLOAT3(0,0,0));
-	if (!m_DaveDude->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Models/dude.txt", "Data/Textures/dude_texture.tga"))
+	if (!m_DaveDude->Init( D3D()->GetDevice(), "Data/Models/dude.txt", L"Data/Textures/dude_texture.dds"))
 	{
 		MessageBox( appWindow, L"Failed to Load dave model correctly", L"Error", MB_OK);
 		return false;
@@ -60,14 +60,14 @@ bool GameState::dLoad()
 	
 	m_ParticleSystem = new D3DParticleEmitter;
 	// Initialize the particle system object.
-	if(!m_ParticleSystem->Initialize(D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Textures/raindrop.tga"))
+	if(!m_ParticleSystem->Initialize(D3D()->GetDevice(), L"Data/Textures/raindrop.dds"))
 	{
 		MessageBox(appWindow, L"Could not initialize the particle shader object.", L"Error", MB_OK);
 		return false;
 	}
 
 	m_SkyBox = new D3DSkyBox;
-	if ( !m_SkyBox->Init( D3D()->GetDevice(), 10, 10, L"Data/Textures/skymap.tga", g_Engine->GetWindow()) )
+	if ( !m_SkyBox->Init( D3D()->GetDevice(), 10, 10, L"Data/Textures/skymap.dds", g_Engine->GetWindow()) )
 	{
 		MessageBox( appWindow, L"Error in creating the skybox", L"Error", MB_OK);
 		return false;
@@ -281,7 +281,7 @@ void GameState::Render3D()
 	D3D()->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	XMMATRIX worldMatrix, translateMatrix;
-	worldMatrix = XMMatrixIdentity();
+	XMMATRIXIdentity(&worldMatrix);
 
 	// Cache camera;
 	m_Player->Camera()->RebuildView();
@@ -351,7 +351,7 @@ void GameState::AddEntity(unsigned short entID, char entType, XMFLOAT3 position,
 	else
 	{
 		// Add the entity to the game scene
-		if (!m_NetworkEntityList[i].Init(D3D(), "Data/Models/cube.txt", "Data/Textures/marble.dds"))
+		if (!m_NetworkEntityList[i].Init(D3D(), "Data/Models/cube.txt", L"Data/Textures/marble.dds"))
 			MessageBox(g_Engine->GetWindow(), L"Could not init network entity model", L"NetworkEntity Init", MB_OK);
 		
 		m_NetworkEntityList[i].SetOnlineStatus(true);

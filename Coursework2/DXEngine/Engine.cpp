@@ -203,7 +203,6 @@ void Engine::ThreadedLoadState( State* stateToLoad )
 		}
 
 		ShowWindow( m_window, SW_NORMAL );
-		
 		m_loadingState->Update( true );
 		m_loadingState->Render();
 	}

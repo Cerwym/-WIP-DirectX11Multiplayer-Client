@@ -35,7 +35,7 @@ public:
 	NWEntity(const NWEntity&){}
 	~NWEntity();
 
-	bool Init(D3DSys* sys, char* modelName, char* textureName);
+	bool Init(D3DSys* sys, char* modelName, WCHAR* textureName);
 	void Render(D3DCamera* camera, D3DShaderManager* sm);
 
 	void SetOnlineStatus(bool flag){m_online = flag;}

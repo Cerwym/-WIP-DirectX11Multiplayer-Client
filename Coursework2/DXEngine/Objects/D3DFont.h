@@ -9,7 +9,6 @@
 using std::unique_ptr;
 
 using namespace std;
-using namespace DirectX;
 
 class D3DFont
 {
@@ -19,7 +18,7 @@ public:
 	D3DFont(const D3DFont&){}
 	~D3DFont();
 
-	bool Init(ID3D11Device* device, ID3D11DeviceContext* context, char* fontFName, char* textureFName);
+	bool Init(ID3D11Device*, char*, WCHAR*);
 
 	ID3D11ShaderResourceView* GetTexture(){return m_Texture->GetTexture();}
 	void BuildVertexArray(void*, char*, float, float);
@@ -35,12 +34,12 @@ private:
 	struct VertexType 
 	{
 		XMFLOAT3 position;
-		XMFLOAT2 texture;
+		D3DXVECTOR2 texture;
 	};
 
 	bool LoadFontData(char*);
 	void ReleaseFontData();
-	bool LoadTexture(ID3D11Device* device, ID3D11DeviceContext*, char* filename);
+	bool LoadTexture(ID3D11Device*, WCHAR*);
 	void ReleaseTexture();
 
 	FontType* m_Font;

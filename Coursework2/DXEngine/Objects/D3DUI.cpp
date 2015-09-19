@@ -20,7 +20,7 @@ D3DUI::~D3DUI()
 	S_DELETE(m_RocketLauncher);
 }
 
-bool D3DUI::Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, const XMMATRIX &baseView, int posY, int posX)
+bool D3DUI::Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, XMMATRIX baseView, int posY, int posX)
 {
 	m_baseViewMatrix = baseView;
 	m_context = d3d->GetDeviceContext();
@@ -32,11 +32,11 @@ bool D3DUI::Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int ch
 	if (!m_ChatWindowBackground)
 		return false;
 
-	if (!m_ChatWindowBackground->Init(d3d->GetDevice(), d3d->GetDeviceContext(), scrWidth, scrHeight, "Data/Textures/ChatWindow.dds", chatWidth, chatHeight))
+	if (!m_ChatWindowBackground->Init(d3d->GetDevice(), scrWidth, scrHeight, L"Data/Textures/ChatWindow.dds", chatWidth, chatHeight))
 		return false;
 
 	m_RocketLauncher = new D3DBitmap;
-	if (!m_RocketLauncher->Init(d3d->GetDevice(), d3d->GetDeviceContext(), scrWidth, scrHeight, "Data/Textures/rlauncher.dds", 330, 260))
+	if (!m_RocketLauncher->Init(d3d->GetDevice(), scrWidth, scrHeight, L"Data/Textures/rlauncher.dds", 330, 260))
 		return false;
 	m_RocketLauncher->SetPosition((scrWidth / 2) - 165, scrHeight - 260);
 
@@ -275,7 +275,7 @@ bool D3DUI::InitChat(D3DSys* d3d)
 
 }
 
-bool D3DUI::Render(D3DSys* d3d, D3DShaderManager* sMgr, XMMATRIX &orthoMatrix)
+bool D3DUI::Render(D3DSys* d3d, D3DShaderManager* sMgr, XMMATRIX orthoMatrix)
 {
 	d3d->TurnOffAlphaBlending();
 	

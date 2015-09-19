@@ -21,11 +21,11 @@ D3DFont::~D3DFont()
 	}
 }
 
-bool D3DFont::Init(ID3D11Device* device, ID3D11DeviceContext* context, char* fontFName, char* textureFName)
+bool D3DFont::Init(ID3D11Device* device, char* fontFName, WCHAR* textureFName)
 {
 	if (!LoadFontData(fontFName))
 		return false;
-	if (!LoadTexture(device, context, textureFName))
+	if (!LoadTexture(device, textureFName))
 		return false;
 	return true;
 }
@@ -63,13 +63,13 @@ bool D3DFont::LoadFontData(char* filename)
 	return true;
 }
 
-bool D3DFont::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* context, char* filename)
+bool D3DFont::LoadTexture(ID3D11Device* device, WCHAR* filename)
 {
 	m_Texture = new D3DTexture;
 	if (!m_Texture)
 		return false;
 
-	if (!m_Texture->Init(device, context, filename))
+	if (!m_Texture->Init(device, filename))
 		return false;
 
 	return true;
@@ -98,28 +98,28 @@ void D3DFont::BuildVertexArray(void* verts, char* sentance, float drawX, float d
 		{
 			// First triangle in quad.
 			vertexPtr[index].position = XMFLOAT3(drawX, drawY, 0.0f);  // Top left.
-			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].left, 0.0f);
+			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].left, 0.0f);
 			index++;
 
 			vertexPtr[index].position = XMFLOAT3((drawX + m_Font[letter].size), (drawY - 16), 0.0f);  // Bottom right.
-			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].right, 1.0f);
+			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].right, 1.0f);
 			index++;
 
 			vertexPtr[index].position = XMFLOAT3(drawX, (drawY - 16), 0.0f);  // Bottom left.
-			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].left, 1.0f);
+			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].left, 1.0f);
 			index++;
 
 			// Second triangle in quad.
 			vertexPtr[index].position = XMFLOAT3(drawX, drawY, 0.0f);  // Top left.
-			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].left, 0.0f);
+			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].left, 0.0f);
 			index++;
 
 			vertexPtr[index].position = XMFLOAT3(drawX + m_Font[letter].size, drawY, 0.0f);  // Top right.
-			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].right, 0.0f);
+			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].right, 0.0f);
 			index++;
 
 			vertexPtr[index].position = XMFLOAT3((drawX + m_Font[letter].size), (drawY - 16), 0.0f);  // Bottom right.
-			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].right, 1.0f);
+			vertexPtr[index].texture = D3DXVECTOR2(m_Font[letter].right, 1.0f);
 			index++;
 
 			// Update the x location for drawing by the size of the letter and one pixel.

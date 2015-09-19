@@ -26,7 +26,7 @@ public:
 	~D3DModel();
 
 	// Initialize the Model with the D3DDevice, Model File, Texture File ( NULLABLE ), Bump Map ( NULLABLE )
-	bool Init( ID3D11Device* device, char* modelFName, WCHAR* textureFName, WCHAR* bumpMapFname = NULL);
+	bool Init( ID3D11Device* device, ID3D11DeviceContext* context, char* modelFName, char* textureFName, char* bumpMapFname = NULL);
 
 	bool Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMgr, D3DCamera* camera, D3DLight* lightObj, const int cullMode = CULL_CUBE );
 
@@ -47,7 +47,7 @@ private:
 	struct TexVertex
 	{
 		XMFLOAT3 position;
-		D3DXVECTOR2 texture;
+		XMFLOAT2 texture;
 		XMFLOAT3 normal;
 	};
 
@@ -55,7 +55,7 @@ private:
 	struct BumpVertex
 	{
 		XMFLOAT3 position;
-		D3DXVECTOR2 texture;
+		XMFLOAT2 texture;
 		XMFLOAT3 normal;
 		XMFLOAT3 tangent;
 		XMFLOAT3 binormal;
@@ -92,7 +92,7 @@ private:
 	bool InitBuffers(ID3D11Device*);
 	void RebuildTransform();
 
-	bool LoadTexture(ID3D11Device*, WCHAR*, WCHAR*);
+	bool LoadTexture(ID3D11Device* device, ID3D11DeviceContext* context, char* filename, char* bumpFN);
 	bool LoadModel(char*, bool);
 
 	void CalculateModelVectors();

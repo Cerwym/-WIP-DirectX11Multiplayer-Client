@@ -49,7 +49,7 @@ D3DModel::~D3DModel()
 	S_DELETE(m_NormalMapTexture);
 }
 
-bool D3DModel::Init( ID3D11Device* device, char* modelFName, WCHAR* textureFName, WCHAR* bumpMapFname )
+bool D3DModel::Init( ID3D11Device* device, ID3D11DeviceContext* context, char* modelFName, char* textureFName, char* bumpMapFname )
 {
 	bool result;
 	if (bumpMapFname != NULL) { m_isBumpMapped = true; }
@@ -72,7 +72,7 @@ bool D3DModel::Init( ID3D11Device* device, char* modelFName, WCHAR* textureFName
 	if (!result)
 		return false;
 
-	result = LoadTexture(device, textureFName, bumpMapFname);
+	result = LoadTexture(device, context, textureFName, bumpMapFname);
 	if(!result)
 		return false;
 
@@ -85,7 +85,7 @@ bool D3DModel::Init( ID3D11Device* device, char* modelFName, WCHAR* textureFName
 
 void D3DModel::NO_GSBillboard(D3DCamera* camera)
 {
-	double angle = atan2( m_Position.x - camera->GetPosition().x, m_Position.z - camera->GetPosition().z) * ( 180 / D3DX_PI );
+	double angle = atan2( m_Position.x - camera->GetPosition().x, m_Position.z - camera->GetPosition().z) * ( 180 / XM_PI );
 	float rotation = angle * 0.0174532925f;
 	SetRotation( 0, rotation, 0 );
 }
@@ -94,25 +94,30 @@ void D3DModel::NO_GSBillboard(D3DCamera* camera)
 void D3DModel::RebuildTransform()
 {
 	// Set the current world matrix to the identity matrix
-	XMMATRIXIdentity( &m_WorldMatrix );
+	m_WorldMatrix = XMMatrixIdentity();
 
-	XMMATRIX temp;
-	XMMATRIXIdentity( &temp );
+	XMMATRIX temp = XMMatrixIdentity();
 	
 	// Scale the temporary matrix
-	XMMATRIXScaling( &temp, m_Scale.x, m_Scale.y, m_Scale.z );
+	temp = XMMatrixScaling(m_Scale.x, m_Scale.y, m_Scale.z );
 	m_WorldMatrix *= temp;
 	
 	// Rotate the temporary matrix
-	if (m_Rotation.x != 0) 
-	{ XMMATRIXRotationX( &temp, m_Rotation.x ); m_WorldMatrix *= temp; }
-	if (m_Rotation.y != 0) 
-	{ XMMATRIXRotationY( &temp, m_Rotation.y ); m_WorldMatrix *= temp; }
-	if (m_Rotation.z != 0) 
-	{ XMMATRIXRotationZ( &temp, m_Rotation.z ); m_WorldMatrix *= temp; }
-	
+	if (m_Rotation.x != 0)
+	{
+		temp = XMMatrixRotationX(m_Rotation.x); m_WorldMatrix *= temp;
+	}
+	if (m_Rotation.y != 0)
+	{
+		temp = XMMatrixRotationY(m_Rotation.y); m_WorldMatrix *= temp;
+	}
+	if (m_Rotation.z != 0)
+	{
+		temp = XMMatrixRotationZ(m_Rotation.z); m_WorldMatrix *= temp;
+	}
+
 	// Translate the temporary matrix
-	XMMATRIXTranslation( &temp, m_Position.x, m_Position.y, m_Position.z );
+	temp = XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z);
 	m_WorldMatrix *= temp;
 }
 
@@ -164,7 +169,9 @@ bool D3DModel::Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sMg
 
 void D3DModel::TranslateBy( float x, float y, float z )
 {
-	m_Position += XMFLOAT3( x, y, z );
+	m_Position.x += x;
+	m_Position.y += y;
+	m_Position.z += z;
 	RebuildTransform();
 }
 
@@ -176,7 +183,9 @@ void D3DModel::TranslateTo( float x, float y, float z )
 
 void D3DModel::RotateBy( float x, float y, float z )
 {
-	m_Rotation += XMFLOAT3( x, y, z );
+	m_Rotation.x += x;
+	m_Rotation.y += y;
+	m_Rotation.z += z;
 	RebuildTransform();
 }
 
@@ -222,7 +231,7 @@ bool D3DModel::InitBuffers(ID3D11Device* device)
 		for (int i = 0; i < m_vertexCount; i++)
 		{
 			vertices[i].position = XMFLOAT3(m_Model[i].x, m_Model[i].y, m_Model[i].z);
-			vertices[i].texture = D3DXVECTOR2(m_Model[i].tu, m_Model[i].tv);
+			vertices[i].texture = XMFLOAT2(m_Model[i].tu, m_Model[i].tv);
 			vertices[i].normal = XMFLOAT3(m_Model[i].nx, m_Model[i].ny, m_Model[i].nz);
 			indices[i] = i;
 		}
@@ -232,7 +241,7 @@ bool D3DModel::InitBuffers(ID3D11Device* device)
 		for( int i = 0; i < m_vertexCount; i++ )
 		{
 			Bvertices[i].position = XMFLOAT3(m_BModel[i].x, m_BModel[i].y, m_BModel[i].z);
-			Bvertices[i].texture = D3DXVECTOR2(m_BModel[i].tu, m_BModel[i].tv);
+			Bvertices[i].texture = XMFLOAT2(m_BModel[i].tu, m_BModel[i].tv);
 			Bvertices[i].normal = XMFLOAT3(m_BModel[i].nx, m_BModel[i].ny, m_BModel[i].nz);
 			Bvertices[i].tangent = XMFLOAT3(m_BModel[i].tx, m_BModel[i].ty, m_BModel[i].tz);
 			Bvertices[i].binormal = XMFLOAT3(m_BModel[i].bx, m_BModel[i].by, m_BModel[i].bz);
@@ -303,7 +312,7 @@ bool D3DModel::InitBuffers(ID3D11Device* device)
 	return true;
 }
 
-bool D3DModel::LoadTexture(ID3D11Device* device, WCHAR* fileName, WCHAR* bumpFN)
+bool D3DModel::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* context, char* filename, char* bumpFN)
 {
 	bool result;
 
@@ -311,7 +320,7 @@ bool D3DModel::LoadTexture(ID3D11Device* device, WCHAR* fileName, WCHAR* bumpFN)
 	if (!m_Texture)
 		return false;
 
-	result = m_Texture->Init(device, fileName);
+	result = m_Texture->Init(device, context, filename);
 	if (!result)
 		return false;
 
@@ -321,7 +330,7 @@ bool D3DModel::LoadTexture(ID3D11Device* device, WCHAR* fileName, WCHAR* bumpFN)
 		if (!m_NormalMapTexture)
 			return false;
 
-		if (!m_NormalMapTexture->Init(device, bumpFN))
+		if (!m_NormalMapTexture->Init(device, context, bumpFN))
 			return false;
 	}
 	return true;

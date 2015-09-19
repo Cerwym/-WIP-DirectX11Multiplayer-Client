@@ -16,7 +16,7 @@ bool OptionsState::dLoad()
 	m_baseViewMatrix = m_Camera->GetViewMatrix();
 
 	m_BackgroundTexture = new D3DBitmap;
-	if (!m_BackgroundTexture->Init( D3D()->GetDevice(), Options()->scrWidth, Options()->scrHeight, L"Data/Textures/options_background.dds", Options()->scrWidth, Options()->scrHeight ))
+	if (!m_BackgroundTexture->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), Options()->scrWidth, Options()->scrHeight, "Data/Textures/options_background.tga", Options()->scrWidth, Options()->scrHeight ))
 	{
 		MessageBox( 0, L"Failed to load background texture", L"Data/Textures/options_background.dds", MB_OK );
 		return 0;
@@ -24,9 +24,9 @@ bool OptionsState::dLoad()
 	m_BackgroundTexture->SetPosition(0,0);
 
 	m_Button = new D3DBitmap;
-	if (!m_Button->Init( D3D()->GetDevice(), Options()->scrWidth, Options()->scrWidth, L"Data/Textures/UI/button.dds", 412,90))
+	if (!m_Button->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), Options()->scrWidth, Options()->scrWidth, "Data/Textures/UI/button.tga", 412,90))
 	{
-		MessageBox( 0, L"Failed to load button texture", L"Data/Textures/UI/button.dds", MB_OK);
+		MessageBox( 0, L"Failed to load button texture", L"Data/Textures/UI/button.tga", MB_OK);
 		return 0;
 	}
 	m_Button->SetPosition( 20, 180);

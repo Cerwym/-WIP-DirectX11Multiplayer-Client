@@ -18,14 +18,14 @@ bool LoadingState::dLoad()
 	m_baseViewMatrix = m_Camera->GetViewMatrix();
 
 	m_LoadingBitmap = new D3DBitmap;
-	if (!m_LoadingBitmap->Init( D3D()->GetDevice(), Options()->scrWidth, Options()->scrHeight, L"Data/Textures/loadingtexture.dds", Options()->scrWidth, Options()->scrHeight ))
+	if (!m_LoadingBitmap->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), Options()->scrWidth, Options()->scrHeight, "Data/Textures/loadingtexture.tga", Options()->scrWidth, Options()->scrHeight ))
 	{
 		MessageBox(0, L"Error Loading Texture", L"Error", MB_OK);
 		return false;
 	}
 
 	m_Imp = new D3DBitmap;
-	if (!m_Imp->Init(D3D()->GetDevice(), Options()->scrWidth, Options()->scrHeight, L"Data/Textures/imp.dds", 50, 50))
+	if (!m_Imp->Init(D3D()->GetDevice(), D3D()->GetDeviceContext(), Options()->scrWidth, Options()->scrHeight, "Data/Textures/imp.tga", 50, 50))
 	{
 		MessageBox(0, L"Error loading imp texture", L"Error", MB_OK);
 		return false;

@@ -23,7 +23,7 @@ private:
 	D3DCamera* m_Camera;
 	D3DBitmap* m_LoadingBitmap;
 	D3DBitmap* m_Imp;
-	D3DMATRIX m_baseViewMatrix;
+	XMMATRIX m_baseViewMatrix;
 	bool m_MouseLock;
 
 	int impMX;

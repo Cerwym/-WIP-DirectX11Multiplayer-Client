@@ -28,8 +28,8 @@ public:
 	@param bitmapWidth, bitmapHeight - the size dimensions of the texture
 	@return success of initialization
 	*/
-	bool Init(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* bitmapFName, int bitmapWidth, int bitmapHeight);
-	bool Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, XMMATRIX view, XMMATRIX proj );
+	bool Init(ID3D11Device* device, ID3D11DeviceContext* context, int screenWidth, int screenHeight, char* bitmapFName, int bitmapWidth, int bitmapHeight);
+	bool Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, XMMATRIX &view, XMMATRIX &proj );
 
 	int GetIndexCount(){return m_indexCount;}
 	int GetWidth(){return m_bitmapWidth;}
@@ -44,13 +44,13 @@ private:
 	struct VertexType
 	{
 		XMFLOAT3 position;
-		D3DXVECTOR2 texture;
+		XMFLOAT2 texture;
 	};
 
 	bool InitBuffers(ID3D11Device*);
 	bool UpdateBuffers(ID3D11DeviceContext*, int, int);
 	void RenderBuffers(ID3D11DeviceContext*);
-	bool LoadTexture(ID3D11Device*, WCHAR*);
+	bool LoadTexture(ID3D11Device* device, ID3D11DeviceContext* context, char* fName);
 
 	ID3D11Buffer *m_vertexBuffer, *m_IndexBuffer;
 	XMMATRIX m_worldMatrix;

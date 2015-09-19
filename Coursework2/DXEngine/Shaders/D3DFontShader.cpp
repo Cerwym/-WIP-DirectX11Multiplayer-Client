@@ -55,7 +55,7 @@ bool D3DFontShader::InitShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFName, 
 	pixelShaderBuffer = 0;
 
 	// Compile the vertex shader
-	if (FAILED(D3DX11CompileFromFile(vsFName, NULL, NULL, "FontVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMessage, NULL)))
+	if (FAILED(D3DCompileFromFile(vsFName, NULL, NULL, "FontVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage)))
 	{
 		if (errorMessage)
 			OutputShaderErrorMessage(errorMessage, hwnd, vsFName);
@@ -66,7 +66,7 @@ bool D3DFontShader::InitShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFName, 
 	}
 
 	// Compile the pixel shader.
-	if(FAILED(D3DX11CompileFromFile(psFName, NULL, NULL, "FontPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL)))
+	if (FAILED(D3DCompileFromFile(psFName, NULL, NULL, "FontPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage)))
 	{
 		if(errorMessage)
 			OutputShaderErrorMessage(errorMessage, hwnd, psFName);

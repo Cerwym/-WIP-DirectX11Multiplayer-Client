@@ -13,11 +13,11 @@ public:
 	D3DUI();
 	~D3DUI();
 
-	bool Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, XMMATRIX baseView, int posX, int posY);
+	bool Init(D3DSys* d3d, int scrWidth, int scrHeight, int chatWidth, int chatHeight, const XMMATRIX &baseView, int posY, int posX);
 	bool InitChat(D3DSys* d3d);
 
 	void SetPosition(int x, int y);
-	bool Render(D3DSys* d3d, D3DShaderManager* sMgr, XMMATRIX orthoMatrix);
+	bool Render(D3DSys* d3d, D3DShaderManager* sMgr, XMMATRIX &orthoMatrix);
 	void KeyPressUpdate(int key);
 	bool UpdateChatBar();
 	void CheckForChatMessage(char* message, bool &newMessage);

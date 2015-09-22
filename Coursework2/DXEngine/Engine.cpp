@@ -52,6 +52,7 @@ Engine::Engine( EngineDefinition *definition )
 
 	m_States = new LinkedList< State >;
 	m_currentState = NULL;
+	m_previousState = NULL;
 
 	
 	m_Input = new D3DInput( m_window );
@@ -221,8 +222,13 @@ void Engine::ThreadedLoadState( State* stateToLoad )
 		// Close the state that did not load correctly.
 		stateToLoad->Close();
 		PopState(stateToLoad); // Pop the state that failed to load, otherwise data from that state will still exists, prohibiting the application from qutting cleanly.
-		m_previousState->SetFailed();
-		ThreadedLoadState(m_previousState);
+		if (m_previousState != NULL)
+		{
+			m_previousState->SetFailed();
+			ThreadedLoadState(m_previousState);
+		}
+
+		assert(m_previousState != NULL && "UNIMPLEMENTED BAILOUT. No state exists to fall back on. Application will crash");
 	}
 
 	// If we've reached here, everything will have loaded correctly, rejoice! :)

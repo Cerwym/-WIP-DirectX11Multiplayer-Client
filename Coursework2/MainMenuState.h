@@ -33,6 +33,8 @@ private:
 	D3DModel* m_MetalCube;
 	D3DModel* m_StoneCube;
 
+	D3DBitmap* m_TestBitmap;
+
 	D3DSkyBox* m_SkyBox;
 	D3DParticleEmitter* m_RainEmitter;
 

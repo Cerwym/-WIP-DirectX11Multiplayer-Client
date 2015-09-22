@@ -14,15 +14,19 @@ MainMenuState::MainMenuState() : State( MAINMENU_STATE )
 	m_SkyBox = 0;
 	m_RainEmitter = 0;
 
+	m_TestBitmap = 0;
+
 	g_Engine->DebugOutput(L"Main Menu Initialized\n");
 	m_MouseLock = true;
 }
 
 bool MainMenuState::dLoad()
 {
-	/*
 	g_Engine->DebugOutput(L"Main Menu Loading...\n");
+
 	m_OrthoMatrix = D3D()->GetOrthoMatrix();
+
+	/*
 
 	// Might want to check to see if the objects already exists as loading a new state will change what the object points to
 	m_MarbleCube = new D3DModel(XMFLOAT3(-3.5f, 0, 0));
@@ -70,6 +74,17 @@ bool MainMenuState::dLoad()
 	if (!m_RainEmitter->Initialize( D3D()->GetDevice(), D3D()->GetDeviceContext(), "Data/Textures/raindrop.dds"))
 		return false;
  */
+	int sWidth = Options()->scrWidth;
+	int sHeight = Options()->scrHeight;
+
+	m_TestBitmap = new D3DBitmap();
+	if (!m_TestBitmap->Init(D3D()->GetDevice(), D3D()->GetDeviceContext(), Options()->scrWidth, Options()->scrHeight, "Data/Textures/loadingtexture.tga", Options()->scrWidth, Options()->scrHeight))
+	{
+		MessageBox(0, L"Error Loading Texture", L"Error", MB_OK);
+		return false;
+	}
+		return false;
+
 	g_Engine->DebugOutput(L"Main Menu Loaded\n"); 
 	return true;
 }
@@ -86,6 +101,7 @@ void MainMenuState::dClose()
 	S_DELETE( m_DebugView3 );
 	S_DELETE( m_RainEmitter );
 	S_DELETE( m_SkyBox );
+	S_DELETE(m_TestBitmap);
 
 	g_Engine->DebugOutput(L"Main Menu Closed\n");
 }
@@ -175,30 +191,26 @@ void MainMenuState::dUpdate( float dt )
 
 void MainMenuState::dRender()
 {
-
 	/*
 	RenderTexture()->SetRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView() );
 	RenderTexture()->ClearRenderTarget( D3D()->GetDeviceContext(), D3D()->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
 	// Render the scene (CURRENTLY WITH ALL SHADERS on the front buffer)
-	
 	D3D()->TurnOnWireFrame();
 	Render3D( false, false );
 	D3D()->TurnOffWireFrame();
-
 	m_DebugView->SetTexture( RenderTexture()->GetShaderResourceView() );
 	// Continue rendering as normal on the back buffer
 	
 	D3D()->SetBackBufferRenderTarget();
 	D3D()->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
-	
+	*/
 	Render3D();
 	Render2D();
-
-	*/
 }
 
 void MainMenuState::Render3D( bool renderParticles, bool renderSkybox )
 {
+	/*
 	m_Camera->RebuildView();
 	D3D()->TurnOnWireFrame();
 	if ( renderSkybox )
@@ -232,6 +244,8 @@ void MainMenuState::Render3D( bool renderParticles, bool renderSkybox )
 	}
 
 	D3D()->TurnOffWireFrame();
+
+	*/
 }
 
 void MainMenuState::Render2D()
@@ -239,15 +253,19 @@ void MainMenuState::Render2D()
 	// Being 2D rendering
 	D3D()->TurnZBufferOff();
 	D3D()->TurnOnAlphaBlending();
-
+	/*
 	if (!m_TextBatch->Render( D3D()->GetDeviceContext(), m_OrthoMatrix ))
 	{
 		MessageBox( g_Engine->GetWindow(), L"Error drawing shitty text", L"Error", MB_OK );
 		PostQuitMessage( 0 );
 	}
+
+	*/
 	
 	D3D()->TurnOffAlphaBlending();
 	// The debug view should always be on top and thus, not blend with the scene
-	m_DebugView->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_baseViewMatrix, m_OrthoMatrix ) ;
+	//m_DebugView->Render( D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_baseViewMatrix, m_OrthoMatrix ) ;
+
+	m_TestBitmap->Render(D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_baseViewMatrix, m_OrthoMatrix);
 	D3D()->TurnZBufferOn();
 }

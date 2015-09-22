@@ -35,8 +35,9 @@ bool D3DBitmap::Init(ID3D11Device* device, ID3D11DeviceContext* context, int scr
 
 	if (bitmapFName!= NULL) // if the filename of the bitmap is not NULL, that means we're passing in external data, i.e a file
 	{
-		if (!LoadTexture(device, context, bitmapFName))
+		if (LoadTexture(device, context, bitmapFName))
 			return false;
+
 	}
 	
 	return true;

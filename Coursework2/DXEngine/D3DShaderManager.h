@@ -16,7 +16,7 @@ public:
 
 	bool Init(ID3D11Device*, HWND);
 
-	bool RenderTextureShader( ID3D11DeviceContext* device, int indexCount, XMMATRIX &worldMatrix, XMMATRIX &viewMatrix, XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture );
+	bool RenderTextureShader(ID3D11DeviceContext* device, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture);
 
 	bool RenderLightShader( ID3D11DeviceContext* deviceContext, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, 
 		ID3D11ShaderResourceView* texture, XMFLOAT3 &camPosition, D3DLight* lightObject );

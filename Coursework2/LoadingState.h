@@ -23,8 +23,27 @@ private:
 	D3DCamera* m_Camera;
 	D3DBitmap* m_LoadingBitmap;
 	D3DBitmap* m_Imp;
-	XMMATRIX m_baseViewMatrix;
+
+	struct CBNeverChanges
+	{
+		XMMATRIX mView;
+	};
+
+	struct CBChangesEveryFrame
+	{
+		XMMATRIX mWorld;
+	};
+
+	struct CBChangesOnResize
+	{
+		XMMATRIX mProjection;
+	};
+	
 	bool m_MouseLock;
+
+	CBNeverChanges cbNever;
+	CBChangesEveryFrame cbEvery;
+	CBChangesOnResize cbResize;
 
 	int impMX;
 };

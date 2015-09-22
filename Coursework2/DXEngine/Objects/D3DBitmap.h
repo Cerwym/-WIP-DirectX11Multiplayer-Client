@@ -29,7 +29,7 @@ public:
 	@return success of initialization
 	*/
 	bool Init(ID3D11Device* device, ID3D11DeviceContext* context, int screenWidth, int screenHeight, char* bitmapFName, int bitmapWidth, int bitmapHeight);
-	bool Render( ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, XMMATRIX &view, XMMATRIX &proj );
+	bool Render(ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, const XMMATRIX &view, const XMMATRIX &proj);
 
 	int GetIndexCount(){return m_indexCount;}
 	int GetWidth(){return m_bitmapWidth;}
@@ -53,8 +53,14 @@ private:
 	bool LoadTexture(ID3D11Device* device, ID3D11DeviceContext* context, char* fName);
 
 	ID3D11Buffer *m_vertexBuffer, *m_IndexBuffer;
-	XMMATRIX m_worldMatrix;
-	XMMATRIX m_baseViewMatrix;
+
+	struct CBChangesEveryFrame
+	{
+		XMMATRIX m_worldMatrix;
+	};
+
+	CBChangesEveryFrame cbEvery;
+
 	int m_vertexCount, m_indexCount;
 	D3DTexture* m_Texture;
 	Vector2I m_Position;

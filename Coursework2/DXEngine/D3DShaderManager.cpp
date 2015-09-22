@@ -63,7 +63,7 @@ bool D3DShaderManager::Init(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
-bool D3DShaderManager::RenderTextureShader(ID3D11DeviceContext* device, int indexCount, XMMATRIX &worldMatrix, XMMATRIX &viewMatrix, XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
+bool D3DShaderManager::RenderTextureShader(ID3D11DeviceContext* device, int indexCount, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
 {
 	// Render the model using the texture shader.
 	if(!m_TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture))

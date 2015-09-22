@@ -92,7 +92,8 @@ void MainMenuState::dClose()
 
 void MainMenuState::dUpdate( float dt )
 {
-	/*
+	g_Engine->DebugOutput(L"Updating MainMenuState %f\n", dt);
+	
 	if (Input()->isKeyPressed( DIK_ESCAPE) )
 	{
 		MessageBox( g_Engine->GetWindow(), L"Quitting Application", L"Quitting...", MB_ICONINFORMATION );
@@ -102,10 +103,10 @@ void MainMenuState::dUpdate( float dt )
 	if( Input()->isKeyPressed( DIK_P ) )
 		Audio()->PlayFile( "Data/Audio/sound01.wav" );
 	
+	/*
 	// Camera movement
 	if ( Input()->isKeyPressed( DIK_A , true ) )
 		m_Camera->Move_X(-2.3f * dt);
-
 	if ( Input()->isKeyPressed( DIK_D, true ) )
 		m_Camera->Move_X(2.3f * dt);
 

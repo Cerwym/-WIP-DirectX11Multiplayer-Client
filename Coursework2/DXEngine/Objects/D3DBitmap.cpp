@@ -18,7 +18,7 @@ D3DBitmap::~D3DBitmap()
 
 bool D3DBitmap::Init(ID3D11Device* device, ID3D11DeviceContext* context, int screenWidth, int screenHeight, char* bitmapFName, int bitmapWidth, int bitmapHeight)
 {
-	m_worldMatrix = XMMatrixIdentity();
+	cbEvery.m_worldMatrix = XMMatrixIdentity();
 
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
@@ -42,7 +42,7 @@ bool D3DBitmap::Init(ID3D11Device* device, ID3D11DeviceContext* context, int scr
 	return true;
 }
 
-bool D3DBitmap::Render(ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, XMMATRIX &view, XMMATRIX &proj)
+bool D3DBitmap::Render(ID3D11DeviceContext* deviceContext, D3DShaderManager* sm, const XMMATRIX &view, const XMMATRIX &proj)
 {
 	bool result;
 
@@ -55,7 +55,7 @@ bool D3DBitmap::Render(ID3D11DeviceContext* deviceContext, D3DShaderManager* sm,
 
 	RenderBuffers(deviceContext);
 
-	sm->RenderTextureShader(deviceContext, m_indexCount, m_worldMatrix, view, proj, m_Texture->GetTexture() );
+	sm->RenderTextureShader(deviceContext, m_indexCount, cbEvery.m_worldMatrix, view, proj, m_Texture->GetTexture() );
 	
 	return true;
 }

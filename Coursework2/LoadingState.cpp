@@ -10,12 +10,13 @@ LoadingState::LoadingState() : State( LOADING_STATE )
 
 bool LoadingState::dLoad()
 {
-	g_Engine->DebugOutput(L"State->Loading...\n");
+	g_Engine->DebugOutput(L"Loading State...\n");
 
 	m_Camera = new D3DCamera( 0.25f*3.14159265358979323f, (float) g_Engine->GetScreenWidth() / g_Engine->GetScreenHeight(), 0.1f, 1000.0f );
 	m_Camera->SetPosition(XMFLOAT3(0.0f, 0.0f, -10.0f));
 	m_Camera->RebuildView();
-	m_baseViewMatrix = m_Camera->GetViewMatrix();
+
+	cbNever.mView = m_Camera->GetViewMatrix();
 
 	m_LoadingBitmap = new D3DBitmap;
 	if (!m_LoadingBitmap->Init( D3D()->GetDevice(), D3D()->GetDeviceContext(), Options()->scrWidth, Options()->scrHeight, "Data/Textures/loadingtexture.tga", Options()->scrWidth, Options()->scrHeight ))
@@ -48,23 +49,23 @@ void LoadingState::dUpdate( float dt )
 {
 	static int posXBy = -4;
 
-	if (m_Imp->GetPosition().x <= 0 || m_Imp->GetPosition().x >= (Options()->scrWidth - m_Imp->GetWidth() ))
-		posXBy =-posXBy;
+	//if (m_Imp->GetPosition().x <= 0 || m_Imp->GetPosition().x >= (Options()->scrWidth - m_Imp->GetWidth() ))
+		//posXBy =-posXBy;
 
-	m_Imp->MoveBy(posXBy, 0);
+	//m_Imp->MoveBy(posXBy, 0);
 }
 
 void LoadingState::dRender()
 {
-	m_Camera->RebuildView();
-	D3D()->TurnZBufferOff();
-	D3D()->TurnOnAlphaBlending();
+	//m_Camera->RebuildView();
+	//D3D()->TurnZBufferOff();
+	//D3D()->TurnOnAlphaBlending();
 
-	m_Imp->Render(D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_baseViewMatrix, D3D()->GetOrthoMatrix());
-	m_LoadingBitmap->Render(D3D()->GetDeviceContext(), g_Engine->ShaderManager(), m_baseViewMatrix, D3D()->GetOrthoMatrix());
+	//m_Imp->Render(D3D()->GetDeviceContext(), g_Engine->ShaderManager(), cbNever.mView, D3D()->GetOrthoMatrix());
+	//m_LoadingBitmap->Render(D3D()->GetDeviceContext(), g_Engine->ShaderManager(), cbNever.mView, D3D()->GetOrthoMatrix());
 
-	D3D()->TurnOffAlphaBlending();
+	//D3D()->TurnOffAlphaBlending();
 
-	D3D()->TurnZBufferOn();
+	//D3D()->TurnZBufferOn();
 
 }

@@ -25,22 +25,8 @@ int WINAPI WinMain(  _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	EngineDefinition eDef;
 	eDef.hInstance = hInstance;
-	eDef.name = L"0901632 - Coursework - Programming Games - Engine2";
+	eDef.name = L"DirectX 11 - Multiplayer Client";
 	eDef.vSync = false;
-
-	/*
-	if (szArgList != NULL)
-	{	
-		LPWSTR ipAddr = szArgList[0];
-		char ipConv[20] = {0};
-		wcstombs(ipConv, ipAddr, wcslen(ipAddr));
-		eDef.server_addr = ipConv;
-	}
-	else 
-	{
-		eDef.server_addr = "127.0.0.1";
-	}*/
-
 	eDef.server_addr = "127.0.0.1";
 
 	eDef.server_port = 5555;
